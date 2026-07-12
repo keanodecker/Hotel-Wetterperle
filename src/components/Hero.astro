@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import hero from '../assets/extracted/hero.jpg';
+import logo from '../assets/extracted/logo.png';
+import RatingBadge from './RatingBadge.astro';
+import { chefplatzUrl } from '../data/nav';
+---
+
+<section class="relative flex h-[92vh] min-h-[640px] w-full items-center justify-center overflow-hidden">
+	<div class="absolute inset-0">
+		<Image
+			src={hero}
+			alt="Luftaufnahme des Landgasthofs Wetteraperle im Grünen"
+			class="animate-kenburns h-full w-full object-cover"
+			widths={[640, 1080, 1600, 2000]}
+			sizes="100vw"
+			priority
+		/>
+		<div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-ink-900/35 to-ink-900/70"></div>
+	</div>
+
+	<div
+		class="animate-fade-in absolute left-1/2 top-6 -translate-x-1/2 md:top-8"
+		style="animation-delay: 1.1s; opacity: 0;"
+	>
+		<RatingBadge />
+	</div>
+
+	<div class="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
+		<Image
+			src={logo}
+			alt="Landgasthof Wetteraperle"
+			width={260}
+			height={109}
+			class="animate-fade-in h-24 w-auto brightness-0 invert md:h-28"
+			style="opacity: 0;"
+		/>
+
+		<h1
+			class="animate-fade-up font-serif text-4xl font-semibold leading-tight text-cream-50 drop-shadow-sm md:text-6xl"
+			style="animation-delay: 0.35s; opacity: 0;"
+		>
+			Landgasthof Wetteraperle
+		</h1>
+
+		<p
+			class="animate-fade-up max-w-xl text-lg leading-relaxed text-cream-100/90"
+			style="animation-delay: 0.6s; opacity: 0;"
+		>
+			Gemütlichkeit, Ruhe und Genuss im Thüringer Schiefergebirge – gehobene
+			gutbürgerliche Küche und persönliche Gastfreundschaft, seit Generationen.
+		</p>
+
+		<div
+			class="animate-fade-up mt-2 flex flex-wrap items-center justify-center gap-4"
+			style="animation-delay: 0.85s; opacity: 0;"
+		>
+			<a
+				href={chefplatzUrl}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="rounded-full bg-orange-500 px-8 py-3.5 text-sm font-semibold text-cream-50 shadow-lg transition-colors hover:bg-orange-600"
+			>
+				Tisch reservieren
+			</a>
+			<a
+				href="/hotel"
+				class="rounded-full border border-cream-50/50 px-8 py-3.5 text-sm font-semibold text-cream-50 transition-colors hover:bg-cream-50/10"
+			>
+				Hotel buchen
+			</a>
+		</div>
+	</div>
+</section>

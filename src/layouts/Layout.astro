@@ -9,8 +9,8 @@ interface Props {
 }
 
 const {
-	title = 'Hotel Wetterperle',
-	description = 'Hotel Wetterperle – Ihr Zuhause auf Zeit für Erholung, Genuss und Gastfreundschaft.',
+	title = 'Landgasthof Wetteraperle',
+	description = 'Landgasthof Wetteraperle in Saalburg-Ebersdorf – Restaurant, Hotelzimmer und Feiern mitten im Thüringer Schiefergebirge.',
 } = Astro.props;
 ---
 
@@ -22,7 +22,7 @@ const {
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
-		<title>{title} | Hotel Wetterperle</title>
+		<title>{title} | Landgasthof Wetteraperle</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -30,7 +30,7 @@ const {
 			rel="stylesheet"
 		/>
 	</head>
-	<body class="flex min-h-screen flex-col bg-cream-50 text-stone-800 font-sans antialiased">
+	<body class="flex min-h-screen flex-col bg-cream-50 text-ink-700 font-sans antialiased">
 		<Header />
 		<main class="flex-1">
 			<slot />

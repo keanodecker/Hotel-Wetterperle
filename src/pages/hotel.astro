@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import BookingWidget from '../components/BookingWidget.astro';
+import PhotoGrid from '../components/PhotoGrid.astro';
+import zimmer1 from '../assets/gallery/zimmer/zimmer-01.jpg';
+import zimmer2 from '../assets/gallery/zimmer/zimmer-02.jpg';
+import zimmer3 from '../assets/gallery/zimmer/zimmer-03.jpg';
+import zimmer4 from '../assets/gallery/zimmer/zimmer-04.jpg';
+import zimmer5 from '../assets/gallery/zimmer/zimmer-05.jpg';
+
+const galerie = [
+	{ src: zimmer3, alt: 'Helles Zimmer mit Balkonzugang' },
+	{ src: zimmer1, alt: 'Doppelbett unter dem Dachschrägen' },
+	{ src: zimmer2, alt: 'Fenstersitzecke mit Fachwerkbalken' },
+	{ src: zimmer4, alt: 'Rustikales Zimmer mit Kunst an der Wand' },
+	{ src: zimmer5, alt: 'Modernes, sauberes Badezimmer' },
+];
+---
+
+<Layout title="Hotel" description="Zimmer und Suiten im Landgasthof Wetteraperle – jetzt Verfügbarkeit prüfen und anfragen.">
+	<PageHeader
+		kicker="Übernachten"
+		title="Zimmer & Suiten"
+		description="Helle, moderne Zimmer für den Rückzug nach einem Tag im Thüringer Schiefergebirge – inklusive Frühstück."
+	/>
+
+	<section class="mx-auto max-w-6xl px-6 py-16">
+		<h2 class="mb-8 font-serif text-2xl font-semibold text-ink-900">Impressionen</h2>
+		<PhotoGrid images={galerie} />
+	</section>
+
+	<section class="mx-auto max-w-6xl px-6 pb-24">
+		<div class="mb-10 max-w-2xl">
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Verfügbarkeit</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+				Zimmer wählen & anfragen
+			</h2>
+			<p class="mt-4 leading-relaxed text-ink-700/80">
+				Wählen Sie Ihr Wunschzimmer sowie Ihren Reisezeitraum – wir zeigen Ihnen direkt
+				den Gesamtpreis. Anreise ab 14:00 Uhr, Abreise bis 11:00 Uhr, kostenlose
+				Stornierung bis 7 Tage vor Anreise.
+			</p>
+		</div>
+
+		<BookingWidget />
+	</section>
+</Layout>

@@ -1,0 +1,38 @@
+---
+import { openingHours } from '../data/hours';
+import { contact } from '../data/nav';
+---
+
+<section class="bg-ink-900">
+	<div class="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-2 md:items-center">
+		<div>
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-400">Öffnungszeiten</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-cream-50 md:text-4xl">
+				Wann Sie uns besuchen können
+			</h2>
+			<p class="mt-4 max-w-md leading-relaxed text-cream-100/70">
+				Wir freuen uns auf Ihren Besuch im Restaurant – Reservierungen sind jederzeit
+				telefonisch oder online möglich.
+			</p>
+			<a
+				href={contact.phoneHref}
+				class="mt-6 inline-block rounded-full border border-cream-50/30 px-6 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-cream-50/10"
+			>
+				{contact.phoneDisplay}
+			</a>
+		</div>
+
+		<div class="rounded-3xl bg-cream-50/5 p-8 ring-1 ring-cream-50/10">
+			<ul class="divide-y divide-cream-50/10">
+				{openingHours.map((entry) => (
+					<li class="flex items-center justify-between gap-4 py-3 text-sm">
+						<span class="font-medium text-cream-50">{entry.label}</span>
+						<span class:list={['text-right', entry.ranges ? 'text-cream-100/80' : 'text-orange-400/90']}>
+							{entry.ranges ? entry.ranges.join(' · ') : 'Ruhetag'}
+						</span>
+					</li>
+				))}
+			</ul>
+		</div>
+	</div>
+</section>

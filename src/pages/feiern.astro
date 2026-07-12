@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PhotoGrid from '../components/PhotoGrid.astro';
+import { Image } from 'astro:assets';
+import events from '../assets/extracted/events.jpg';
+import feiern1 from '../assets/gallery/feiern/feiern-01.jpg';
+import feiern2 from '../assets/gallery/feiern/feiern-02.jpg';
+import { contact } from '../data/nav';
+
+const galerie = [
+	{ src: feiern2, alt: 'Feier im Garten unter alten Bäumen' },
+	{ src: feiern1, alt: 'Hüpfburg für die kleinen Gäste' },
+];
+
+const anlaesse = [
+	{
+		title: 'Hochzeiten',
+		text: 'Festsaal und Außenbereich direkt am See – für den schönsten Tag zu zweit.',
+	},
+	{
+		title: 'Geburtstage',
+		text: 'Wichtige und runde Geburtstage sollten immer gebührend gefeiert werden.',
+	},
+	{
+		title: 'Familienfeste',
+		text: 'Restaurant, Biergarten oder Festsaal mit individueller Menü- und Dekorationsplanung.',
+	},
+	{
+		title: 'Jugendweihe & Konfirmation',
+		text: 'Spezialisierte Planung für diesen besonderen Lebensabschnitt.',
+	},
+];
+---
+
+<Layout title="Feiern" description="Hochzeiten, Geburtstage und Familienfeste im Festsaal oder am See – individuell geplant im Landgasthof Wetteraperle.">
+	<PageHeader
+		kicker="Ihr Anlass, unsere Sorgfalt"
+		title="Feiern im Landgasthof"
+		description="Ob Hochzeit, Geburtstag oder Familienfest – wir planen Ihre Feier individuell, mit Herz und Liebe zum Detail."
+	/>
+
+	<section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
+		<div class="order-2 md:order-1">
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Unser Motto</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+				"Es gibt nur einen Chef und das ist der Gast"
+			</h2>
+			<p class="mt-4 leading-relaxed text-ink-700/80">
+				Festsaal, Außenbereich am See, Biergarten oder Restaurant – wir finden für
+				jeden Anlass den passenden Rahmen und planen Menü und Dekoration ganz nach
+				Ihren Wünschen.
+			</p>
+			<a
+				href={contact.phoneHref}
+				class="mt-6 inline-block rounded-full bg-orange-500 px-7 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
+			>
+				Event anfragen: {contact.phoneDisplay}
+			</a>
+		</div>
+		<Image
+			src={events}
+			alt="Feier im Landgasthof Wetteraperle"
+			class="order-1 h-80 w-full rounded-3xl object-cover md:order-2 md:h-[26rem]"
+		/>
+	</section>
+
+	<section class="bg-cream-100/60">
+		<div class="mx-auto max-w-6xl px-6 py-20">
+			<h2 class="mb-12 text-center font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+				Für jeden Anlass
+			</h2>
+			<div class="grid gap-8 md:grid-cols-2">
+				{anlaesse.map((anlass) => (
+					<div class="rounded-2xl border border-ink-900/10 bg-white p-8">
+						<h3 class="font-serif text-xl font-semibold text-ink-900">{anlass.title}</h3>
+						<p class="mt-3 text-sm leading-relaxed text-ink-700/80">{anlass.text}</p>
+					</div>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-6 py-20">
+		<h2 class="mb-8 font-serif text-2xl font-semibold text-ink-900">Echte Momente</h2>
+		<PhotoGrid images={galerie} />
+	</section>
+</Layout>

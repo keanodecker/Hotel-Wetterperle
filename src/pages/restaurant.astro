@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PhotoGrid from '../components/PhotoGrid.astro';
+import { Image } from 'astro:assets';
+import restaurant from '../assets/extracted/restaurant.jpg';
+import galerie1 from '../assets/gallery/restaurant/restaurant-01.jpg';
+import galerie2 from '../assets/gallery/restaurant/restaurant-02.jpg';
+import galerie3 from '../assets/gallery/restaurant/restaurant-03.jpg';
+import galerie4 from '../assets/gallery/restaurant/restaurant-04.jpg';
+import galerie5 from '../assets/gallery/restaurant/restaurant-05.jpg';
+import { openingHours } from '../data/hours';
+import { chefplatzUrl, contact } from '../data/nav';
+
+const schwerpunkte = ['Schnitzel & Steaks', 'Gegrilltes vom Grill', 'Leichte Salate', 'Hausgemachte Desserts'];
+
+const galerie = [
+	{ src: galerie4, alt: 'Frank am Grill' },
+	{ src: galerie1, alt: 'Dessert mit Birne und Schokolade' },
+	{ src: galerie2, alt: 'Gurken-Tomaten-Salat' },
+	{ src: galerie3, alt: 'Schokoladenmousse mit Apfel und Pflaume' },
+	{ src: galerie5, alt: 'Gemütlicher Gastraum' },
+];
+---
+
+<Layout title="Restaurant" description="Gehobene gutbürgerliche Küche mit regionalen Produkten im Landgasthof Wetteraperle.">
+	<PageHeader
+		kicker="Genuss"
+		title="Restaurant"
+		description="Internationale Gerichte, verbunden mit Thüringer Spezialitäten – frisch, regional und mit Handwerk zubereitet."
+	/>
+
+	<section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
+		<Image src={restaurant} alt="Restaurant im Landgasthof Wetteraperle" class="h-80 w-full rounded-3xl object-cover md:h-[26rem]" />
+		<div>
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Küchenkonzept</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+				Nachhaltigkeit, Qualität, Gastfreundschaft
+			</h2>
+			<p class="mt-4 leading-relaxed text-ink-700/80">
+				Unsere Küche setzt auf frische, regionale Produkte – Fleisch und Kartoffeln von
+				lokalen Erzeugern, Honig aus eigenem Anbau. Frank bereitet jedes Gericht
+				persönlich zu und verbindet traditionelle Thüringer Küche mit modernen,
+				international inspirierten Kreationen.
+			</p>
+			<ul class="mt-6 grid grid-cols-2 gap-3">
+				{schwerpunkte.map((item) => (
+					<li class="rounded-xl bg-cream-100/70 px-4 py-3 text-sm font-medium text-ink-900">{item}</li>
+				))}
+			</ul>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-6 pb-20">
+		<h2 class="mb-8 font-serif text-2xl font-semibold text-ink-900">Impressionen</h2>
+		<PhotoGrid images={galerie} />
+	</section>
+
+	<section class="bg-cream-100/60">
+		<div class="mx-auto max-w-6xl px-6 py-20 text-center">
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Draußen sitzen</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+				Biergarten am Teich
+			</h2>
+			<p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-700/80">
+				Genießen Sie Ihr Essen oder Getränk direkt am Wasser – ruhig gelegen und
+				umgeben von Grün, ideal für laue Sommerabende.
+			</p>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-4xl px-6 py-20">
+		<div class="grid gap-10 rounded-3xl border border-ink-900/10 bg-white p-10 md:grid-cols-2">
+			<div>
+				<h2 class="font-serif text-2xl font-semibold text-ink-900">Öffnungszeiten</h2>
+				<ul class="mt-5 space-y-2 text-sm">
+					{openingHours.map((entry) => (
+						<li class="flex justify-between gap-4">
+							<span class="font-medium text-ink-900">{entry.label}</span>
+							<span class="text-ink-700/70">{entry.ranges ? entry.ranges.join(' · ') : 'Ruhetag'}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+			<div class="flex flex-col justify-between gap-6">
+				<div>
+					<h2 class="font-serif text-2xl font-semibold text-ink-900">Reservierung</h2>
+					<p class="mt-3 text-sm leading-relaxed text-ink-700/80">
+						Am einfachsten reservieren Sie online oder telefonisch unter
+						<a href={contact.phoneHref} class="font-semibold text-orange-600">{contact.phoneDisplay}</a>.
+					</p>
+				</div>
+				<a
+					href={chefplatzUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-block rounded-full bg-orange-500 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
+				>
+					Tisch reservieren
+				</a>
+			</div>
+		</div>
+	</section>
+</Layout>

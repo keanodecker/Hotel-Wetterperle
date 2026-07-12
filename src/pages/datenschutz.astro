@@ -1,0 +1,121 @@
+---
+// HINWEIS FÜR ENTWICKLER/BETREIBER: Dies ist ein improvisiertes Standard-Grundgerüst
+// und ersetzt keine rechtliche Prüfung. Vor Veröffentlichung von einem/einer
+// Datenschutzbeauftragten bzw. einer Rechtsberatung prüfen und vervollständigen lassen.
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { contact } from '../data/nav';
+---
+
+<Layout title="Datenschutz" description="Datenschutzerklärung des Landgasthofs Wetteraperle.">
+	<PageHeader kicker="Rechtliches" title="Datenschutzerklärung" />
+
+	<section class="mx-auto max-w-3xl space-y-10 px-6 py-20 text-sm leading-relaxed text-ink-700/90">
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">1. Verantwortlicher</h2>
+			<p class="mt-3">
+				Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br />
+				{contact.name}<br />
+				{contact.street}, {contact.zipCity}<br />
+				E-Mail: {contact.email} · Telefon: {contact.phoneDisplay}
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">2. Allgemeines zur Datenverarbeitung</h2>
+			<p class="mt-3">
+				Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit
+				dies zur Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte
+				und Leistungen erforderlich ist. Die Verarbeitung personenbezogener Daten
+				erfolgt regelmäßig nur nach Einwilligung der Nutzer oder auf Grundlage einer
+				gesetzlichen Erlaubnis.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">3. Server-Logfiles</h2>
+			<p class="mt-3">
+				Beim Aufruf dieser Website erhebt unser Hosting-Anbieter automatisch
+				Informationen in sogenannten Server-Logfiles, die Ihr Browser übermittelt
+				(z. B. Browsertyp, verwendetes Betriebssystem, Referrer-URL, Datum und Uhrzeit
+				der Anfrage, IP-Adresse). Diese Daten sind nicht bestimmten Personen
+				zuordenbar und werden nicht mit anderen Datenquellen zusammengeführt.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">4. Kontakt- und Anfrageformular</h2>
+			<p class="mt-3">
+				Wenn Sie uns per Formular oder E-Mail Anfragen zukommen lassen, werden Ihre
+				Angaben aus dem Anfrageformular inklusive der von Ihnen dort angegebenen
+				Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von
+				Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre
+				Einwilligung weiter.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">5. Google Maps</h2>
+			<p class="mt-3">
+				Auf unserer Kontaktseite binden wir Kartenmaterial des Dienstes „Google Maps"
+				der Google Ireland Limited ein. Bei Aufruf der Kontaktseite kann Google
+				Informationen, einschließlich Ihrer IP-Adresse, an Server in den USA
+				übertragen. Weitere Informationen entnehmen Sie der Datenschutzerklärung von
+				Google unter
+				<a href="https://policies.google.com/privacy" class="font-medium text-orange-600" target="_blank" rel="noopener noreferrer">
+					policies.google.com/privacy
+				</a>.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">6. Google Fonts</h2>
+			<p class="mt-3">
+				Diese Website nutzt zur einheitlichen Darstellung von Schriftarten „Google
+				Fonts", einen Dienst der Google Ireland Limited. Beim Aufruf einer Seite lädt
+				Ihr Browser die benötigten Schriftarten direkt von den Servern Googles, wobei
+				eine Verbindung zu Google-Servern hergestellt und dabei Ihre IP-Adresse
+				übermittelt wird.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">7. Cookies</h2>
+			<p class="mt-3">
+				Diese Website verwendet aktuell keine Analyse- oder Marketing-Cookies. Sollte
+				sich dies ändern, informieren wir Sie an dieser Stelle und holen, soweit
+				erforderlich, Ihre Einwilligung ein.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">8. Ihre Rechte</h2>
+			<p class="mt-3">
+				Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre
+				gespeicherten personenbezogenen Daten sowie ein Recht auf Berichtigung,
+				Sperrung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und
+				Widerspruch. Zudem steht Ihnen ein Beschwerderecht bei der zuständigen
+				Aufsichtsbehörde zu. Bei Fragen zur Erhebung, Verarbeitung oder Nutzung Ihrer
+				personenbezogenen Daten wenden Sie sich bitte an die oben genannten
+				Kontaktdaten.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">9. SSL-/TLS-Verschlüsselung</h2>
+			<p class="mt-3">
+				Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung
+				vertraulicher Inhalte eine SSL- bzw. TLS-Verschlüsselung.
+			</p>
+		</div>
+
+		<div>
+			<h2 class="font-serif text-xl font-semibold text-ink-900">10. Änderung dieser Datenschutzerklärung</h2>
+			<p class="mt-3">
+				Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets
+				den aktuellen rechtlichen Anforderungen entspricht. Es gilt die jeweils
+				aktuelle, auf dieser Seite veröffentlichte Fassung.
+			</p>
+		</div>
+	</section>
+</Layout>

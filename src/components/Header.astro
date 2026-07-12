@@ -1,30 +1,38 @@
 ---
-const navItems = [
-	{ href: '/', label: 'Startseite' },
-	{ href: '/zimmer', label: 'Zimmer' },
-	{ href: '/ueber-uns', label: 'Über uns' },
-	{ href: '/galerie', label: 'Galerie' },
-	{ href: '/kontakt', label: 'Kontakt' },
-];
+import { Image } from 'astro:assets';
+import logo from '../assets/extracted/logo.png';
+import { navItems, chefplatzUrl, contact } from '../data/nav';
+import { shortOpeningHours } from '../data/hours';
 
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 border-b border-forest-100 bg-cream-50/95 backdrop-blur">
-	<div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-		<a href="/" class="flex items-baseline gap-2">
-			<span class="font-serif text-xl font-semibold text-forest-700">Hotel Wetterperle</span>
+<div class="hidden bg-ink-900 text-cream-50 md:block">
+	<div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 text-xs tracking-wide text-cream-100/80">
+		<div class="flex items-center gap-6">
+			<a href={contact.phoneHref} class="hover:text-orange-400">{contact.phoneDisplay}</a>
+			<span>·</span>
+			<a href={`mailto:${contact.email}`} class="hover:text-orange-400">{contact.email}</a>
+		</div>
+		<p>{shortOpeningHours}</p>
+	</div>
+</div>
+
+<header class="sticky top-0 z-50 border-b border-ink-900/10 bg-cream-50/95 backdrop-blur">
+	<div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+		<a href="/" class="shrink-0">
+			<Image src={logo} alt="Landgasthof Wetteraperle" width={210} height={88} class="h-16 w-auto md:h-20" />
 		</a>
 
-		<nav class="hidden gap-8 md:flex">
+		<nav class="hidden gap-7 lg:flex">
 			{navItems.map((item) => {
 				const isActive = currentPath === item.href;
 				return (
 					<a
 						href={item.href}
 						class:list={[
-							'text-sm font-medium tracking-wide transition-colors hover:text-gold-600',
-							isActive ? 'text-gold-600' : 'text-forest-700',
+							'text-sm font-medium tracking-wide transition-colors hover:text-orange-500',
+							isActive ? 'text-orange-500' : 'text-ink-900',
 						]}
 					>
 						{item.label}
@@ -33,23 +41,46 @@ const currentPath = Astro.url.pathname;
 			})}
 		</nav>
 
-		<a
-			href="/kontakt"
-			class="hidden rounded-full bg-forest-700 px-5 py-2 text-sm font-medium text-cream-50 transition-colors hover:bg-forest-600 md:inline-block"
-		>
-			Jetzt anfragen
-		</a>
+		<div class="hidden items-center gap-3 md:flex">
+			<a
+				href={chefplatzUrl}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="rounded-full border border-ink-900/20 px-5 py-2.5 text-sm font-semibold text-ink-900 transition-colors hover:border-orange-500 hover:text-orange-500"
+			>
+				Tisch reservieren
+			</a>
+			<a
+				href="/hotel"
+				class="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-cream-50 shadow-sm transition-colors hover:bg-orange-600"
+			>
+				Hotel buchen
+			</a>
+		</div>
 
-		<details class="relative md:hidden">
-			<summary class="list-none rounded-md border border-forest-100 px-3 py-2 text-forest-700">
+		<details class="relative lg:hidden">
+			<summary class="list-none rounded-md border border-ink-900/20 px-3 py-2 text-sm text-ink-900">
 				Menü
 			</summary>
-			<nav class="absolute right-0 mt-2 flex w-48 flex-col gap-1 rounded-lg border border-forest-100 bg-cream-50 p-3 shadow-lg">
+			<nav class="absolute right-0 mt-2 flex w-56 flex-col gap-1 rounded-lg border border-ink-900/10 bg-cream-50 p-3 shadow-lg">
 				{navItems.map((item) => (
-					<a href={item.href} class="rounded px-3 py-2 text-sm font-medium text-forest-700 hover:bg-forest-50">
+					<a href={item.href} class="rounded px-3 py-2 text-sm font-medium text-ink-900 hover:bg-orange-50">
 						{item.label}
 					</a>
 				))}
+				<hr class="my-1 border-ink-900/10" />
+				<a
+					href={chefplatzUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="rounded px-3 py-2 text-sm font-semibold text-ink-900 hover:bg-orange-50"
+				>
+					Tisch reservieren
+				</a>
+				<a href="/hotel" class="rounded bg-orange-500 px-3 py-2 text-center text-sm font-semibold text-cream-50">
+					Hotel buchen
+				</a>
+				<p class="px-3 pt-1 text-xs text-ink-900/60">{shortOpeningHours}</p>
 			</nav>
 		</details>
 	</div>

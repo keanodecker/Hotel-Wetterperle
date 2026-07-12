@@ -1,68 +1,133 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { Image } from 'astro:assets';
+import owners from '../assets/extracted/owners.jpg';
+import feengrotten from '../assets/gallery/umgebung/feengrotten.jpg';
+import saaleschleife from '../assets/gallery/umgebung/saaleschleife-burgk.jpg';
+import wildwasserbahn from '../assets/gallery/umgebung/wildwasserbahn-plohn.jpg';
+
+const ausflugsziele = [
+	{
+		title: 'Feengrotten Saalfeld',
+		text: 'Das farbenreichste Schauhöhlensystem der Welt – ein unterirdisches Naturwunder ganz in der Nähe.',
+		image: feengrotten,
+	},
+	{
+		title: 'Saaleschleife bei Burgk',
+		text: 'Einer der schönsten Aussichtspunkte Thüringens, mit Blick auf die geschwungene Saale.',
+		image: saaleschleife,
+	},
+	{
+		title: 'Freizeitpark Plohn',
+		text: 'Wildwasserbahn und Fahrattraktionen für einen actionreichen Familientag.',
+		image: wildwasserbahn,
+	},
+];
+
+const zeitstrahl = [
+	{ zeit: '19. Jh. – 1945', text: 'Das Gebäude dient als Getreidemühle mit günstiger Flussanbindung.' },
+	{ zeit: 'Nach 1945', text: 'Nutzung als landwirtschaftlicher Betrieb (LPG).' },
+	{ zeit: 'Ab 1994', text: 'Das Haus wird zum privat geführten Gasthaus.' },
+	{ zeit: '2010 – 2019', text: 'Das Gebäude steht nahezu leer.' },
+	{ zeit: 'Seit 2018/19', text: 'Frank und Nadine Gröters übernehmen und hauchen der Wetteraperle neuen Charme ein.' },
+];
 
 const werte = [
 	{
-		title: 'Herzlichkeit',
-		text: 'Wir empfangen jeden Gast wie einen Freund – aufmerksam, persönlich und ohne Distanz.',
+		title: 'Qualität & Handwerk',
+		text: 'Frank bereitet alle Speisen selbst zu – mit Fokus auf Steaks, leichte Salate und innovative Kreationen.',
 	},
 	{
-		title: 'Regionalität',
-		text: 'Von der Küche bis zur Einrichtung setzen wir auf Partner und Produkte aus der Region.',
+		title: 'Nachhaltigkeit',
+		text: 'Zutaten von lokalen Bauern, Fleisch aus der Umgebung, eigener Honig – immer saisonal gedacht.',
 	},
 	{
-		title: 'Ruhe',
-		text: 'Kein Trubel, keine Eile – bei uns darf die Zeit langsamer vergehen.',
+		title: 'Gastfreundlichkeit',
+		text: 'Wanderer, Radfahrer und Einheimische sind gleichermaßen willkommen – inklusive fünf Wohnmobilstellplätzen.',
 	},
 ];
 ---
 
-<Layout title="Über uns">
-	<section class="bg-forest-900">
-		<div class="mx-auto max-w-6xl px-6 py-20">
-			<p class="font-serif text-sm uppercase tracking-[0.3em] text-gold-400">Unsere Geschichte</p>
-			<h1 class="mt-3 font-serif text-4xl font-semibold text-cream-50 md:text-5xl">Über uns</h1>
-			<p class="mt-4 max-w-2xl leading-relaxed text-forest-100">
-				Das Hotel Wetterperle ist mehr als eine Adresse – es ist ein Ort, an dem Gastfreundschaft
-				seit Generationen gelebt wird.
+<Layout title="Über uns" description="Die Geschichte des Landgasthofs Wetteraperle und seiner Inhaber Frank und Nadine Gröters.">
+	<PageHeader
+		kicker="Unsere Geschichte"
+		title="Über uns"
+		description="Vom historischen Mühlengebäude zum familiengeführten Landgasthof – eine Geschichte mit vielen Kapiteln."
+	/>
+
+	<section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
+		<Image
+			src={owners}
+			alt="Frank und Nadine Gröters"
+			class="h-72 w-72 justify-self-center rounded-full object-cover shadow-xl ring-8 ring-white"
+		/>
+		<div>
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Die Inhaber</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+				Frank &amp; Nadine Gröters
+			</h2>
+			<p class="mt-4 leading-relaxed text-ink-700/80">
+				Nach einer längeren Pause übernahmen Frank und Nadine Gröters die Wetteraperle
+				und wollten dem Gasthof „wieder ihren alten Charme einhauchen und neue
+				Impulse" setzen. Sie bringen Erfahrung aus Berlin und vom Tegernsee mit – Frank
+				ist gelernter Koch mit über 30 Jahren Erfahrung.
 			</p>
 		</div>
 	</section>
 
-	<section class="mx-auto max-w-6xl px-6 py-20">
-		<div class="grid gap-10 md:grid-cols-2 md:items-center">
-			<ImagePlaceholder label="Historisches Foto Hotel Wetterperle" class="h-72 w-full rounded-2xl md:h-96" />
-			<div>
-				<p class="font-serif text-sm uppercase tracking-[0.3em] text-gold-600">Tradition</p>
-				<h2 class="mt-3 font-serif text-3xl font-semibold text-forest-700 md:text-4xl">
-					Eine Familie, ein Versprechen
-				</h2>
-				<p class="mt-4 leading-relaxed text-stone-600">
-					Was einst als kleines Gasthaus begann, ist heute ein Hotel, das Tradition und
-					Komfort miteinander verbindet. Über die Jahre haben wir das Haus behutsam
-					weiterentwickelt – immer mit dem Ziel, unseren Gästen ein echtes Zuhause auf
-					Zeit zu bieten.
-				</p>
-				<p class="mt-4 leading-relaxed text-stone-600">
-					Bis heute führen wir das Hotel Wetterperle mit derselben Sorgfalt und
-					Leidenschaft, mit der alles begonnen hat.
-				</p>
-			</div>
+	<section class="bg-ink-900">
+		<div class="mx-auto max-w-4xl px-6 py-20">
+			<h2 class="mb-10 text-center font-serif text-3xl font-semibold text-cream-50 md:text-4xl">
+				Ein Gebäude mit Geschichte
+			</h2>
+			<ol class="space-y-8 border-l border-cream-50/20 pl-8">
+				{zeitstrahl.map((station) => (
+					<li class="relative">
+						<span class="absolute -left-[2.15rem] top-1.5 h-3 w-3 rounded-full bg-orange-500"></span>
+						<p class="font-serif text-sm font-semibold uppercase tracking-wider text-orange-400">{station.zeit}</p>
+						<p class="mt-1 text-cream-100/80">{station.text}</p>
+					</li>
+				))}
+			</ol>
 		</div>
 	</section>
 
-	<section class="bg-forest-50">
+	<section class="mx-auto max-w-6xl px-6 py-20">
+		<h2 class="mb-12 text-center font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+			Wofür wir stehen
+		</h2>
+		<div class="grid gap-8 md:grid-cols-3">
+			{werte.map((wert) => (
+				<div class="rounded-2xl border border-ink-900/10 bg-white p-8">
+					<h3 class="font-serif text-xl font-semibold text-ink-900">{wert.title}</h3>
+					<p class="mt-3 text-sm leading-relaxed text-ink-700/80">{wert.text}</p>
+				</div>
+			))}
+		</div>
+	</section>
+
+	<section class="bg-cream-100/60">
 		<div class="mx-auto max-w-6xl px-6 py-20">
-			<p class="font-serif text-sm uppercase tracking-[0.3em] text-gold-600">Was uns wichtig ist</p>
-			<h2 class="mt-3 font-serif text-3xl font-semibold text-forest-700 md:text-4xl">
-				Unsere Werte
-			</h2>
-			<div class="mt-10 grid gap-8 md:grid-cols-3">
-				{werte.map((wert) => (
-					<div class="rounded-2xl border border-forest-100 bg-white p-8">
-						<h3 class="font-serif text-xl font-semibold text-forest-700">{wert.title}</h3>
-						<p class="mt-3 text-sm leading-relaxed text-stone-600">{wert.text}</p>
+			<div class="mb-12 max-w-2xl">
+				<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Mitten in der Natur</p>
+				<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+					Ausflugsziele in der Umgebung
+				</h2>
+				<p class="mt-4 leading-relaxed text-ink-700/80">
+					Das Thüringer Schiefergebirge und seine Umgebung bieten Ausflugsziele für
+					jeden Geschmack – ideal als Ausgangspunkt für Wanderer, Familien und
+					Entdecker.
+				</p>
+			</div>
+			<div class="grid gap-8 md:grid-cols-3">
+				{ausflugsziele.map((ziel) => (
+					<div class="overflow-hidden rounded-2xl border border-ink-900/10 bg-white">
+						<Image src={ziel.image} alt={ziel.title} class="h-48 w-full object-cover" />
+						<div class="p-6">
+							<h3 class="font-serif text-lg font-semibold text-ink-900">{ziel.title}</h3>
+							<p class="mt-2 text-sm leading-relaxed text-ink-700/80">{ziel.text}</p>
+						</div>
 					</div>
 				))}
 			</div>
