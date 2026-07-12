@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+	--font-serif: "Playfair Display", ui-serif, Georgia, serif;
+
+	--color-cream-50: #faf7f0;
+	--color-cream-100: #f3ecdd;
+
+	--color-forest-50: #eef2ed;
+	--color-forest-100: #d3ddd0;
+	--color-forest-400: #4a6b4e;
+	--color-forest-600: #2f4a34;
+	--color-forest-700: #24382a;
+	--color-forest-900: #16241a;
+
+	--color-gold-400: #d3af5f;
+	--color-gold-500: #c9a24b;
+	--color-gold-600: #ab8639;
+}
+
+html {
+	scroll-behavior: smooth;
+}

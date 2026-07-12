@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+
+const highlights = [
+	{
+		title: 'Zimmer & Suiten',
+		text: 'Ruhige Rückzugsorte mit Blick auf die Berge, liebevoll eingerichtet für Ihre Erholung.',
+		href: '/zimmer',
+	},
+	{
+		title: 'Küche & Genuss',
+		text: 'Regionale Küche mit saisonalen Zutaten – ehrlich, frisch und mit Liebe zubereitet.',
+		href: '/kontakt',
+	},
+	{
+		title: 'Wellness & Ruhe',
+		text: 'Sauna, Ruheräume und Bergluft zum Durchatmen – für Körper und Geist.',
+		href: '/kontakt',
+	},
+];
+---
+
+<Layout title="Startseite">
+	<section class="relative overflow-hidden bg-forest-900">
+		<div class="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-28 md:py-36">
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-gold-400">Willkommen im</p>
+			<h1 class="max-w-2xl font-serif text-4xl font-semibold leading-tight text-cream-50 md:text-6xl">
+				Hotel Wetterperle
+			</h1>
+			<p class="max-w-xl text-lg leading-relaxed text-forest-100">
+				Zwischen Bergen und Himmel gelegen, ist das Hotel Wetterperle ein Ort für alle,
+				die Ruhe, Gastfreundschaft und echten Genuss suchen.
+			</p>
+			<div class="mt-4 flex flex-wrap gap-4">
+				<a
+					href="/kontakt"
+					class="rounded-full bg-gold-500 px-7 py-3 text-sm font-semibold text-forest-900 transition-colors hover:bg-gold-400"
+				>
+					Zimmer anfragen
+				</a>
+				<a
+					href="/zimmer"
+					class="rounded-full border border-cream-50/40 px-7 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-cream-50/10"
+				>
+					Zimmer entdecken
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-6 py-20">
+		<div class="mb-12 max-w-2xl">
+			<p class="font-serif text-sm uppercase tracking-[0.3em] text-gold-600">Willkommen</p>
+			<h2 class="mt-3 font-serif text-3xl font-semibold text-forest-700 md:text-4xl">
+				Ihr Zuhause auf Zeit
+			</h2>
+			<p class="mt-4 leading-relaxed text-stone-600">
+				Seit Generationen empfangen wir Gäste mit offenen Türen und einem Gespür für die
+				kleinen Dinge, die einen Aufenthalt unvergesslich machen. Lassen Sie den Alltag
+				hinter sich und genießen Sie die Ruhe der Berge.
+			</p>
+		</div>
+
+		<div class="grid gap-8 md:grid-cols-3">
+			{highlights.map((item) => (
+				<a
+					href={item.href}
+					class="group flex flex-col overflow-hidden rounded-2xl border border-forest-100 bg-white transition-shadow hover:shadow-lg"
+				>
+					<ImagePlaceholder label={item.title} class="h-48 w-full" />
+					<div class="flex flex-1 flex-col gap-2 p-6">
+						<h3 class="font-serif text-xl font-semibold text-forest-700">{item.title}</h3>
+						<p class="text-sm leading-relaxed text-stone-600">{item.text}</p>
+						<span class="mt-auto pt-3 text-sm font-medium text-gold-600 group-hover:text-gold-500">
+							Mehr erfahren →
+						</span>
+					</div>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section class="bg-forest-50">
+		<div class="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-2 md:items-center">
+			<ImagePlaceholder label="Ansicht Hotel Wetterperle" class="h-72 w-full rounded-2xl md:h-96" />
+			<div>
+				<p class="font-serif text-sm uppercase tracking-[0.3em] text-gold-600">Über uns</p>
+				<h2 class="mt-3 font-serif text-3xl font-semibold text-forest-700 md:text-4xl">
+					Gastfreundschaft mit Geschichte
+				</h2>
+				<p class="mt-4 leading-relaxed text-stone-600">
+					Das Hotel Wetterperle steht für persönliche Betreuung, gelebte Tradition und
+					den Blick fürs Detail. Wir freuen uns darauf, auch Sie bei uns willkommen zu
+					heißen.
+				</p>
+				<a
+					href="/ueber-uns"
+					class="mt-6 inline-block rounded-full border border-forest-700 px-6 py-3 text-sm font-semibold text-forest-700 transition-colors hover:bg-forest-700 hover:text-cream-50"
+				>
+					Unsere Geschichte
+				</a>
+			</div>
+		</div>
+	</section>
+</Layout>

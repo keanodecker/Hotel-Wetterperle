@@ -1,0 +1,56 @@
+---
+const navItems = [
+	{ href: '/', label: 'Startseite' },
+	{ href: '/zimmer', label: 'Zimmer' },
+	{ href: '/ueber-uns', label: 'Über uns' },
+	{ href: '/galerie', label: 'Galerie' },
+	{ href: '/kontakt', label: 'Kontakt' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-forest-100 bg-cream-50/95 backdrop-blur">
+	<div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+		<a href="/" class="flex items-baseline gap-2">
+			<span class="font-serif text-xl font-semibold text-forest-700">Hotel Wetterperle</span>
+		</a>
+
+		<nav class="hidden gap-8 md:flex">
+			{navItems.map((item) => {
+				const isActive = currentPath === item.href;
+				return (
+					<a
+						href={item.href}
+						class:list={[
+							'text-sm font-medium tracking-wide transition-colors hover:text-gold-600',
+							isActive ? 'text-gold-600' : 'text-forest-700',
+						]}
+					>
+						{item.label}
+					</a>
+				);
+			})}
+		</nav>
+
+		<a
+			href="/kontakt"
+			class="hidden rounded-full bg-forest-700 px-5 py-2 text-sm font-medium text-cream-50 transition-colors hover:bg-forest-600 md:inline-block"
+		>
+			Jetzt anfragen
+		</a>
+
+		<details class="relative md:hidden">
+			<summary class="list-none rounded-md border border-forest-100 px-3 py-2 text-forest-700">
+				Menü
+			</summary>
+			<nav class="absolute right-0 mt-2 flex w-48 flex-col gap-1 rounded-lg border border-forest-100 bg-cream-50 p-3 shadow-lg">
+				{navItems.map((item) => (
+					<a href={item.href} class="rounded px-3 py-2 text-sm font-medium text-forest-700 hover:bg-forest-50">
+						{item.label}
+					</a>
+				))}
+			</nav>
+		</details>
+	</div>
+</header>

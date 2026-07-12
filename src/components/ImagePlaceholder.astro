@@ -1,0 +1,17 @@
+---
+interface Props {
+	label: string;
+	class?: string;
+}
+
+const { label, class: className = '' } = Astro.props;
+---
+
+<div
+	class:list={[
+		'flex items-center justify-center bg-gradient-to-br from-forest-100 via-cream-100 to-forest-50 text-center',
+		className,
+	]}
+>
+	<span class="px-4 text-sm font-medium tracking-wide text-forest-600">{label}</span>
+</div>
