@@ -12,7 +12,8 @@ import galerie5 from '../assets/gallery/restaurant/restaurant-05.jpg';
 import { openingHours } from '../data/hours';
 import { chefplatzUrl, contact } from '../data/nav';
 
-const schwerpunkte = ['Schnitzel & Steaks', 'Gegrilltes vom Grill', 'Leichte Salate', 'Hausgemachte Desserts'];
+// Schwerpunkte 1:1 von der Original-Restaurant-Seite (wetteraperle.de/restaurant)
+const schwerpunkte = ['Dessert', 'Grillen', 'Salate', 'Innovationen'];
 
 const galerie = [
 	{ src: galerie4, alt: 'Frank am Grill' },
@@ -27,7 +28,7 @@ const galerie = [
 	<PageHeader
 		kicker="Genuss"
 		title="Restaurant"
-		description="Internationale Gerichte, verbunden mit Thüringer Spezialitäten – frisch, regional und mit Handwerk zubereitet."
+		description="Unser Geheimnis sind frische und regionale Produkte. Wir paaren internationale Küche mit heimischen Spezialitäten."
 	/>
 
 	<section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
@@ -35,13 +36,18 @@ const galerie = [
 		<div>
 			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Küchenkonzept</p>
 			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
-				Nachhaltigkeit, Qualität, Gastfreundschaft
+				Regionalität und Natürlichkeit
 			</h2>
 			<p class="mt-4 leading-relaxed text-ink-700/80">
-				Unsere Küche setzt auf frische, regionale Produkte – Fleisch und Kartoffeln von
-				lokalen Erzeugern, Honig aus eigenem Anbau. Frank bereitet jedes Gericht
-				persönlich zu und verbindet traditionelle Thüringer Küche mit modernen,
-				international inspirierten Kreationen.
+				In der Wetteraperle legen wir besonders Wert auf einen achtsamen Umgang mit
+				Lebensmitteln. Wir beziehen unsere Produkte von Händlern aus der Umgebung und
+				wenn möglich sogar direkt vom Erzeuger vor Ort. So kommen unsere Produkte wie
+				Fleisch, Kartoffeln und andere Lebensmittel direkt aus der Region.
+			</p>
+			<p class="mt-3 leading-relaxed text-ink-700/80">
+				Wer gute Produkte verwendet, wird auch ein köstliches Essen zaubern und genau
+				nach diesem Motto kochen wir. Gepaart mit einer Prise Erfahrung, Kreativität
+				und Salz bekommen Sie bei uns nur das Beste.
 			</p>
 			<ul class="mt-6 grid grid-cols-2 gap-3">
 				{schwerpunkte.map((item) => (
@@ -51,7 +57,59 @@ const galerie = [
 		</div>
 	</section>
 
-	<section class="mx-auto max-w-6xl px-6 pb-20">
+	<section class="bg-ink-900">
+		<div class="mx-auto max-w-6xl px-6 py-20">
+			<div class="mx-auto max-w-3xl text-center">
+				<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-400">Unsere Haltung</p>
+				<h2 class="mt-3 font-serif text-3xl font-semibold text-cream-50 md:text-4xl">Philosophie</h2>
+				<p class="mt-8 font-serif text-2xl leading-snug text-cream-50 md:text-3xl">
+					„Wir werden das beste Schnitzel und das beste Steak in der Umgebung machen."
+				</p>
+				<p class="mt-6 leading-relaxed text-cream-100/80">
+					So lautete das Motto vor unserer Neueröffnung der Wetteraperle. Unsere Küche
+					hat aber noch viel mehr zu bieten als diese beiden Argumente. Wir stehen für
+					Nachhaltigkeit, Regionalität, Qualität und Gastfreundschaft.
+				</p>
+				<p class="mt-4 leading-relaxed text-cream-100/80">
+					Nach über 20 Jahren Gastronomieerfahrung am Tegernsee möchten wir unsere Zeit
+					in der Heimat von Familie und Freunden verbringen. Wir wollen uns hier
+					kulinarisch verwirklichen und nehmen Sie mit auf diese Reise.
+				</p>
+				<p class="mt-4 leading-relaxed text-cream-100/80">
+					Wir möchten die Geschichte des Hauses fortsetzen und die Einzigartigkeit des
+					Ortes und der Region mit Ihnen teilen.
+				</p>
+			</div>
+
+			<div class="mx-auto mt-14 grid max-w-4xl gap-10 text-left md:grid-cols-2">
+				<div class="rounded-3xl border border-cream-50/10 bg-cream-50/5 p-8">
+					<h3 class="font-serif text-xl font-semibold text-cream-50">
+						Tradition, Heimatliebe und internationale Küche
+					</h3>
+					<p class="mt-3 text-sm leading-relaxed text-cream-100/75">
+						Sie fragen sich, ob diese drei Aspekte zusammenpassen? Wir zeigen Ihnen,
+						dass sie es tun. Überzeugen Sie sich, dass traditionelle und moderne
+						Gerichte mit saisonalen Produkten in einem neuen Gewand präsentiert werden
+						können. Öffnen Sie sich ein wenig für neue Geschmäcker und lassen Sie sich
+						von unserer Küchenphilosophie überraschen.
+					</p>
+				</div>
+				<div class="rounded-3xl border border-cream-50/10 bg-cream-50/5 p-8">
+					<h3 class="font-serif text-xl font-semibold text-cream-50">Gastfreundschaft</h3>
+					<p class="mt-3 text-sm leading-relaxed text-cream-100/75">
+						Zum perfekten Erlebnis in unserem Restaurant gehören nicht nur gute Speisen,
+						sondern auch freundliche Gastwirte. Wir legen besonderen Wert darauf, unsere
+						Gäste kennenzulernen.
+					</p>
+					<p class="mt-4 font-serif text-lg text-orange-400">
+						„Wer den Gast nicht ehrt, ist die Bezahlung nicht wert."
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-6 py-20">
 		<h2 class="mb-8 font-serif text-2xl font-semibold text-ink-900">Impressionen</h2>
 		<PhotoGrid images={galerie} />
 	</section>
@@ -63,8 +121,10 @@ const galerie = [
 				Biergarten am Teich
 			</h2>
 			<p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-700/80">
-				Genießen Sie Ihr Essen oder Getränk direkt am Wasser – ruhig gelegen und
-				umgeben von Grün, ideal für laue Sommerabende.
+				Wir haben in der Wetteraperle für Sie die Gaststube neu eingerichtet und ihren
+				alten Charme wiedergebracht. Außerdem können Sie bei uns im Biergarten Ihr
+				Feierabendbier oder Ihr Frühstück gerne draußen im Freien direkt am Teich
+				genießen.
 			</p>
 		</div>
 	</section>

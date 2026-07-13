@@ -57,7 +57,38 @@ const year = new Date().getFullYear();
 		</div>
 	</div>
 
-	<div class="border-t border-cream-100/10 px-6 py-5 text-center text-xs text-cream-100/60">
-		© {year} Landgasthof Wetteraperle. Alle Rechte vorbehalten.
+	<div class="flex flex-col items-center justify-between gap-4 border-t border-cream-100/10 px-6 py-5 text-center text-xs text-cream-100/60 sm:flex-row">
+		<button
+			type="button"
+			aria-label="Switch to English"
+			class="inline-flex items-center gap-2 rounded-full border border-cream-100/15 px-3 py-1.5 text-cream-100/80 transition-colors hover:border-cream-100/40 hover:text-cream-100"
+		>
+			<svg viewBox="0 0 60 30" class="h-4 w-auto rounded-sm" aria-hidden="true">
+				<clipPath id="uk-flag-clip">
+					<path d="M0,0 v30 h60 v-30 z" />
+				</clipPath>
+				<g clip-path="url(#uk-flag-clip)">
+					<path d="M0,0 v30 h60 v-30 z" fill="#012169" />
+					<path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+					<path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" />
+					<path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+					<path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+				</g>
+			</svg>
+			English
+		</button>
+
+		<span>© {year} Landgasthof Wetteraperle. Alle Rechte vorbehalten.</span>
+		<span>
+			Made by
+			<a
+				href="https://www.media-castle.com"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="font-semibold text-cream-100/80 transition-colors hover:text-orange-400"
+			>
+				Media Castle
+			</a>
+		</span>
 	</div>
 </footer>

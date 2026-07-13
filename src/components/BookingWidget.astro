@@ -1,33 +1,45 @@
 ---
+import { Image } from 'astro:assets';
 import { rooms } from '../data/rooms';
 ---
 
 <div class="rounded-3xl border border-ink-900/10 bg-white p-6 shadow-sm md:p-10" id="booking-widget">
 	<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 		{rooms.map((room, index) => (
-			<label class="relative flex cursor-pointer flex-col gap-2 rounded-2xl border-2 border-ink-900/10 p-5 transition-colors has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50">
-				<input
-					type="radio"
-					name="room"
-					value={room.id}
-					checked={index === 1}
-					data-name={room.name}
-					data-price={room.pricePerNight}
-					class="absolute right-4 top-4 h-4 w-4 accent-orange-500"
-				/>
-				<span class="pr-6 font-serif text-lg font-semibold text-ink-900">{room.name}</span>
-				{room.size && <span class="text-xs text-ink-700/60">{room.size}</span>}
-				<span class="text-sm text-ink-700/70">
-					bis {room.maxGuests} {room.maxGuests === 1 ? 'Person' : 'Personen'}
-				</span>
-				<ul class="mt-1 space-y-1 text-xs text-ink-700/60">
-					{room.features.map((feature) => (
-						<li>· {feature}</li>
-					))}
-				</ul>
-				<span class="mt-2 font-serif text-xl font-semibold text-orange-600">
-					ab {room.pricePerNight} €<span class="text-xs font-normal text-ink-700/60"> / Nacht</span>
-				</span>
+			<label class="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border-2 border-ink-900/10 transition-colors has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50">
+				<div class="h-36 w-full overflow-hidden">
+					<Image
+						src={room.image}
+						alt={room.imageAlt}
+						width={480}
+						height={288}
+						class="h-full w-full object-cover"
+					/>
+				</div>
+				<div class="flex flex-1 flex-col gap-2 p-5">
+					<input
+						type="radio"
+						name="room"
+						value={room.id}
+						checked={index === 1}
+						data-name={room.name}
+						data-price={room.pricePerNight}
+						class="absolute right-4 top-4 h-4 w-4 accent-orange-500"
+					/>
+					<span class="pr-6 font-serif text-lg font-semibold text-ink-900">{room.name}</span>
+					{room.size && <span class="text-xs text-ink-700/60">{room.size}</span>}
+					<span class="text-sm text-ink-700/70">
+						bis {room.maxGuests} {room.maxGuests === 1 ? 'Person' : 'Personen'}
+					</span>
+					<ul class="mt-1 space-y-1 text-xs text-ink-700/60">
+						{room.features.map((feature) => (
+							<li>· {feature}</li>
+						))}
+					</ul>
+					<span class="mt-2 font-serif text-xl font-semibold text-orange-600">
+						ab {room.pricePerNight} €<span class="text-xs font-normal text-ink-700/60"> / Nacht</span>
+					</span>
+				</div>
 			</label>
 		))}
 	</div>

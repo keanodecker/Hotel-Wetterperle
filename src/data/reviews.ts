@@ -15,14 +15,16 @@ export const reviews: Review[] = [
 		text: 'Wunderschön gelegener Landgasthof mitten im Grünen. Das Zimmer war geräumig, sauber und liebevoll eingerichtet. Genau die Ruhe, die wir gesucht haben.',
 	},
 	{
-		author: 'Michael R.',
+		// Echte Bewertung, 1:1 von der Original-Startseite wetteraperle.de
+		author: 'Bernd',
 		rating: 5,
-		text: 'Frank kocht wirklich jedes Gericht selbst – man schmeckt die Sorgfalt. Das Steak war eines der besten, die ich seit Langem hatte.',
+		text: 'Ein hervorragendes, kleines Hotel mit bester Küche. Wunderbare, äußerst sympathische Gastgeber. Zimmer modern, gemütlich und sauber. Eine familiäre Atmosphäre dank der freundlichen Wirte. Der Chef kocht selber und zwar exzellent. Ich habe mich bestens aufgehoben gefühlt.',
 	},
 	{
-		author: 'Andrea T.',
+		// Echte Bewertung, 1:1 von der Original-Startseite wetteraperle.de
+		author: 'Georg',
 		rating: 5,
-		text: 'Herzliche Gastfreundschaft von der ganzen Familie. Man fühlt sich sofort willkommen, nichts wirkt aufgesetzt.',
+		text: 'Die Besitzer des Landgasthofs waren unheimlich gastfreundlich. Das Abendessen war sehr lecker, qualitativ sehr gut und die Portionen riesig. Auch das Frühstück hat uns super gefallen. Dazu eine sehr ruhige Lage mitten in der Natur. Kinder sind herzlich willkommen. Wir werden gerne wieder kommen!',
 	},
 	{
 		author: 'Jürgen W.',

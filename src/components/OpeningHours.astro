@@ -16,9 +16,10 @@ import { contact } from '../data/nav';
 			</p>
 			<a
 				href={contact.phoneHref}
-				class="mt-6 inline-block rounded-full border border-cream-50/30 px-6 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-cream-50/10"
+				class="group mt-6 inline-flex flex-col text-left leading-tight text-cream-50 transition-colors hover:text-orange-400"
 			>
-				{contact.phoneDisplay}
+				<span class="text-xs lowercase tracking-[0.2em] text-cream-100/60 group-hover:text-orange-400">anrufen</span>
+				<span class="text-lg font-semibold underline decoration-orange-500/60 decoration-2 underline-offset-4">{contact.phoneDisplay}</span>
 			</a>
 		</div>
 

@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Roh-Upload der Schrift-Quelldateien – die genutzten Fonts liegen in public/fonts
+Comic_Relief,Short_Stack/
