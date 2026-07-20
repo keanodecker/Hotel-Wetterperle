@@ -6,9 +6,13 @@ import { Image } from 'astro:assets';
 import events from '../assets/extracted/events.jpg';
 import feiern1 from '../assets/gallery/feiern/feiern-01.jpg';
 import feiern2 from '../assets/gallery/feiern/feiern-02.jpg';
+import saalHell from '../assets/gallery/feiern/saal-hell-fenster.jpg';
+import saalWeit from '../assets/gallery/feiern/saal-weit-bar.jpg';
 import { contact } from '../data/nav';
 
 const galerie = [
+	{ src: saalHell, alt: 'Heller Festsaal mit eingedeckten Tischen an den Fenstern' },
+	{ src: saalWeit, alt: 'Gastraum mit Bar – Platz für Gesellschaften' },
 	{ src: feiern2, alt: 'Feier im Garten unter alten Bäumen' },
 	{ src: feiern1, alt: 'Hüpfburg für die kleinen Gäste' },
 ];

@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { openingHours } from '../data/hours';
 import { contact } from '../data/nav';
+import { Image } from 'astro:assets';
+import gastraumStimmung from '../assets/gallery/haus/gastraum-stimmung.jpg';
 ---
 
 <Layout title="Kontakt" description="Adresse, Öffnungszeiten und Anfrage – so erreichen Sie den Landgasthof Wetteraperle.">
@@ -11,6 +13,14 @@ import { contact } from '../data/nav';
 		title="Kontakt"
 		description="Haben Sie Fragen oder möchten Sie ein Zimmer oder einen Tisch anfragen? Wir melden uns schnellstmöglich zurück."
 	/>
+
+	<section class="mx-auto max-w-6xl px-6 pt-16">
+		<Image
+			src={gastraumStimmung}
+			alt="Gemütlich eingedeckter Tisch im Gastraum der Wetteraperle"
+			class="h-72 w-full rounded-3xl object-cover md:h-96"
+		/>
+	</section>
 
 	<section class="mx-auto max-w-6xl px-6 py-20">
 		<div class="grid gap-12 md:grid-cols-2">

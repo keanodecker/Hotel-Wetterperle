@@ -1,7 +1,7 @@
-import einzelzimmer from '../assets/gallery/zimmer/zimmer-10.jpg';
-import doppelzimmer from '../assets/gallery/zimmer/zimmer-04.jpg';
-import familienzimmer from '../assets/gallery/zimmer/zimmer-02.jpg';
-import familienSuite from '../assets/gallery/zimmer/zimmer-08.jpg';
+import einzelzimmer from '../assets/gallery/zimmer/zimmer-einzel-fenster.jpg';
+import doppelzimmer from '../assets/gallery/zimmer/zimmer-holzbett.jpg';
+import familienzimmer from '../assets/gallery/zimmer/familienzimmer-etagenbett.jpg';
+import familienSuite from '../assets/gallery/zimmer/zimmer-dach-balken.jpg';
 
 export interface Room {
 	id: string;
@@ -23,7 +23,7 @@ export const rooms: Room[] = [
 		size: null,
 		features: ['Einzelbett', 'Privates Badezimmer', 'Kostenloses WLAN', 'Frühstück inbegriffen'],
 		image: einzelzimmer,
-		imageAlt: 'Einzelzimmer mit gemütlichem Einzelbett am Fenster',
+		imageAlt: 'Einzelzimmer mit Bett unter dem Sprossenfenster',
 	},
 	{
 		id: 'doppelzimmer',
@@ -43,7 +43,7 @@ export const rooms: Room[] = [
 		size: '40 m²',
 		features: ['Großes Doppelbett', 'Kleines Doppelbett', 'Kostenloses WLAN', 'Frühstück inbegriffen'],
 		image: familienzimmer,
-		imageAlt: 'Familienzimmer mit Hochbett und Fachwerkbalken',
+		imageAlt: 'Familienzimmer mit Etagenbett aus Massivholz',
 	},
 	{
 		id: 'familien-suite',
@@ -59,6 +59,6 @@ export const rooms: Room[] = [
 			'Frühstück inbegriffen',
 		],
 		image: familienSuite,
-		imageAlt: 'Essbereich der Familien-Suite mit Fachwerk und Sitzgruppe',
+		imageAlt: 'Familien-Suite unter historischen Deckenbalken mit zwei Betten',
 	},
 ];

@@ -3,12 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import { Image } from 'astro:assets';
-import restaurant from '../assets/extracted/restaurant.jpg';
-import galerie1 from '../assets/gallery/restaurant/restaurant-01.jpg';
-import galerie2 from '../assets/gallery/restaurant/restaurant-02.jpg';
-import galerie3 from '../assets/gallery/restaurant/restaurant-03.jpg';
+import restaurant from '../assets/gallery/restaurant/gastraum-bar.jpg';
+import gastraumUebersicht from '../assets/gallery/restaurant/gastraum-uebersicht.jpg';
+import gerichtSteak from '../assets/gallery/restaurant/gericht-steak.jpg';
+import gerichtBurrata from '../assets/gallery/restaurant/gericht-rote-bete-burrata.jpg';
+import gerichtPfifferlinge from '../assets/gallery/restaurant/gericht-pfifferlinge.jpg';
+import gerichtDessert from '../assets/gallery/restaurant/gericht-dessert-sorbet.jpg';
 import galerie4 from '../assets/gallery/restaurant/restaurant-04.jpg';
-import galerie5 from '../assets/gallery/restaurant/restaurant-05.jpg';
 import { openingHours } from '../data/hours';
 import { chefplatzUrl, contact } from '../data/nav';
 
@@ -16,11 +17,12 @@ import { chefplatzUrl, contact } from '../data/nav';
 const schwerpunkte = ['Dessert', 'Grillen', 'Salate', 'Innovationen'];
 
 const galerie = [
+	{ src: gerichtSteak, alt: 'Steak mit Rosmarin, Bratkartoffeln und Kräuterbutter' },
+	{ src: gerichtBurrata, alt: 'Rote-Bete-Pasta mit Burrata und Rucola' },
+	{ src: gerichtPfifferlinge, alt: 'Pfifferlinge auf geröstetem Brot mit Johannisbeeren' },
+	{ src: gerichtDessert, alt: 'Dessert mit zweierlei Sorbet, Schokoladenerde und Minze' },
+	{ src: gastraumUebersicht, alt: 'Gastraum mit Massivholztischen und Blick zur Bar' },
 	{ src: galerie4, alt: 'Frank am Grill' },
-	{ src: galerie1, alt: 'Dessert mit Birne und Schokolade' },
-	{ src: galerie2, alt: 'Gurken-Tomaten-Salat' },
-	{ src: galerie3, alt: 'Schokoladenmousse mit Apfel und Pflaume' },
-	{ src: galerie5, alt: 'Gemütlicher Gastraum' },
 ];
 ---
 
@@ -32,7 +34,7 @@ const galerie = [
 	/>
 
 	<section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
-		<Image src={restaurant} alt="Restaurant im Landgasthof Wetteraperle" class="h-80 w-full rounded-3xl object-cover md:h-[26rem]" />
+		<Image src={restaurant} alt="Bar und Gastraum unter dem historischen Ziegelgewölbe" class="h-80 w-full rounded-3xl object-cover md:h-[26rem]" />
 		<div>
 			<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Küchenkonzept</p>
 			<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { Image } from 'astro:assets';
 import owners from '../assets/extracted/owners.jpg';
+import treppe from '../assets/gallery/haus/treppe-historisch.jpg';
 import feengrotten from '../assets/gallery/umgebung/feengrotten.jpg';
 import saaleschleife from '../assets/gallery/umgebung/saaleschleife-burgk.jpg';
 import wildwasserbahn from '../assets/gallery/umgebung/wildwasserbahn-plohn.jpg';
@@ -77,19 +78,26 @@ const werte = [
 	</section>
 
 	<section class="bg-ink-900">
-		<div class="mx-auto max-w-4xl px-6 py-20">
-			<h2 class="mb-10 text-center font-serif text-3xl font-semibold text-cream-50 md:text-4xl">
+		<div class="mx-auto max-w-5xl px-6 py-20">
+			<h2 class="mb-12 text-center font-serif text-3xl font-semibold text-cream-50 md:text-4xl">
 				Ein Gebäude mit Geschichte
 			</h2>
-			<ol class="space-y-8 border-l border-cream-50/20 pl-8">
-				{zeitstrahl.map((station) => (
-					<li class="relative">
-						<span class="absolute -left-[2.15rem] top-1.5 h-3 w-3 rounded-full bg-orange-500"></span>
-						<p class="font-serif text-sm font-semibold uppercase tracking-wider text-orange-400">{station.zeit}</p>
-						<p class="mt-1 text-cream-100/80">{station.text}</p>
-					</li>
-				))}
-			</ol>
+			<div class="grid gap-12 md:grid-cols-[1fr_1.2fr] md:items-center">
+				<Image
+					src={treppe}
+					alt="Historische Holztreppe im Landgasthof Wetteraperle"
+					class="h-80 w-full rounded-3xl object-cover md:h-[28rem]"
+				/>
+				<ol class="space-y-8 border-l border-cream-50/20 pl-8">
+					{zeitstrahl.map((station) => (
+						<li class="relative">
+							<span class="absolute -left-[2.15rem] top-1.5 h-3 w-3 rounded-full bg-orange-500"></span>
+							<p class="font-serif text-sm font-semibold uppercase tracking-wider text-orange-400">{station.zeit}</p>
+							<p class="mt-1 text-cream-100/80">{station.text}</p>
+						</li>
+					))}
+				</ol>
+			</div>
 		</div>
 	</section>
 

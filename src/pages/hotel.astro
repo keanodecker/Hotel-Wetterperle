@@ -4,20 +4,26 @@ import PageHeader from '../components/PageHeader.astro';
 import BookingWidget from '../components/BookingWidget.astro';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import { Image } from 'astro:assets';
-import zimmer1 from '../assets/gallery/zimmer/zimmer-01.jpg';
-import zimmer2 from '../assets/gallery/zimmer/zimmer-02.jpg';
-import zimmer3 from '../assets/gallery/zimmer/zimmer-03.jpg';
-import zimmer4 from '../assets/gallery/zimmer/zimmer-04.jpg';
-import zimmer5 from '../assets/gallery/zimmer/zimmer-05.jpg';
-import fruehstueck1 from '../assets/gallery/zimmer/zimmer-11-square.png';
-import fruehstueck2 from '../assets/gallery/zimmer/zimmer-12-square.png';
+import zimmerHell from '../assets/gallery/zimmer/zimmer-hell-strandbild.jpg';
+import zimmerDach from '../assets/gallery/zimmer/zimmer-dach-doppelbett.jpg';
+import zimmerBalkon from '../assets/gallery/zimmer/zimmer-balkon-ausblick.jpg';
+import zimmerBalken from '../assets/gallery/zimmer/zimmer-dach-balken.jpg';
+import zimmerHolzbett from '../assets/gallery/zimmer/zimmer-holzbett.jpg';
+import familienzimmer from '../assets/gallery/zimmer/familienzimmer-etagenbett.jpg';
+import badDusche from '../assets/gallery/zimmer/bad-dusche.jpg';
+import detailHandtuecher from '../assets/gallery/zimmer/detail-handtuecher.jpg';
+import fruehstueck1 from '../assets/gallery/fruehstueck/fruehstueck-tisch.jpg';
+import fruehstueck2 from '../assets/gallery/fruehstueck/fruehstueck-osaft.jpg';
 
 const galerie = [
-	{ src: zimmer3, alt: 'Helles Zimmer mit Balkonzugang' },
-	{ src: zimmer1, alt: 'Doppelbett unter der Dachschräge' },
-	{ src: zimmer2, alt: 'Fenstersitzecke mit Fachwerkbalken' },
-	{ src: zimmer4, alt: 'Rustikales Zimmer mit Kunst an der Wand' },
-	{ src: zimmer5, alt: 'Modernes, sauberes Badezimmer' },
+	{ src: zimmerHell, alt: 'Helles Doppelzimmer mit Holzbett und Pendelleuchten' },
+	{ src: zimmerDach, alt: 'Breites Massivholzbett unter der Dachschräge' },
+	{ src: zimmerBalkon, alt: 'Zimmer mit offener Balkontür und Blick ins Grüne' },
+	{ src: zimmerBalken, alt: 'Zimmer mit historischen Deckenbalken und zwei Betten' },
+	{ src: zimmerHolzbett, alt: 'Doppelbett aus hellem Massivholz mit Leselampe' },
+	{ src: familienzimmer, alt: 'Familienzimmer mit Etagenbett aus Holz' },
+	{ src: badDusche, alt: 'Modernes Badezimmer mit Dusche und Waschbecken' },
+	{ src: detailHandtuecher, alt: 'Frische Handtücher mit süßem Willkommensgruß' },
 ];
 
 // Infos 1:1 von der Original-Hotel-Seite (wetteraperle.de/hotel)
@@ -84,12 +90,12 @@ const infos = [
 			<div class="grid grid-cols-2 gap-4">
 				<Image
 					src={fruehstueck1}
-					alt="Frühstück im Freien mit frischen Brötchen und hausgemachter Marmelade"
+					alt="Gedeckter Frühstückstisch mit Etagere, frischen Brötchen und Kaffee"
 					class="aspect-square w-full rounded-3xl object-cover"
 				/>
 				<Image
 					src={fruehstueck2}
-					alt="Gedeckter Frühstückstisch mit regionalen Produkten"
+					alt="Frisch eingeschenkter Orangensaft zum Frühstück"
 					class="aspect-square w-full rounded-3xl object-cover md:mt-8"
 				/>
 			</div>
