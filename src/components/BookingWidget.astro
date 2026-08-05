@@ -4,15 +4,19 @@ import { rooms } from '../data/rooms';
 ---
 
 <div class="rounded-3xl border border-ink-900/10 bg-white p-6 shadow-sm md:p-10" id="booking-widget">
-	<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+	<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 		{rooms.map((room, index) => (
 			<label class="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border-2 border-ink-900/10 transition-colors has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50">
 				<div class="h-36 w-full overflow-hidden">
 					<Image
-						src={room.image}
-						alt={room.imageAlt}
+						src={room.gallery[0].src}
+						alt={room.gallery[0].alt}
 						width={480}
 						height={288}
+						format="webp"
+						quality={70}
+						loading="lazy"
+						decoding="async"
 						class="h-full w-full object-cover"
 					/>
 				</div>
@@ -26,7 +30,7 @@ import { rooms } from '../data/rooms';
 						data-price={room.pricePerNight}
 						class="absolute right-4 top-4 h-4 w-4 accent-orange-500"
 					/>
-					<span class="pr-6 font-serif text-lg font-semibold text-ink-900">{room.name}</span>
+					<span class="pr-6 font-akzent text-lg font-semibold text-ink-900">{room.name}</span>
 					{room.size && <span class="text-xs text-ink-700/60">{room.size}</span>}
 					<span class="text-sm text-ink-700/70">
 						bis {room.maxGuests} {room.maxGuests === 1 ? 'Person' : 'Personen'}
@@ -36,9 +40,15 @@ import { rooms } from '../data/rooms';
 							<li>· {feature}</li>
 						))}
 					</ul>
-					<span class="mt-2 font-serif text-xl font-semibold text-orange-600">
-						ab {room.pricePerNight} €<span class="text-xs font-normal text-ink-700/60"> / Nacht</span>
-					</span>
+					{room.pricePerNight === null ? (
+						<span class="mt-2 font-akzent text-lg font-semibold text-orange-600">
+							Preis auf Anfrage
+						</span>
+					) : (
+						<span class="mt-2 font-akzent text-xl font-semibold text-orange-600">
+							ab {room.pricePerNight} €<span class="text-xs font-normal text-ink-700/60"> / Nacht</span>
+						</span>
+					)}
 				</div>
 			</label>
 		))}
@@ -85,8 +95,8 @@ import { rooms } from '../data/rooms';
 	</button>
 
 	<div id="booking-result" class="mt-8 hidden rounded-2xl bg-ink-900 p-8 text-cream-50">
-		<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-400">Verfügbar</p>
-		<h3 class="mt-2 font-serif text-2xl font-semibold" id="result-room"></h3>
+		<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-400">Verfügbar</p>
+		<h3 class="mt-2 font-akzent text-2xl font-semibold" id="result-room"></h3>
 		<dl class="mt-4 space-y-2 text-sm text-cream-100/80">
 			<div class="flex justify-between">
 				<dt>Zeitraum</dt>
@@ -165,14 +175,18 @@ import { rooms } from '../data/rooms';
 			button.textContent = 'Verfügbarkeit wird geprüft…';
 
 			setTimeout(() => {
-				const price = Number(selectedRoom.dataset.price);
-				const total = price * nights;
+				// Fuer Zimmer ohne hinterlegten Preis (data-price fehlt) zeigen wir
+				// keine erfundene Summe, sondern verweisen auf die Anfrage.
+				const rawPrice = selectedRoom.dataset.price;
+				const price = rawPrice ? Number(rawPrice) : null;
 
 				document.getElementById('result-room')!.textContent = String(selectedRoom.dataset.name);
 				document.getElementById('result-dates')!.textContent = `${formatDate(checkin)} – ${formatDate(checkout)}`;
 				document.getElementById('result-nights')!.textContent = `${nights} ${nights === 1 ? 'Nacht' : 'Nächte'}`;
-				document.getElementById('result-price')!.textContent = `${price} €`;
-				document.getElementById('result-total')!.textContent = `${total} €`;
+				document.getElementById('result-price')!.textContent =
+					price === null ? 'auf Anfrage' : `${price} €`;
+				document.getElementById('result-total')!.textContent =
+					price === null ? 'auf Anfrage' : `${price * nights} €`;
 
 				resultEl.classList.remove('hidden');
 				resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

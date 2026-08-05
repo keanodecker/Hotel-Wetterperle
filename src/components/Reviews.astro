@@ -5,8 +5,8 @@ import RatingBadge from './RatingBadge.astro';
 
 <section class="overflow-hidden bg-cream-100/60 py-24">
 	<div class="mx-auto max-w-6xl px-6 text-center">
-		<p class="font-serif text-sm uppercase tracking-[0.3em] text-orange-600">Das sagen unsere Gäste</p>
-		<h2 class="mt-3 font-serif text-3xl font-semibold text-ink-900 md:text-4xl">
+		<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">Das sagen unsere Gäste</p>
+		<h2 class="mt-3 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
 			Bewertungen aus erster Hand
 		</h2>
 		<div class="mt-5 flex justify-center">
@@ -17,7 +17,7 @@ import RatingBadge from './RatingBadge.astro';
 	<div id="review-slider" class="mx-auto mt-14 max-w-3xl px-6">
 		<div class="relative rounded-3xl border border-ink-900/10 bg-white px-8 py-12 shadow-sm md:px-16">
 			<span
-				class="pointer-events-none absolute -top-2 left-8 select-none font-serif text-8xl leading-none text-orange-100 md:left-12"
+				class="pointer-events-none absolute -top-2 left-8 select-none font-akzent text-8xl leading-none text-orange-100 md:left-12"
 				aria-hidden="true"
 			>„</span>
 
@@ -41,7 +41,7 @@ import RatingBadge from './RatingBadge.astro';
 							{review.text}
 						</blockquote>
 						<figcaption class="flex items-center gap-3">
-							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 font-serif text-lg font-bold text-cream-50">
+							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 font-akzent text-lg font-bold text-cream-50">
 								{review.author.charAt(0)}
 							</span>
 							<span class="text-left">

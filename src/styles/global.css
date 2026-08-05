@@ -1,7 +1,30 @@
 @import "tailwindcss";
 
-/* Überschriften-Fonts (lokal, von KD hochgeladen). Beide freigegeben – aktiv ist Short Stack.
-   Umschalten = nur --font-serif unten auf "Comic Relief" ändern. */
+/* ---------------------------------------------------------------------------
+   SCHRIFTEN — alle lokal ausgeliefert, KEIN Google-CDN (DSGVO).
+   Aktiv fuer Ueberschriften: "Satisfy" = die Originalschrift der alten Website
+   wetteraperle.de (dort per Beaver Builder auf .fl-heading / .fl-cta-title,
+   font-weight 400, Farbe #bb6756). Uebernommen am 05.08.2026.
+   Alternativen bleiben geladen: "Short Stack" und "Comic Relief".
+   Umschalten = nur --font-serif unten aendern.
+   --------------------------------------------------------------------------- */
+@font-face {
+	font-family: "Satisfy";
+	src: url("/fonts/Satisfy-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* Fliesstext-Schrift, lokal statt fonts.googleapis.com (variabel 400–700) */
+@font-face {
+	font-family: "Inter";
+	src: url("/fonts/Inter-Variable.woff2") format("woff2");
+	font-weight: 400 700;
+	font-style: normal;
+	font-display: swap;
+}
+
 @font-face {
 	font-family: "Short Stack";
 	src: url("/fonts/ShortStack-Regular.ttf") format("truetype");
@@ -28,8 +51,17 @@
 
 @theme {
 	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-	/* Überschriften: aktiv Short Stack, Alternative "Comic Relief" (via .font-serif projektweit genutzt) */
-	--font-serif: "Short Stack", ui-serif, Georgia, serif;
+	/* Überschriften: aktiv "Satisfy" = Originalschrift der alten Website.
+	   Alternativen: "Short Stack", "Comic Relief" (via .font-serif projektweit genutzt) */
+	--font-serif: "Satisfy", ui-serif, Georgia, serif;
+	/* Akzentschrift = das, was die alte Website tatsaechlich anzeigt.
+	   Dort steht zwar "font-family: Satisfy, cursive", der Satisfy-Webfont wird
+	   aber nicht mehr geladen — es greift der Fallback "cursive", und der ist
+	   unter Windows/macOS Comic Sans MS. Genau dieses Schriftbild ist gewuenscht
+	   (KD, 05.08.2026). Systemschrift zuerst (0 KB), danach das lokal
+	   ausgelieferte "Comic Relief" als metrisch gleicher OFL-Klon fuer Android
+	   und Linux, wo Comic Sans fehlt. */
+	--font-akzent: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Relief", cursive;
 
 	/* Warmes Off-White / Creme, wie auf der Live-Site */
 	--color-cream-50: #fdfaf8;
@@ -65,6 +97,14 @@
 
 html {
 	scroll-behavior: smooth;
+}
+
+/* "Satisfy" gibt es nur in einem Schnitt (400). Die Ueberschriften tragen im
+   Projekt durchgehend font-semibold/font-bold — ohne diese Zeile rechnet der
+   Browser daraus einen kuenstlichen Fettdruck, der bei einer Schreibschrift
+   verschmiert. Bei Rueckkehr zu Short Stack/Comic Relief kann sie weg. */
+.font-serif {
+	font-synthesis-weight: none;
 }
 
 @keyframes kenburns {

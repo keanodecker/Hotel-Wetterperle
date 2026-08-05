@@ -1,0 +1,191 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { RoomImage } from '../data/rooms';
+
+interface Props {
+	bilder: RoomImage[];
+	/** Zimmername, wird nur fuer Bedientexte gebraucht. */
+	name: string;
+}
+
+const { bilder, name } = Astro.props;
+
+const [titelbild, ...weitere] = bilder;
+
+/*
+ * Fuer die Lightbox erzeugen wir einmalig eine 1600-px-WebP-Fassung pro Bild.
+ * Die URL haengt nur als data-Attribut am Thumbnail - geladen wird sie erst,
+ * wenn jemand das Bild wirklich gross ansieht. So bleibt die Zimmerseite
+ * leicht, obwohl die Originale 1600-1920 px breit sind.
+ */
+const grossbilder = await Promise.all(
+	bilder.map((bild) => getImage({ src: bild.src, width: 1600, format: 'webp', quality: 78 })),
+);
+---
+
+<div class="zimmer-galerie" data-zimmer-galerie data-name={name}>
+	<button
+		type="button"
+		class="group relative block w-full overflow-hidden rounded-3xl bg-cream-100"
+		data-galerie-bild
+		data-index="0"
+		data-voll={grossbilder[0].src}
+		aria-label={`${titelbild.alt} – grösser ansehen`}
+	>
+		<Image
+			src={titelbild.src}
+			alt={titelbild.alt}
+			widths={[480, 800, 1200]}
+			sizes="(min-width: 1024px) 45vw, 100vw"
+			format="webp"
+			quality={72}
+			loading="lazy"
+			decoding="async"
+			class="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+		/>
+		<span
+			class="pointer-events-none absolute bottom-4 right-4 rounded-full bg-ink-900/70 px-4 py-1.5 text-xs font-medium text-cream-50 backdrop-blur-sm"
+		>
+			{bilder.length} Fotos ansehen
+		</span>
+	</button>
+
+	{weitere.length > 0 && (
+		<div class="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-3">
+			{weitere.map((bild, i) => (
+				<button
+					type="button"
+					class="group overflow-hidden rounded-2xl bg-cream-100"
+					data-galerie-bild
+					data-index={i + 1}
+					data-voll={grossbilder[i + 1].src}
+					aria-label={`${bild.alt} – grösser ansehen`}
+				>
+					<Image
+						src={bild.src}
+						alt={bild.alt}
+						widths={[200, 400]}
+						sizes="(min-width: 1024px) 15vw, 30vw"
+						format="webp"
+						quality={70}
+						loading="lazy"
+						decoding="async"
+						class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105"
+					/>
+				</button>
+			))}
+		</div>
+	)}
+</div>
+
+<script>
+	/*
+	 * Eine gemeinsame Lightbox fuer alle Galerien der Seite. Sie wird erst beim
+	 * ersten Klick in den DOM gehaengt, damit sie nichts kostet, solange niemand
+	 * ein Bild vergroessert.
+	 */
+	interface Eintrag {
+		voll: string;
+		alt: string;
+	}
+
+	let overlay: HTMLDivElement | null = null;
+	let bildEl: HTMLImageElement | null = null;
+	let textEl: HTMLParagraphElement | null = null;
+	let zaehlerEl: HTMLSpanElement | null = null;
+	let aktuelleListe: Eintrag[] = [];
+	let aktuellerIndex = 0;
+	let vorherFokus: HTMLElement | null = null;
+
+	function baueOverlay() {
+		overlay = document.createElement('div');
+		// z-[100], damit die Lightbox auch ueber der sticky Kopfzeile (z-50) liegt.
+		overlay.className =
+			'fixed inset-0 z-[100] hidden items-center justify-center bg-ink-900 p-4 sm:p-8';
+		overlay.setAttribute('role', 'dialog');
+		overlay.setAttribute('aria-modal', 'true');
+		overlay.innerHTML = `
+			<button type="button" data-schliessen aria-label="Galerie schliessen"
+				class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-2xl leading-none text-cream-50 transition hover:bg-cream-50/25">&times;</button>
+			<button type="button" data-zurueck aria-label="Vorheriges Bild"
+				class="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-2xl leading-none text-cream-50 transition hover:bg-cream-50/25 sm:left-6">&#8249;</button>
+			<button type="button" data-weiter aria-label="Nächstes Bild"
+				class="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-2xl leading-none text-cream-50 transition hover:bg-cream-50/25 sm:right-6">&#8250;</button>
+			<figure class="flex max-h-full w-full max-w-5xl flex-col items-center gap-3">
+				<img data-lightbox-bild alt="" class="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain" />
+				<figcaption class="text-center text-sm text-cream-100/75">
+					<p data-lightbox-text></p>
+					<span data-lightbox-zaehler class="mt-1 block text-xs text-cream-100/50"></span>
+				</figcaption>
+			</figure>
+		`;
+		document.body.appendChild(overlay);
+
+		bildEl = overlay.querySelector('[data-lightbox-bild]');
+		textEl = overlay.querySelector('[data-lightbox-text]');
+		zaehlerEl = overlay.querySelector('[data-lightbox-zaehler]');
+
+		overlay.querySelector('[data-schliessen]')?.addEventListener('click', schliessen);
+		overlay.querySelector('[data-zurueck]')?.addEventListener('click', () => blaettern(-1));
+		overlay.querySelector('[data-weiter]')?.addEventListener('click', () => blaettern(1));
+		overlay.addEventListener('click', (event) => {
+			if (event.target === overlay) schliessen();
+		});
+	}
+
+	function zeige(index: number) {
+		if (!bildEl || !textEl || !zaehlerEl) return;
+		aktuellerIndex = (index + aktuelleListe.length) % aktuelleListe.length;
+		const eintrag = aktuelleListe[aktuellerIndex];
+		bildEl.src = eintrag.voll;
+		bildEl.alt = eintrag.alt;
+		textEl.textContent = eintrag.alt;
+		zaehlerEl.textContent = `Bild ${aktuellerIndex + 1} von ${aktuelleListe.length}`;
+	}
+
+	function blaettern(richtung: number) {
+		zeige(aktuellerIndex + richtung);
+	}
+
+	function oeffnen(liste: Eintrag[], index: number, ausloeser: HTMLElement) {
+		if (!overlay) baueOverlay();
+		if (!overlay) return;
+		vorherFokus = ausloeser;
+		aktuelleListe = liste;
+		zeige(index);
+		overlay.classList.remove('hidden');
+		overlay.classList.add('flex');
+		document.body.style.overflow = 'hidden';
+		overlay.querySelector<HTMLButtonElement>('[data-schliessen]')?.focus();
+	}
+
+	function schliessen() {
+		if (!overlay) return;
+		overlay.classList.add('hidden');
+		overlay.classList.remove('flex');
+		document.body.style.overflow = '';
+		if (bildEl) bildEl.src = '';
+		vorherFokus?.focus();
+	}
+
+	document.addEventListener('keydown', (event) => {
+		if (!overlay || overlay.classList.contains('hidden')) return;
+		if (event.key === 'Escape') schliessen();
+		if (event.key === 'ArrowLeft') blaettern(-1);
+		if (event.key === 'ArrowRight') blaettern(1);
+	});
+
+	document.querySelectorAll<HTMLElement>('[data-zimmer-galerie]').forEach((galerie) => {
+		const knoepfe = Array.from(galerie.querySelectorAll<HTMLElement>('[data-galerie-bild]'));
+		const liste: Eintrag[] = knoepfe.map((knopf) => ({
+			voll: knopf.dataset.voll ?? '',
+			alt: knopf.querySelector('img')?.alt ?? '',
+		}));
+
+		knoepfe.forEach((knopf) => {
+			knopf.addEventListener('click', () => {
+				oeffnen(liste, Number(knopf.dataset.index ?? 0), knopf);
+			});
+		});
+	});
+</script>

@@ -13,8 +13,8 @@ const year = new Date().getFullYear();
 			<Image
 				src={logo}
 				alt="Landgasthof Wetteraperle"
-				width={180}
-				height={76}
+				width={360}
+				height={151}
 				class="h-14 w-auto brightness-0 invert"
 			/>
 			<p class="mt-4 text-sm leading-relaxed text-cream-100/70">
@@ -24,7 +24,7 @@ const year = new Date().getFullYear();
 		</div>
 
 		<div>
-			<p class="font-serif text-sm font-semibold uppercase tracking-wider text-orange-400">Kontakt</p>
+			<p class="font-akzent text-sm font-semibold uppercase tracking-wider text-orange-400">Kontakt</p>
 			<ul class="mt-4 space-y-2 text-sm text-cream-100/80">
 				<li>{contact.street}</li>
 				<li>{contact.zipCity}</li>
@@ -34,7 +34,7 @@ const year = new Date().getFullYear();
 		</div>
 
 		<div>
-			<p class="font-serif text-sm font-semibold uppercase tracking-wider text-orange-400">Öffnungszeiten</p>
+			<p class="font-akzent text-sm font-semibold uppercase tracking-wider text-orange-400">Öffnungszeiten</p>
 			<ul class="mt-4 space-y-2 text-sm text-cream-100/80">
 				{openingHours.map((entry) => (
 					<li class="flex justify-between gap-4">
@@ -48,7 +48,7 @@ const year = new Date().getFullYear();
 		</div>
 
 		<div>
-			<p class="font-serif text-sm font-semibold uppercase tracking-wider text-orange-400">Navigation</p>
+			<p class="font-akzent text-sm font-semibold uppercase tracking-wider text-orange-400">Navigation</p>
 			<ul class="mt-4 space-y-2 text-sm text-cream-100/80">
 				{footerNavItems.map((item) => (
 					<li><a href={item.href} class="hover:text-orange-400">{item.label}</a></li>
