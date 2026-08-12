@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { openingHours } from '../data/hours';
 import { contact } from '../data/nav';
+import { rooms } from '../data/rooms';
 import { Image } from 'astro:assets';
 import gastraumStimmung from '../assets/gallery/haus/gastraum-stimmung.jpg';
 import { ausUrl, pfad } from '../i18n/ui';
@@ -26,6 +27,23 @@ const formularTexte = {
 	absenden: s.absenden,
 	serverText: sprache === 'de',
 };
+
+/*
+ * Die Zimmerfelder erscheinen NUR bei „Zimmeranfrage" (KD 12.08.2026: „Aber nur
+ * wenn er auf Zimmeranfrage klickt"). Verglichen wird gegen den Text der Option —
+ * er steht in i18n/ui.ts an INDEX 1 der `anliegenOptionen`. Deshalb hier aus dem
+ * Array gelesen und nicht abgetippt: sonst laeuft eine Uebersetzung still
+ * auseinander und der Block erscheint nie.
+ */
+const ZIMMER_ANFRAGE = s.anliegenOptionen[1];
+
+/* Auswahl der Zimmerarten kommt aus denselben Daten wie die Zimmerseite —
+   kommt ein Zimmer dazu, steht es hier automatisch mit drin. */
+const zimmerAuswahl = rooms(sprache).map((r) => r.name);
+
+/* Anreise fruehestens heute: ein Datum in der Vergangenheit ist immer ein
+   Vertipper, und Frank soll ihn nicht per Rueckfrage klaeren muessen. */
+const heute = new Date().toISOString().slice(0, 10);
 ---
 
 <Layout title={s.titel} description={s.beschreibung}>
@@ -84,6 +102,90 @@ const formularTexte = {
 							))}
 						</select>
 					</div>
+
+					{/*
+					 * Zimmerfelder — eingeklappt, bis oben „Zimmeranfrage" gewaehlt ist.
+					 * `hidden` allein reicht nicht: die Felder wuerden sonst leer
+					 * mitgeschickt werden. Das Skript unten setzt zusaetzlich `disabled`,
+					 * damit ausgeblendete Felder GAR NICHT im FormData landen — sonst
+					 * steht in jeder Sonstiges-Mail ein leerer Zimmerblock.
+					 */}
+					<fieldset
+						id="zimmer-felder"
+						data-anliegen={ZIMMER_ANFRAGE}
+						class="hidden rounded-2xl border border-ink-900/10 bg-cream-50/60 p-5"
+						disabled
+					>
+						<legend class="px-1 text-sm font-medium text-ink-900">{s.zimmerBlockTitel}</legend>
+						<p class="mb-4 text-xs text-ink-700/70">{s.zimmerBlockHinweis}</p>
+
+						<div class="grid gap-4 sm:grid-cols-2">
+							<div>
+								<label for="anreise" class="text-sm font-medium text-ink-900">{s.anreise}</label>
+								<input
+									type="date"
+									id="anreise"
+									name="anreise"
+									min={heute}
+									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+								/>
+							</div>
+							<div>
+								<label for="abreise" class="text-sm font-medium text-ink-900">{s.abreise}</label>
+								<input
+									type="date"
+									id="abreise"
+									name="abreise"
+									min={heute}
+									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+								/>
+							</div>
+							<div>
+								<label for="anzahlZimmer" class="text-sm font-medium text-ink-900">{s.anzahlZimmer}</label>
+								<input
+									type="number"
+									id="anzahlZimmer"
+									name="anzahlZimmer"
+									min="1"
+									max="5"
+									value="1"
+									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+								/>
+							</div>
+							<div>
+								<label for="personen" class="text-sm font-medium text-ink-900">{s.personen}</label>
+								<input
+									type="number"
+									id="personen"
+									name="personen"
+									min="1"
+									max="20"
+									value="2"
+									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+								/>
+							</div>
+							<div class="sm:col-span-2">
+								<label for="zimmerart" class="text-sm font-medium text-ink-900">{s.zimmerart}</label>
+								<select
+									id="zimmerart"
+									name="zimmerart"
+									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+								>
+									<option>{s.zimmerartEgal}</option>
+									{zimmerAuswahl.map((name) => (
+										<option>{name}</option>
+									))}
+								</select>
+							</div>
+						</div>
+
+						<a
+							href={pfad(sprache, '/hotel')}
+							class="mt-4 inline-block text-xs font-semibold text-orange-600 underline hover:text-orange-700"
+						>
+							{s.zumBuchungssystem} →
+						</a>
+					</fieldset>
 					<div>
 						<label for="nachricht" class="text-sm font-medium text-ink-900">{s.nachricht}</label>
 						<textarea
@@ -173,6 +275,26 @@ const formularTexte = {
 	// POST-Verhalten des Formulars — der Endpoint antwortet dann als JSON.
 	const formular = document.getElementById('anfrage-formular');
 	const status = document.getElementById('anfrage-status');
+
+	/*
+	 * Zimmerfelder ein- und ausblenden. `disabled` wird MITGESCHALTET, nicht nur
+	 * `hidden`: ein ausgeblendetes, aber aktives Feld wandert trotzdem ins
+	 * FormData und erzeugt in jeder anderen Anfrage einen leeren Zimmerblock.
+	 * Ohne JavaScript bleibt der Block zu und das Formular funktioniert wie bisher.
+	 */
+	const anliegen = document.getElementById('betreff');
+	const zimmerFelder = document.getElementById('zimmer-felder');
+
+	if (anliegen instanceof HTMLSelectElement && zimmerFelder instanceof HTMLFieldSetElement) {
+		const auslöser = zimmerFelder.dataset.anliegen;
+		const umschalten = () => {
+			const an = anliegen.value === auslöser;
+			zimmerFelder.classList.toggle('hidden', !an);
+			zimmerFelder.disabled = !an;
+		};
+		anliegen.addEventListener('change', umschalten);
+		umschalten(); // auch beim Laden, falls der Browser eine Auswahl wiederherstellt
+	}
 
 	if (formular instanceof HTMLFormElement && status) {
 		const knopf = formular.querySelector('button[type="submit"]');

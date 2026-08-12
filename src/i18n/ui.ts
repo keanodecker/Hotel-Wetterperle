@@ -483,7 +483,24 @@ const de = {
 		name: 'Name',
 		email: 'E-Mail',
 		anliegen: 'Anliegen',
-		anliegenOptionen: ['Zimmeranfrage', 'Tischreservierung', 'Feier / Event', 'Sonstiges'],
+		/*
+		 * Reihenfolge ist Absicht: „Sonstiges" steht vorn und ist damit die
+		 * Vorauswahl (KD 12.08.2026). „Tischreservierung" ist bewusst RAUS — dafür
+		 * gibt es den eigenen Weg „Tisch reservieren" im Kopf der Seite.
+		 * ⚠️ „Zimmeranfrage" blendet die Zimmerfelder darunter ein; wird der Text
+		 * hier geändert, muss `ZIMMER_ANFRAGE` in KontaktSeite.astro mitgeändert werden.
+		 */
+		anliegenOptionen: ['Sonstiges', 'Zimmeranfrage', 'Feier / Event'],
+		zimmerBlockTitel: 'Angaben zu Ihrem Aufenthalt',
+		zimmerBlockHinweis:
+			'Damit wir Ihnen sofort sagen können, ob wir frei haben — Sie können auch direkt online buchen.',
+		anzahlZimmer: 'Wie viele Zimmer?',
+		zimmerart: 'Welches Zimmer?',
+		zimmerartEgal: 'Noch offen / bitte beraten',
+		personen: 'Wie viele Personen?',
+		anreise: 'Anreise',
+		abreise: 'Abreise',
+		zumBuchungssystem: 'Lieber sofort verbindlich buchen',
 		nachricht: 'Nachricht',
 		einwilligung1: 'Ich habe die',
 		datenschutzLink: 'Datenschutzerklärung',
@@ -1001,7 +1018,20 @@ const en: typeof de = {
 		name: 'Name',
 		email: 'Email',
 		anliegen: 'Your enquiry',
-		anliegenOptionen: ['Room enquiry', 'Table reservation', 'Celebration / event', 'Something else'],
+		/* Siehe den deutschen Block: „Something else" ist die Vorauswahl, „Table
+		   reservation" ist entfernt. Reihenfolge muss zur deutschen passen, weil die
+		   Zimmerfelder am INDEX 1 hängen. */
+		anliegenOptionen: ['Something else', 'Room enquiry', 'Celebration / event'],
+		zimmerBlockTitel: 'Details of your stay',
+		zimmerBlockHinweis:
+			'So we can tell you straight away whether we have availability — you can also book online right now.',
+		anzahlZimmer: 'How many rooms?',
+		zimmerart: 'Which room?',
+		zimmerartEgal: 'Not sure yet / please advise',
+		personen: 'How many guests?',
+		anreise: 'Arrival',
+		abreise: 'Departure',
+		zumBuchungssystem: 'Rather book directly',
 		nachricht: 'Message',
 		einwilligung1: 'I have read the',
 		datenschutzLink: 'privacy policy',
