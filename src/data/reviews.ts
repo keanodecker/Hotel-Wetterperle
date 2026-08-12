@@ -5,60 +5,62 @@ export interface Review {
 }
 
 /**
- * Platzhalter, an echten Themen aus TripAdvisor/RestaurantGuru orientiert (4,9★ Schnitt).
- * Sobald der Google-Rezensionen-Link ausgewertet ist, hier 1:1 gegen die echten Top-10 tauschen.
+ * Echte Google-Bewertungen, 1:1 von KD am 12.08.2026 aus Google Maps/Search
+ * per Screenshot übernommen (Reihenfolge wie von KD vorgegeben).
+ * ⚠️ Rezension 3 (Cryo) ist im Original-Screenshot hinter "... Mehr" gekürzt —
+ * Text endet dort, wo Google ihn abgeschnitten hat. Volltext müsste KD aus
+ * Google nachliefern, falls gewünscht.
  */
 export const reviews: Review[] = [
 	{
-		author: 'Sabine K.',
+		author: 'Silke Schmidt',
 		rating: 5,
-		text: 'Wunderschön gelegener Landgasthof mitten im Grünen. Das Zimmer war geräumig, sauber und liebevoll eingerichtet. Genau die Ruhe, die wir gesucht haben.',
+		text: 'Wir haben für eine Nacht ein Familienzimmer gebucht. Ein sehr freundlicher Empfang von den netten Gastgebern. Zimmer perfekt und chic, mit Begrüßungsgetränken. Am Abend haben wir im Restaurant sehr gut gespeist. Das Frühstück bestens mit Bäckerbrötchen und ausreichend Zutaten. Rundum hat alles super gepasst. Eine Perle in der deutschen Gastronomielandschaft. Dankeschön Fam Schmidt',
 	},
 	{
-		// Echte Bewertung, 1:1 von der Original-Startseite wetteraperle.de
-		author: 'Bernd',
+		author: 'Lutz Hellmund',
 		rating: 5,
-		text: 'Ein hervorragendes, kleines Hotel mit bester Küche. Wunderbare, äußerst sympathische Gastgeber. Zimmer modern, gemütlich und sauber. Eine familiäre Atmosphäre dank der freundlichen Wirte. Der Chef kocht selber und zwar exzellent. Ich habe mich bestens aufgehoben gefühlt.',
+		text: 'Mit viel Liebe eingerichteter und geführter Gasthof. Für eine Landgasthof außergewöhnlich einfallsreiches Speisenangebot. Super Frühstück mit meinen geliebten Ost-Brötchen. Wir waren auf einer Radtour auf Durchreise. Der Gastgeber hat uns noch vergessene Utensilien hinterher gefahren. Alles Sachen, die man nicht voraussetzend kann, aber doch passieren. Großes Kompliment.',
 	},
 	{
-		// Echte Bewertung, 1:1 von der Original-Startseite wetteraperle.de
-		author: 'Georg',
+		// ⚠️ im Screenshot hinter "... Mehr" gekürzt, Text endet hier wie bei Google gezeigt
+		author: 'Cryo',
 		rating: 5,
-		text: 'Die Besitzer des Landgasthofs waren unheimlich gastfreundlich. Das Abendessen war sehr lecker, qualitativ sehr gut und die Portionen riesig. Auch das Frühstück hat uns super gefallen. Dazu eine sehr ruhige Lage mitten in der Natur. Kinder sind herzlich willkommen. Wir werden gerne wieder kommen!',
+		text: 'Wir waren zu fünft im Landgasthof Wetteraperle und haben uns rundum wohlgefühlt. Unser Zimmer war gemütlich und sehr schön eingerichtet, und das Essen im Restaurant war ausgesprochen lecker. Die direkte Umgebung eignet sich außerdem gut zum …',
 	},
 	{
-		author: 'Jürgen W.',
+		author: 'Dieter Oetjengerdes',
 		rating: 5,
-		text: 'Der Biergarten am Teich ist ein echtes Highlight – abends dort zu sitzen und die Ruhe zu genießen, war der perfekte Abschluss unseres Ausflugs ins Schiefergebirge.',
+		text: 'Sehr schönes Hotel in ruhiger Lage. Die Abendkarte und das Frühstück sind absolute Spitzenklasse und lassen keine Wünsche offen. Das gesamte Team ist sehr freundlich und hilfsbereit. Ein perfekter Aufenthalt den man nur empfehlen kann',
 	},
 	{
-		author: 'Claudia B.',
+		author: 'Jonas Peters',
 		rating: 5,
-		text: 'Der hausgemachte Honig und die Marmelade zum Frühstück sind ein Traum – haben uns direkt ein Glas zum Mitnehmen gekauft.',
+		text: 'Wir hatten einen sehr angenehmen Aufenthalt im Landgasthof - ein herzlicher Empfang, schöne und sehr neu gemachte Zimmer, fantastisches Essen in reichlichen Portionen, ein schöner Garten mit Spielgelegenheiten und Blick auf den Teich. Absolut zu empfehlen!',
 	},
 	{
-		author: 'Thomas H.',
+		author: 'Sven Otersen',
 		rating: 5,
-		text: 'Unsere Feier im Festsaal war rundum gelungen. Individuelle Planung, aufmerksamer Service und ein Ambiente, das im Gedächtnis bleibt.',
+		text: 'Wir waren auf der Durchreise und wurden sehr nett empfangen. Die Gastfreundschaft ist hier einfach von der ersten Sekunde an gesetzt. Wir haben sehr gut gegessen, die Zimmer waren toll, ruhig geschlafen und sehr gut gefrühstückt. Wir kommen gerne wieder und schöne Grüße aus dem LK Cuxhaven 😊',
 	},
 	{
-		author: 'Petra S.',
+		author: 'Mandy Moors',
 		rating: 5,
-		text: 'Kleiner, inhabergeführter Gasthof mit großem Herz. Man merkt, dass hier noch mit Leidenschaft statt Routine gearbeitet wird.',
+		text: 'Was für ein Glücksgriff! Auf unserer Durchreise in Richtung Schweiz sind wir durch Zufall im Landgasthof Wetteraperle gelandet – und wurden rundum begeistert. Schon beim herzlichen Empfang spürt man, dass hier mit Leidenschaft und Liebe zum Detail gearbeitet wird. Die Küche ist ein Genuss: saisonal, frisch und geschmacklich perfekt abgestimmt. Besonders der gebratene Kürbis mit Ziegenkäse war ein echtes Highlight – eine Kombination, die man nicht so schnell vergisst! Auch die Anrichtung der Gerichte ist ein Augenschmaus und das Preis-Leistungs-Verhältnis stimmt einfach. Unser Fazit: Ein Abstecher von der Autobahn, der sich mehr als lohnt. Hier fühlt man sich willkommen und wird kulinarisch verwöhnt – ein Geheimtipp, den wir von Herzen weiterempfehlen!',
 	},
 	{
-		author: 'Markus F.',
+		author: 'Lora Ibrom',
 		rating: 5,
-		text: 'Ideale Lage für einen Zwischenstopp mit dem Wohnmobil – die Stellplätze sind gepflegt und die Küche danach eine willkommene Belohnung.',
+		text: 'Dieser Landgasthof ist wie sein Name lautet wirklich eine richtige PERLE am Flüsschen WETTERA. Begrüßung von Herzen, Zimmer neu und süß, sogar mit USB-Anschluss zum Handyaufladen. Die Speisekarte ist großartig, das Essen sensationell. Wirklich. Großes Kompliment an den Inhaber. Hatte mich auf Grund der guten Google-Bewertungen entschieden, hier wegen meiner langen Fahrstrecke zwischenzustoppen, zu Anend zu essen und zu übernachten. Eine gute Entscheidung. Viele liebe Grüße an den Inhaber und sein Team.',
 	},
 	{
-		author: 'Nicole D.',
+		author: 'David von Behr',
 		rating: 5,
-		text: 'Modernes, sauberes Zimmer mit Blick ins Grüne. Für den Preis eines der besten Häuser, in denen wir in der Region übernachtet haben.',
+		text: 'Wir waren schon zum zweiten Mal Gast in der Wetteraperle - leider wieder nur zur Durchreise. Die Zimmer sind geräumig, gemütlich und sehr gut ausgestattet. Das Frühstück ist lecker und vielfältig und der Gastwirt ist einfach super nett und familienfreundlich. Könnte nicht besser sein 👍',
 	},
 	{
-		author: 'Stefan L.',
+		author: 'Ines Inesb',
 		rating: 5,
-		text: 'Von der Begrüßung bis zur Verabschiedung alles top. Wir kommen definitiv wieder – am liebsten gleich mit der ganzen Familie.',
+		text: 'Wir haben in Familie ein super entspanntes Osterwochenende in diesem Gasthaus erlebt. Die Zimmer sind sehr geräumig und geschmackvoll eingerichtet. Es ist alles da, was man braucht. In ruhiger landschaftlich idyllischer Umgebung kann man wunderbar die Seele baumeln lassen. Wir haben uns sofort wohlgefühlt. Der Gastwirt selber ist hier der Koch und es vereinen sich Können, Kreativität und Raffinesse zu einem kulinarischen Erlebnis. Das Frühstück nimmt man in wohliger Atmosphäre zu sich. Es wird am Tisch eingedeckt und dadurch entsteht keine Unruhe durch ständige Buffetgänge. Wir fanden das sehr angenehm. Auch für nette Gespräche sind die Gastleute sehr offen. Einfach sympathisch. Die Umgebung bietet vielfältige Angebote zur Freizeitgestaltung. Wandern, Sehenswürdigkeiten, Wassersport, etc... Wir waren sicher nicht das letzte Mal hier und können diese Unterkunft mit gutem Gewissen weiterempfehlen. Vielen Dank nochmal.',
 	},
 ];

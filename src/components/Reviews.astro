@@ -21,13 +21,13 @@ import RatingBadge from './RatingBadge.astro';
 				aria-hidden="true"
 			>„</span>
 
-			<div class="grid" aria-live="polite">
+			<div id="review-viewport" class="relative overflow-hidden" aria-live="polite">
 				{reviews.map((review, index) => (
 					<figure
 						data-slide
 						class:list={[
-							'col-start-1 row-start-1 flex flex-col items-center gap-6 text-center transition-all duration-700',
-							index === 0 ? 'opacity-100' : 'pointer-events-none translate-y-2 opacity-0',
+							'inset-x-0 top-0 flex flex-col items-center gap-6 text-center transition-opacity duration-700',
+							index === 0 ? 'relative opacity-100' : 'absolute pointer-events-none opacity-0',
 						]}
 					>
 						<div class="flex text-orange-500" aria-hidden="true">
@@ -106,9 +106,14 @@ import RatingBadge from './RatingBadge.astro';
 
 			slides.forEach((slide, i) => {
 				const active = i === current;
+				// Nur die aktive Bewertung liegt im normalen Fluss (bestimmt die Höhe der
+				// Box) – alle anderen sind absolut gestapelt und tragen nichts zur Höhe
+				// bei. So passt sich die Fläche automatisch an: kurze Bewertung = kleine
+				// Box, lange Bewertung = große Box, keine feste Höhe für alle gleich.
+				slide.classList.toggle('relative', active);
+				slide.classList.toggle('absolute', !active);
 				slide.classList.toggle('opacity-100', active);
 				slide.classList.toggle('opacity-0', !active);
-				slide.classList.toggle('translate-y-2', !active);
 				slide.classList.toggle('pointer-events-none', !active);
 			});
 
