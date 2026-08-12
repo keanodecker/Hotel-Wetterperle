@@ -25,6 +25,7 @@ const formularTexte = {
 	keineVerbindung: s.keineVerbindung,
 	wirdGesendet: s.wirdGesendet,
 	absenden: s.absenden,
+	buchenKnopf: s.buchenKnopf,
 	serverText: sprache === 'de',
 };
 
@@ -37,9 +38,10 @@ const formularTexte = {
  */
 const ZIMMER_ANFRAGE = s.anliegenOptionen[1];
 
-/* Auswahl der Zimmerarten kommt aus denselben Daten wie die Zimmerseite —
-   kommt ein Zimmer dazu, steht es hier automatisch mit drin. */
-const zimmerAuswahl = rooms(sprache).map((r) => r.name);
+/* Auswahl der Zimmer kommt aus denselben Daten wie die Zimmerseite — kommt ein
+   Zimmer dazu, steht es hier automatisch mit drin. Die `id` ist der Schlüssel
+   zur Smoobu-Einheit (siehe ZIMMER_ZU_SMOOBU in lib/smoobu.ts). */
+const zimmerAuswahl = rooms(sprache).map((r) => ({ id: r.id, name: r.name }));
 
 /* Anreise fruehestens heute: ein Datum in der Vergangenheit ist immer ein
    Vertipper, und Frank soll ihn nicht per Rueckfrage klaeren muessen. */
@@ -140,17 +142,23 @@ const heute = new Date().toISOString().slice(0, 10);
 									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
 								/>
 							</div>
+							{/*
+								Wert ist die STABILE Zimmer-ID aus data/rooms.ts, nicht der
+								Anzeigename: nur damit findet die Route die Smoobu-Einheit,
+								und zwar auf der englischen Seite genauso.
+							*/}
 							<div>
-								<label for="anzahlZimmer" class="text-sm font-medium text-ink-900">{s.anzahlZimmer}</label>
-								<input
-									type="number"
-									id="anzahlZimmer"
-									name="anzahlZimmer"
-									min="1"
-									max="5"
-									value="1"
+								<label for="zimmerId" class="text-sm font-medium text-ink-900">{s.zimmerart}</label>
+								<select
+									id="zimmerId"
+									name="zimmerId"
 									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
-								/>
+								>
+									<option value="">{s.zimmerartEgal}</option>
+									{zimmerAuswahl.map((zimmer) => (
+										<option value={zimmer.id}>{zimmer.name}</option>
+									))}
+								</select>
 							</div>
 							<div>
 								<label for="personen" class="text-sm font-medium text-ink-900">{s.personen}</label>
@@ -165,26 +173,21 @@ const heute = new Date().toISOString().slice(0, 10);
 								/>
 							</div>
 							<div class="sm:col-span-2">
-								<label for="zimmerart" class="text-sm font-medium text-ink-900">{s.zimmerart}</label>
-								<select
-									id="zimmerart"
-									name="zimmerart"
+								<label for="telefon" class="text-sm font-medium text-ink-900">{s.telefonFeld}</label>
+								<input
+									type="tel"
+									id="telefon"
+									name="telefon"
 									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
-								>
-									<option>{s.zimmerartEgal}</option>
-									{zimmerAuswahl.map((name) => (
-										<option>{name}</option>
-									))}
-								</select>
+								/>
 							</div>
 						</div>
 
-						<a
-							href={pfad(sprache, '/hotel')}
-							class="mt-4 inline-block text-xs font-semibold text-orange-600 underline hover:text-orange-700"
-						>
-							{s.zumBuchungssystem} →
-						</a>
+						{/* Sprache mitschicken, damit Smoobu die Bestätigung in der
+						    richtigen Sprache verschickt. */}
+						<input type="hidden" name="sprache" value={sprache} />
+
+						<p class="mt-4 text-xs text-ink-700/60">{s.nurAnfragen}</p>
 					</fieldset>
 					<div>
 						<label for="nachricht" class="text-sm font-medium text-ink-900">{s.nachricht}</label>
@@ -276,25 +279,8 @@ const heute = new Date().toISOString().slice(0, 10);
 	const formular = document.getElementById('anfrage-formular');
 	const status = document.getElementById('anfrage-status');
 
-	/*
-	 * Zimmerfelder ein- und ausblenden. `disabled` wird MITGESCHALTET, nicht nur
-	 * `hidden`: ein ausgeblendetes, aber aktives Feld wandert trotzdem ins
-	 * FormData und erzeugt in jeder anderen Anfrage einen leeren Zimmerblock.
-	 * Ohne JavaScript bleibt der Block zu und das Formular funktioniert wie bisher.
-	 */
 	const anliegen = document.getElementById('betreff');
 	const zimmerFelder = document.getElementById('zimmer-felder');
-
-	if (anliegen instanceof HTMLSelectElement && zimmerFelder instanceof HTMLFieldSetElement) {
-		const auslöser = zimmerFelder.dataset.anliegen;
-		const umschalten = () => {
-			const an = anliegen.value === auslöser;
-			zimmerFelder.classList.toggle('hidden', !an);
-			zimmerFelder.disabled = !an;
-		};
-		anliegen.addEventListener('change', umschalten);
-		umschalten(); // auch beim Laden, falls der Browser eine Auswahl wiederherstellt
-	}
 
 	if (formular instanceof HTMLFormElement && status) {
 		const knopf = formular.querySelector('button[type="submit"]');
@@ -310,6 +296,34 @@ const heute = new Date().toISOString().slice(0, 10);
 			serverText: true,
 			...JSON.parse(formular.dataset.texte ?? '{}'),
 		};
+
+		/*
+		 * ZWEI WEGE IN EINEM FORMULAR (KD 12.08.2026):
+		 *  · „Zimmer verbindlich buchen" → /api/zimmer-buchen → legt die Buchung in
+		 *    SMOOBU an. Sie blockt den Zeitraum sofort, auch auf Booking.com.
+		 *  · alles andere              → /api/kontakt → E-Mail an Frank über Resend.
+		 * Umgeschaltet wird die `action` des Formulars, damit ohne JavaScript
+		 * wenigstens der Mail-Weg funktioniert (die `action` im HTML ist /api/kontakt).
+		 *
+		 * `disabled` wird beim Ausblenden MITGESCHALTET, nicht nur `hidden`: ein
+		 * ausgeblendetes, aber aktives Feld wandert trotzdem ins FormData und
+		 * erzeugt in jeder anderen Anfrage einen leeren Zimmerblock.
+		 */
+		let buchungsModus = false;
+		const ruheText = () => (buchungsModus ? texte.buchenKnopf : texte.absenden);
+
+		if (anliegen instanceof HTMLSelectElement && zimmerFelder instanceof HTMLFieldSetElement) {
+			const auslöser = zimmerFelder.dataset.anliegen;
+			const umschalten = () => {
+				buchungsModus = anliegen.value === auslöser;
+				zimmerFelder.classList.toggle('hidden', !buchungsModus);
+				zimmerFelder.disabled = !buchungsModus;
+				formular.action = buchungsModus ? '/api/zimmer-buchen' : '/api/kontakt';
+				if (knopf instanceof HTMLButtonElement) knopf.textContent = ruheText();
+			};
+			anliegen.addEventListener('change', umschalten);
+			umschalten(); // auch beim Laden, falls der Browser eine Auswahl wiederherstellt
+		}
 
 		const melden = (text: string, erfolg: boolean) => {
 			status.textContent = text;
@@ -344,7 +358,7 @@ const heute = new Date().toISOString().slice(0, 10);
 			} finally {
 				if (knopf instanceof HTMLButtonElement) {
 					knopf.disabled = false;
-					knopf.textContent = texte.absenden;
+					knopf.textContent = ruheText();
 				}
 			}
 		});

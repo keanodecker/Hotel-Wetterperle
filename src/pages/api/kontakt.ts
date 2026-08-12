@@ -104,10 +104,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   if (!name || !email) return antwort(false, 'Bitte geben Sie Ihren Namen und Ihre E-Mail-Adresse an.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return antwort(false, 'Diese E-Mail-Adresse sieht nicht gültig aus.');
-  // Bei einer Zimmeranfrage sagen die Felder oben schon alles — dann ist ein
-  // freier Text nicht nötig. Sonst bleibt er Pflicht, sonst kommt eine leere Mail.
-  const hatAufenthalt = Boolean(sauber(daten.get('anreise'), 20) || sauber(daten.get('zimmerart'), 80));
-  if (!nachricht && !hatAufenthalt) return antwort(false, 'Bitte schreiben Sie uns kurz Ihr Anliegen.');
+  if (!nachricht) return antwort(false, 'Bitte schreiben Sie uns kurz Ihr Anliegen.');
   // Ein `required` im Browser ist bequem, aber kein Schutz — deshalb hier noch einmal.
   if (!einwilligung) {
     return antwort(false, 'Bitte bestätigen Sie kurz die Datenschutzhinweise, dann können wir Ihre Anfrage bearbeiten.');
@@ -118,27 +115,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   /*
-   * Zimmerfelder: kommen NUR mit, wenn der Gast oben „Zimmeranfrage" gewählt hat
-   * (das Formular schaltet den Block sonst auf `disabled`). Deshalb wird hier
-   * nichts erzwungen — fehlt alles, ist es eine normale Nachricht.
-   * ⚠️ Das ist eine ANFRAGE, keine Buchung: sie blockt in Smoobu nichts. Wer
-   * verbindlich bucht, geht über das Buchungssystem auf /hotel.
+   * ⚠️ Hier landen KEINE Zimmerbuchungen mehr. Wählt der Gast im Formular
+   * „Zimmer verbindlich buchen", schaltet die Seite auf /api/zimmer-buchen um —
+   * die legt die Buchung direkt in Smoobu an. Diese Route ist der Mail-Weg für
+   * alles andere (Sonstiges, Feier/Event) und bleibt bewusst schlicht.
    */
-  const aufenthalt = [
-    ['Anreise', sauber(daten.get('anreise'), 20)],
-    ['Abreise', sauber(daten.get('abreise'), 20)],
-    ['Zimmer', sauber(daten.get('anzahlZimmer'), 10)],
-    ['Personen', sauber(daten.get('personen'), 10)],
-    ['Zimmerart', sauber(daten.get('zimmerart'), 80)],
-  ].filter(([, wert]) => wert);
-
   const text = [
     `Anliegen: ${betreff}`,
     `Name: ${name}`,
     `E-Mail: ${email}`,
-    ...(aufenthalt.length
-      ? ['', '— Angaben zum Aufenthalt —', ...aufenthalt.map(([feld, wert]) => `${feld}: ${wert}`)]
-      : []),
     '',
     nachricht,
     '',

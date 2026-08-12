@@ -490,17 +490,20 @@ const de = {
 		 * ⚠️ „Zimmeranfrage" blendet die Zimmerfelder darunter ein; wird der Text
 		 * hier geändert, muss `ZIMMER_ANFRAGE` in KontaktSeite.astro mitgeändert werden.
 		 */
-		anliegenOptionen: ['Sonstiges', 'Zimmeranfrage', 'Feier / Event'],
-		zimmerBlockTitel: 'Angaben zu Ihrem Aufenthalt',
+		anliegenOptionen: ['Sonstiges', 'Zimmer verbindlich buchen', 'Feier / Event'],
+		zimmerBlockTitel: 'Ihre Buchung',
+		/* ⚠️ Muss deutlich sagen, dass hier verbindlich gebucht wird (KD 12.08.2026).
+		   Die Buchung blockt den Zeitraum sofort — auch auf Booking.com. */
 		zimmerBlockHinweis:
-			'Damit wir Ihnen sofort sagen können, ob wir frei haben — Sie können auch direkt online buchen.',
-		anzahlZimmer: 'Wie viele Zimmer?',
+			'Diese Buchung ist verbindlich: Das Zimmer wird sofort für Sie reserviert. Bezahlt wird vor Ort bei der Abreise.',
+		zimmerartEgal: 'Bitte wählen',
 		zimmerart: 'Welches Zimmer?',
-		zimmerartEgal: 'Noch offen / bitte beraten',
 		personen: 'Wie viele Personen?',
+		telefonFeld: 'Telefon (für Rückfragen)',
 		anreise: 'Anreise',
 		abreise: 'Abreise',
-		zumBuchungssystem: 'Lieber sofort verbindlich buchen',
+		buchenKnopf: 'Verbindlich buchen',
+		nurAnfragen: 'Sie möchten nur etwas fragen? Wählen Sie oben „Sonstiges".',
 		nachricht: 'Nachricht',
 		einwilligung1: 'Ich habe die',
 		datenschutzLink: 'Datenschutzerklärung',
@@ -1021,17 +1024,18 @@ const en: typeof de = {
 		/* Siehe den deutschen Block: „Something else" ist die Vorauswahl, „Table
 		   reservation" ist entfernt. Reihenfolge muss zur deutschen passen, weil die
 		   Zimmerfelder am INDEX 1 hängen. */
-		anliegenOptionen: ['Something else', 'Room enquiry', 'Celebration / event'],
-		zimmerBlockTitel: 'Details of your stay',
+		anliegenOptionen: ['Something else', 'Book a room (binding)', 'Celebration / event'],
+		zimmerBlockTitel: 'Your booking',
 		zimmerBlockHinweis:
-			'So we can tell you straight away whether we have availability — you can also book online right now.',
-		anzahlZimmer: 'How many rooms?',
+			'This booking is binding: the room is reserved for you immediately. Payment is made on site.',
+		zimmerartEgal: 'Please choose',
 		zimmerart: 'Which room?',
-		zimmerartEgal: 'Not sure yet / please advise',
 		personen: 'How many guests?',
+		telefonFeld: 'Phone (for queries)',
 		anreise: 'Arrival',
 		abreise: 'Departure',
-		zumBuchungssystem: 'Rather book directly',
+		buchenKnopf: 'Book bindingly',
+		nurAnfragen: 'Just want to ask something? Choose “Something else” above.',
 		nachricht: 'Message',
 		einwilligung1: 'I have read the',
 		datenschutzLink: 'privacy policy',
