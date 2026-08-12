@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import BookingWidget from '../components/BookingWidget.astro';
+import BuchungsModal from '../components/BuchungsModal.astro';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import ZimmerGalerie from '../components/ZimmerGalerie.astro';
 import { rooms } from '../data/rooms';
@@ -110,12 +111,15 @@ const galerie = [badDusche, detailHandtuecher, treppe, gastraum].map((src, i) =>
 								</ul>
 
 								<div class="mt-8 flex flex-wrap gap-3">
-									<a
-										href="#booking-widget"
+									{/* Oeffnet den Buchungsdialog mit DIESEM Zimmer vorausgewaehlt
+									    (vorher nur ein Anker nach oben zur Uebersicht). */}
+									<button
+										type="button"
+										data-buchen={room.id}
 										class="rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
 									>
 										{s.zimmerBuchen}
-									</a>
+									</button>
 									<a
 										href={pfad(sprache, '/kontakt')}
 										class="rounded-full border border-ink-900/15 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:border-orange-500 hover:text-orange-600"
@@ -183,6 +187,9 @@ const galerie = [badDusche, detailHandtuecher, treppe, gastraum].map((src, i) =>
 		<h2 class="mb-8 font-akzent text-2xl font-semibold text-ink-900">{s.rundumsHaus}</h2>
 		<PhotoGrid images={galerie} />
 	</section>
+
+	{/* Der Buchungsanfrage-Dialog — geoeffnet von allen [data-buchen]-Knoepfen. */}
+	<BuchungsModal />
 </Layout>
 
 <script>

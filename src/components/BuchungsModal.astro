@@ -1,0 +1,476 @@
+---
+import { Image } from 'astro:assets';
+import { rooms } from '../data/rooms';
+import { contact } from '../data/nav';
+import { ausUrl, pfad, preis } from '../i18n/ui';
+
+/*
+ * Buchungsanfrage-Dialog (12.08.2026), Vorbild: Gasthof-Herderich-Website.
+ *
+ * Jeder „Buchen"-Knopf auf der Seite traegt `data-buchen="<zimmer-id>"` — das
+ * Skript unten oeffnet dann diesen Dialog mit dem Zimmer vorausgewaehlt. Der
+ * Gast waehlt Zeitraum und Personen, sieht Naechte x Preis gerechnet und
+ * schickt die Anfrage ab. Versand laeuft ueber die BESTEHENDE Resend-Route
+ * /api/kontakt (inkl. Honeypot, Datenschutz-Pflicht, Rate-Limit) — hier
+ * entsteht kein zweiter Sendeweg.
+ *
+ * Bewusst KEINE Verfuegbarkeitsanzeige: es haengt (noch) kein Channel-Manager
+ * an der Seite, eine erfundene Frei/Belegt-Anzeige waere irrefuehrend. Die
+ * Bestaetigung kommt persoenlich vom Haus — das steht auch so im Dialog.
+ * Sobald Smoobu angebunden ist (siehe BookingWidget.astro), entscheidet KD,
+ * ob dieser Dialog daneben bestehen bleibt.
+ */
+const { sprache, t } = ausUrl(Astro.url);
+const b = t.buchung;
+const zimmer = rooms(sprache);
+const zimmerDe = rooms('de');
+
+// Was das Skript je Zimmer wissen muss. `nameDe` steht mit drin, weil die
+// Mail ans Haus IMMER die deutschen Zimmernamen traegt — der Empfaenger ist
+// das Haus, nicht der Gast.
+const zimmerDaten = Object.fromEntries(
+	zimmer.map((z, i) => [
+		z.id,
+		{ name: z.name, nameDe: zimmerDe[i].name, preis: z.pricePerNight, maxGuests: z.maxGuests },
+	])
+);
+
+// Beschriftungen, die das Browser-Skript dynamisch zusammensetzt (Naechte,
+// Summen, Statusmeldungen) — gleiche Technik wie im Kontaktformular.
+const texte = {
+	nacht: b.nacht,
+	naechte: b.naechte,
+	gast: b.gast,
+	gaeste: b.gaeste,
+	gesamt: b.gesamt,
+	ab: b.ab,
+	proNacht: b.proNacht,
+	preisAufAnfrage: b.preisAufAnfrage,
+	pflichtHinweis: b.pflichtHinweis,
+	emailHinweis: b.emailHinweis,
+	fehler: b.fehler,
+	keineVerbindung: b.keineVerbindung,
+	wirdGesendet: b.wirdGesendet,
+	absenden: b.absenden,
+	betreff: b.betreff,
+	// Die API-Route antwortet auf Deutsch — nur dort ihre Meldung durchreichen.
+	serverText: sprache === 'de',
+	// Preisformat je Sprache: "101 €" bzw. "€101" (wie preis() in i18n/ui.ts).
+	preisVor: sprache === 'de' ? '' : '€',
+	preisNach: sprache === 'de' ? ' €' : '',
+};
+
+const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
+---
+
+<dialog
+	id="buchungs-modal"
+	class="m-auto w-full max-w-lg bg-transparent p-4 backdrop:bg-black/55"
+	data-zimmer={JSON.stringify(zimmerDaten)}
+	data-texte={JSON.stringify(texte)}
+	aria-label={b.modalTitel}
+>
+	{/* max-h rechnet das p-4 des Dialogs mit ein — sonst ist der Kasten hoeher
+	    als der Dialog und es erscheint eine zweite Scrollleiste daneben. */}
+	<div class="flex max-h-[calc(100dvh-4rem)] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+		{/* Kopf: Titelbild des gewaehlten Zimmers. Alle Bilder liegen gerendert
+		    im Dokument, das Skript blendet nur das passende ein — so bleibt die
+		    Bild-Optimierung bei Astro. */}
+		<div class="relative h-40 w-full shrink-0 overflow-hidden bg-cream-100 sm:h-48">
+			{zimmer.map((room, index) => (
+				<Image
+					src={room.gallery[0].src}
+					alt={room.gallery[0].alt}
+					width={640}
+					height={384}
+					format="webp"
+					quality={70}
+					loading="lazy"
+					decoding="async"
+					class={`absolute inset-0 h-full w-full object-cover ${index === 0 ? '' : 'hidden'}`}
+					data-buchung-bild={room.id}
+				/>
+			))}
+			<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-6 pb-3 pt-10">
+				<p class="font-akzent text-lg font-semibold text-cream-50" data-buchung-zimmername></p>
+			</div>
+			<button
+				type="button"
+				data-buchung-schliessen
+				aria-label={b.schliessen}
+				class="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-black/40 text-cream-50 transition-colors hover:bg-black/60"
+			>
+				<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+					<path d="M6 6l12 12M18 6L6 18" />
+				</svg>
+			</button>
+		</div>
+
+		{/* Formular */}
+		<form id="buchung-formular" class="flex flex-col gap-4 overflow-y-auto p-6" novalidate>
+			<div>
+				<h3 class="font-akzent text-2xl font-semibold text-ink-900">{b.modalTitel}</h3>
+				<p class="mt-1 text-sm text-ink-700/70">{b.modalHinweis}</p>
+			</div>
+
+			<div class="grid gap-4 sm:grid-cols-2">
+				<div class="sm:col-span-2">
+					<label for="buchung-zimmer" class="text-sm font-medium text-ink-900">{b.zimmerLabel}</label>
+					<select
+						id="buchung-zimmer"
+						name="zimmer"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					>
+						{zimmer.map((room) => (
+							<option value={room.id}>{room.name}</option>
+						))}
+					</select>
+				</div>
+				<div>
+					<label for="buchung-anreise" class="text-sm font-medium text-ink-900">{b.anreise}</label>
+					<input
+						type="date"
+						id="buchung-anreise"
+						name="anreise"
+						required
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div>
+					<label for="buchung-abreise" class="text-sm font-medium text-ink-900">{b.abreise}</label>
+					<input
+						type="date"
+						id="buchung-abreise"
+						name="abreise"
+						required
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div>
+					<label for="buchung-personen" class="text-sm font-medium text-ink-900">{b.personen}</label>
+					<select
+						id="buchung-personen"
+						name="personen"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					>
+						{Array.from({ length: maxPersonen }, (_, i) => (
+							<option value={String(i + 1)}>{i + 1} {i === 0 ? b.gast : b.gaeste}</option>
+						))}
+					</select>
+				</div>
+				{/* Naechte x Preis, live gerechnet — beim Zimmer ohne Preis steht hier "Preis auf Anfrage". */}
+				<div class="flex items-end">
+					<p
+						class="w-full rounded-lg bg-cream-100/80 px-4 py-2.5 text-sm font-semibold text-ink-900"
+						data-buchung-summe
+						aria-live="polite"
+					>
+					</p>
+				</div>
+			</div>
+
+			<div class="grid gap-4 sm:grid-cols-2">
+				<div>
+					<label for="buchung-name" class="text-sm font-medium text-ink-900">{b.nameLabel}</label>
+					<input
+						type="text"
+						id="buchung-name"
+						name="name"
+						required
+						autocomplete="name"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div>
+					<label for="buchung-email" class="text-sm font-medium text-ink-900">{b.emailLabel}</label>
+					<input
+						type="email"
+						id="buchung-email"
+						name="email"
+						required
+						autocomplete="email"
+						inputmode="email"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div class="sm:col-span-2">
+					<label for="buchung-telefon" class="text-sm font-medium text-ink-900">{b.telefonLabel}</label>
+					<input
+						type="tel"
+						id="buchung-telefon"
+						name="telefon"
+						autocomplete="tel"
+						inputmode="tel"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div class="sm:col-span-2">
+					<label for="buchung-nachricht" class="text-sm font-medium text-ink-900">{b.nachrichtLabel}</label>
+					<textarea
+						id="buchung-nachricht"
+						name="nachricht"
+						rows="3"
+						placeholder={b.nachrichtPlatzhalter}
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					></textarea>
+				</div>
+			</div>
+
+			<label class="flex items-start gap-2 text-xs text-ink-700/70">
+				<input type="checkbox" name="datenschutz" value="ja" required class="mt-0.5 shrink-0 accent-orange-500" />
+				<span>
+					{b.einwilligung1} <a href={pfad(sprache, '/datenschutz')} target="_blank" class="underline hover:text-orange-600">{b.datenschutzLink}</a>{sprache === 'de' ? ' ' : ''}{b.einwilligung2}
+				</span>
+			</label>
+			<p class="-mt-2 text-xs text-ink-700/50">{b.pflichtfelder}</p>
+
+			{/* Falle fuer Bots — dieselbe wie im Kontaktformular. */}
+			<div class="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+				<label for="buchung-website">Website</label>
+				<input type="text" id="buchung-website" name="website" tabindex="-1" autocomplete="off" />
+			</div>
+
+			{/* Statusmeldung direkt UEBER dem Knopf (Herderich-Lehre: am Kopf
+			    des Formulars sieht sie auf dem Handy niemand). */}
+			<p data-buchung-status class="hidden rounded-lg bg-orange-500/10 px-4 py-3 text-sm text-orange-700" role="status" aria-live="polite"></p>
+
+			<div class="flex flex-col gap-3 sm:flex-row">
+				<button
+					type="submit"
+					class="rounded-full bg-orange-500 px-7 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600 disabled:opacity-60 sm:flex-1"
+				>
+					{b.absenden}
+				</button>
+				<a
+					href={contact.phoneHref}
+					class="rounded-full border border-ink-900/15 px-7 py-3 text-center text-sm font-semibold text-ink-900 transition-colors hover:border-orange-500 hover:text-orange-600"
+				>
+					{contact.phoneDisplay}
+				</a>
+			</div>
+		</form>
+
+		{/* Erfolgsansicht — ersetzt das Formular, damit niemand doppelt sendet. */}
+		<div data-buchung-erfolg class="hidden flex-col gap-4 overflow-y-auto p-6">
+			<span class="grid h-12 w-12 place-items-center rounded-2xl bg-orange-500/10 text-orange-600">
+				<svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M20 6L9 17l-5-5" />
+				</svg>
+			</span>
+			<h3 class="font-akzent text-2xl font-semibold text-ink-900">{b.erfolgTitel}</h3>
+			<p class="text-sm leading-relaxed text-ink-700/80">{b.erfolgText}</p>
+			<p class="rounded-lg bg-cream-100/80 px-4 py-3 text-sm text-ink-700/80">
+				<span class="font-semibold text-ink-900">{b.erfolgAuswahl}</span>
+				<span data-buchung-erfolg-details></span>
+			</p>
+			<button
+				type="button"
+				data-buchung-schliessen
+				class="self-start rounded-full border border-ink-900/15 px-7 py-3 text-sm font-semibold text-ink-900 transition-colors hover:border-orange-500 hover:text-orange-600"
+			>
+				{b.erfolgSchliessen}
+			</button>
+		</div>
+	</div>
+</dialog>
+
+<script>
+	/*
+	 * Steuert den Buchungsanfrage-Dialog. Alles laeuft ueber data-Attribute,
+	 * damit die Komponente in beiden Sprachen ohne zweite Fassung funktioniert.
+	 */
+	const dialog = document.getElementById('buchungs-modal') as HTMLDialogElement | null;
+
+	if (dialog) {
+		const zimmerDaten = JSON.parse(dialog.dataset.zimmer ?? '{}') as Record<
+			string,
+			{ name: string; nameDe: string; preis: number | null; maxGuests: number }
+		>;
+		const texte = JSON.parse(dialog.dataset.texte ?? '{}') as Record<string, string | boolean>;
+
+		const formular = dialog.querySelector<HTMLFormElement>('#buchung-formular')!;
+		const erfolg = dialog.querySelector<HTMLElement>('[data-buchung-erfolg]')!;
+		const erfolgDetails = dialog.querySelector<HTMLElement>('[data-buchung-erfolg-details]')!;
+		const status = dialog.querySelector<HTMLElement>('[data-buchung-status]')!;
+		const zimmerName = dialog.querySelector<HTMLElement>('[data-buchung-zimmername]')!;
+		const summe = dialog.querySelector<HTMLElement>('[data-buchung-summe]')!;
+		const bilder = dialog.querySelectorAll<HTMLElement>('[data-buchung-bild]');
+
+		const zimmerFeld = formular.querySelector<HTMLSelectElement>('#buchung-zimmer')!;
+		const anreiseFeld = formular.querySelector<HTMLInputElement>('#buchung-anreise')!;
+		const abreiseFeld = formular.querySelector<HTMLInputElement>('#buchung-abreise')!;
+		const personenFeld = formular.querySelector<HTMLSelectElement>('#buchung-personen')!;
+		const nameFeld = formular.querySelector<HTMLInputElement>('#buchung-name')!;
+		const emailFeld = formular.querySelector<HTMLInputElement>('#buchung-email')!;
+		const telefonFeld = formular.querySelector<HTMLInputElement>('#buchung-telefon')!;
+		const nachrichtFeld = formular.querySelector<HTMLTextAreaElement>('#buchung-nachricht')!;
+		const datenschutzFeld = formular.querySelector<HTMLInputElement>('input[name="datenschutz"]')!;
+		const honeypotFeld = formular.querySelector<HTMLInputElement>('#buchung-website')!;
+		const sendenKnopf = formular.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+		const iso = (d: Date) => {
+			const off = d.getTimezoneOffset() * 60000;
+			return new Date(d.getTime() - off).toISOString().slice(0, 10);
+		};
+		const anzeigeDatum = (isoWert: string) => {
+			const [j, m, t] = isoWert.split('-');
+			return j && m && t ? `${t}.${m}.${j}` : isoWert;
+		};
+		const geld = (betrag: number) => `${texte.preisVor}${betrag}${texte.preisNach}`;
+
+		function naechte(): number {
+			const n = Math.round(
+				(new Date(abreiseFeld.value).getTime() - new Date(anreiseFeld.value).getTime()) / 86400000
+			);
+			return Number.isFinite(n) && n > 0 ? n : 0;
+		}
+
+		/** Bild, Titelzeile, Personen-Deckel und die Naechte-x-Preis-Zeile nachziehen. */
+		function aktualisiere() {
+			const z = zimmerDaten[zimmerFeld.value];
+			if (!z) return;
+
+			bilder.forEach((bild) => bild.classList.toggle('hidden', bild.dataset.buchungBild !== zimmerFeld.value));
+			zimmerName.textContent = z.name;
+
+			// Mehr Personen als das Zimmer traegt lassen sich nicht auswaehlen.
+			let geklemmt = false;
+			Array.from(personenFeld.options).forEach((option) => {
+				const zuViel = Number(option.value) > z.maxGuests;
+				option.hidden = zuViel;
+				option.disabled = zuViel;
+				if (zuViel && option.selected) geklemmt = true;
+			});
+			if (geklemmt) personenFeld.value = String(z.maxGuests);
+
+			const n = naechte();
+			if (z.preis === null) {
+				summe.textContent = String(texte.preisAufAnfrage);
+			} else if (n > 0) {
+				summe.textContent = `${n} ${n === 1 ? texte.nacht : texte.naechte} × ${geld(z.preis)} = ${geld(n * z.preis)} ${texte.gesamt}`;
+			} else {
+				summe.textContent = `${texte.ab} ${geld(z.preis)}${texte.proNacht}`;
+			}
+		}
+
+		function melde(text: string) {
+			status.textContent = text;
+			status.classList.remove('hidden');
+		}
+
+		function oeffne(zimmerId?: string) {
+			// Formular wieder zeigen, falls vorher schon eine Anfrage raus war.
+			formular.classList.remove('hidden');
+			erfolg.classList.add('hidden');
+			erfolg.classList.remove('flex');
+			status.classList.add('hidden');
+
+			// "Heute" erst beim Oeffnen bestimmen — die Seite ist statisch gebaut,
+			// ein Datum aus dem Build waere laengst veraltet.
+			const heute = new Date();
+			anreiseFeld.min = iso(heute);
+			if (!anreiseFeld.value || anreiseFeld.value < anreiseFeld.min) {
+				anreiseFeld.value = iso(new Date(heute.getTime() + 86400000));
+			}
+			abreiseFeld.min = anreiseFeld.value;
+			if (!abreiseFeld.value || abreiseFeld.value <= anreiseFeld.value) {
+				abreiseFeld.value = iso(new Date(new Date(anreiseFeld.value).getTime() + 86400000));
+			}
+
+			if (zimmerId && zimmerDaten[zimmerId]) zimmerFeld.value = zimmerId;
+			aktualisiere();
+			dialog!.showModal();
+		}
+
+		// Alle "Buchen"-Knoepfe der Seite oeffnen den Dialog mit ihrem Zimmer.
+		document.querySelectorAll<HTMLElement>('[data-buchen]').forEach((knopf) => {
+			knopf.addEventListener('click', () => oeffne(knopf.dataset.buchen || undefined));
+		});
+
+		dialog.querySelectorAll<HTMLElement>('[data-buchung-schliessen]').forEach((knopf) => {
+			knopf.addEventListener('click', () => dialog!.close());
+		});
+		// Klick auf den abgedunkelten Hintergrund schliesst ebenfalls.
+		dialog.addEventListener('click', (ereignis) => {
+			if (ereignis.target === dialog) dialog!.close();
+		});
+
+		zimmerFeld.addEventListener('change', aktualisiere);
+		personenFeld.addEventListener('change', aktualisiere);
+		anreiseFeld.addEventListener('change', () => {
+			if (abreiseFeld.value && abreiseFeld.value <= anreiseFeld.value) {
+				abreiseFeld.value = iso(new Date(new Date(anreiseFeld.value).getTime() + 86400000));
+			}
+			abreiseFeld.min = anreiseFeld.value;
+			aktualisiere();
+		});
+		abreiseFeld.addEventListener('change', aktualisiere);
+
+		formular.addEventListener('submit', async (ereignis) => {
+			ereignis.preventDefault();
+
+			const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailFeld.value.trim());
+			if (!nameFeld.value.trim() || !emailFeld.value.trim() || !anreiseFeld.value || !abreiseFeld.value || !datenschutzFeld.checked) {
+				melde(String(texte.pflichtHinweis));
+				return;
+			}
+			if (!emailOk) {
+				melde(String(texte.emailHinweis));
+				return;
+			}
+
+			const z = zimmerDaten[zimmerFeld.value];
+			const n = naechte();
+
+			// Die Mail geht ans HAUS — deshalb deutsche Beschriftungen und der
+			// deutsche Zimmername, unabhaengig von der Seitensprache des Gastes.
+			const zeilen = [
+				`Zimmer: ${z.nameDe}`,
+				`Anreise: ${anzeigeDatum(anreiseFeld.value)}`,
+				`Abreise: ${anzeigeDatum(abreiseFeld.value)}`,
+				`Personen: ${personenFeld.value}`,
+				z.preis === null
+					? 'Preis: auf Anfrage (Website nennt keinen Preis)'
+					: `Preis laut Website: ${n} × ${z.preis} € = ${n * z.preis} €`,
+				telefonFeld.value.trim() ? `Telefon: ${telefonFeld.value.trim()}` : '',
+				'',
+				nachrichtFeld.value.trim() ? `Nachricht des Gastes:\n${nachrichtFeld.value.trim()}` : 'Keine weitere Nachricht.',
+			].filter((zeile, i, alle) => zeile !== '' || alle[i + 1] !== '');
+
+			const daten = new FormData();
+			daten.set('name', nameFeld.value.trim());
+			daten.set('email', emailFeld.value.trim());
+			daten.set('betreff', `${texte.betreff}: ${z.nameDe}, ${anzeigeDatum(anreiseFeld.value)}–${anzeigeDatum(abreiseFeld.value)}`);
+			daten.set('nachricht', zeilen.join('\n'));
+			daten.set('datenschutz', 'ja');
+			daten.set('website', honeypotFeld.value);
+
+			sendenKnopf.disabled = true;
+			const knopfText = sendenKnopf.textContent;
+			sendenKnopf.textContent = String(texte.wirdGesendet);
+
+			try {
+				const antwort = await fetch('/api/kontakt', {
+					method: 'POST',
+					body: daten,
+					headers: { Accept: 'application/json' },
+				});
+				const ergebnis = await antwort.json().catch(() => null);
+
+				if (antwort.ok && ergebnis?.ok) {
+					erfolgDetails.textContent = ` ${z.name} · ${anzeigeDatum(anreiseFeld.value)} – ${anzeigeDatum(abreiseFeld.value)} · ${personenFeld.value} ${personenFeld.value === '1' ? texte.gast : texte.gaeste}`;
+					formular.classList.add('hidden');
+					erfolg.classList.remove('hidden');
+					erfolg.classList.add('flex');
+				} else {
+					melde(texte.serverText ? (ergebnis?.meldung ?? String(texte.fehler)) : String(texte.fehler));
+				}
+			} catch {
+				melde(String(texte.keineVerbindung));
+			} finally {
+				sendenKnopf.disabled = false;
+				sendenKnopf.textContent = knopfText;
+			}
+		});
+	}
+</script>

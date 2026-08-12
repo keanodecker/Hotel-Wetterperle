@@ -219,7 +219,49 @@ const de = {
 		ohneJs:
 			'Für die Online-Buchung braucht Ihr Browser JavaScript. Sie erreichen uns auch direkt – wir bestätigen Ihnen Ihr Zimmer persönlich.',
 		direkt:
-			'Ihr Zimmer buchen Sie direkt bei uns – telefonisch oder per E-Mail. Nennen Sie uns Ihren Wunschzeitraum und die Anzahl der Personen, wir bestätigen Ihnen Ihr Zimmer persönlich.',
+			'Ihr Zimmer buchen Sie direkt bei uns – telefonisch, per E-Mail oder über die Buchungsanfrage. Nennen Sie uns Ihren Wunschzeitraum und die Anzahl der Personen, wir bestätigen Ihnen Ihr Zimmer persönlich.',
+
+		// Buchungsanfrage-Dialog (12.08.2026): Zimmer waehlen → Daten → Anfrage
+		// geht als Mail ans Haus (Route /api/kontakt, Resend). Keine
+		// Verfuegbarkeitsanzeige — die Bestaetigung kommt persoenlich vom Haus.
+		buchen: 'Buchen',
+		modalTitel: 'Buchungsanfrage',
+		modalHinweis:
+			'Unverbindlich anfragen – wir prüfen die Verfügbarkeit und bestätigen Ihnen Ihr Zimmer persönlich.',
+		zimmerLabel: 'Zimmer',
+		anreise: 'Anreise',
+		abreise: 'Abreise',
+		personen: 'Personen',
+		nameLabel: 'Ihr Name *',
+		emailLabel: 'E-Mail-Adresse *',
+		telefonLabel: 'Telefon (optional)',
+		nachrichtLabel: 'Nachricht (optional)',
+		nachrichtPlatzhalter: 'Zustellbett, Ankunftszeit, Fragen …',
+		einwilligung1: 'Ich bin mit der Verarbeitung meiner Angaben laut',
+		datenschutzLink: 'Datenschutzerklärung',
+		einwilligung2: 'einverstanden. *',
+		pflichtfelder: '* Pflichtfelder',
+		absenden: 'Buchungsanfrage senden',
+		wirdGesendet: 'Wird gesendet …',
+		schliessen: 'Schließen',
+		nacht: 'Nacht',
+		naechte: 'Nächte',
+		gast: 'Gast',
+		gaeste: 'Gäste',
+		gesamt: 'gesamt',
+		pflichtHinweis:
+			'Bitte füllen Sie Name, E-Mail und Reisedaten aus und bestätigen Sie die Datenschutzhinweise.',
+		emailHinweis: 'Bitte prüfen Sie Ihre E-Mail-Adresse – an diese Adresse antworten wir Ihnen.',
+		fehler:
+			'Die Anfrage konnte gerade nicht verschickt werden. Bitte rufen Sie uns an oder schreiben Sie uns direkt eine E-Mail.',
+		keineVerbindung:
+			'Keine Verbindung zum Server. Bitte prüfen Sie Ihre Internetverbindung oder rufen Sie uns an.',
+		erfolgTitel: 'Ihre Anfrage ist angekommen',
+		erfolgText:
+			'Vielen Dank! Wir haben Ihre Buchungsanfrage erhalten und melden uns schnellstmöglich bei Ihnen – unsere Antwort geht an Ihre E-Mail-Adresse.',
+		erfolgAuswahl: 'Ihre Anfrage:',
+		erfolgSchliessen: 'Fenster schließen',
+		betreff: 'Buchungsanfrage',
 	},
 
 	start: {
@@ -694,7 +736,46 @@ const en: typeof de = {
 		ohneJs:
 			'Online booking needs JavaScript in your browser. You can also reach us directly – we will confirm your room personally.',
 		direkt:
-			'You book your room directly with us – by phone or by email. Just tell us your preferred dates and the number of guests, and we will confirm your room personally.',
+			'You book your room directly with us – by phone, by email or via the booking request. Just tell us your preferred dates and the number of guests, and we will confirm your room personally.',
+
+		buchen: 'Book',
+		modalTitel: 'Booking request',
+		modalHinweis:
+			'A non-binding request – we check availability and confirm your room personally.',
+		zimmerLabel: 'Room',
+		anreise: 'Arrival',
+		abreise: 'Departure',
+		personen: 'Guests',
+		nameLabel: 'Your name *',
+		emailLabel: 'Email address *',
+		telefonLabel: 'Phone (optional)',
+		nachrichtLabel: 'Message (optional)',
+		nachrichtPlatzhalter: 'Extra bed, arrival time, questions …',
+		einwilligung1: 'I agree to the processing of my details as described in the',
+		datenschutzLink: 'privacy policy',
+		einwilligung2: '. *',
+		pflichtfelder: '* Required fields',
+		absenden: 'Send booking request',
+		wirdGesendet: 'Sending …',
+		schliessen: 'Close',
+		nacht: 'night',
+		naechte: 'nights',
+		gast: 'guest',
+		gaeste: 'guests',
+		gesamt: 'in total',
+		pflichtHinweis:
+			'Please fill in your name, email address and travel dates and confirm the privacy notice.',
+		emailHinweis: 'Please check your email address – this is where our reply will go.',
+		fehler:
+			'Your request could not be sent just now. Please call us or write to us directly by email.',
+		keineVerbindung:
+			'No connection to the server. Please check your internet connection or give us a call.',
+		erfolgTitel: 'Your request has arrived',
+		erfolgText:
+			'Thank you! We have received your booking request and will get back to you as soon as possible – our reply will go to your email address.',
+		erfolgAuswahl: 'Your request:',
+		erfolgSchliessen: 'Close window',
+		betreff: 'Booking request',
 	},
 
 	start: {
