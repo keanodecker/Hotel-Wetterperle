@@ -71,6 +71,27 @@ import gastraumStimmung from '../assets/gallery/haus/gastraum-stimmung.jpg';
 							class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
 						></textarea>
 					</div>
+					{/*
+						Einwilligung: absichtlich VOR dem Knopf — erst zustimmen, dann absenden.
+						Der Server prueft dasselbe noch einmal (Feld `datenschutz` in
+						src/pages/api/kontakt.ts) — ein `required` im Browser ist bequem,
+						aber kein Schutz.
+					*/}
+					<label class="flex items-start gap-2 text-xs text-ink-700/70">
+						<input
+							type="checkbox"
+							name="datenschutz"
+							value="ja"
+							required
+							class="mt-0.5 shrink-0 accent-orange-500"
+						/>
+						<span>
+							Ich habe die <a href="/datenschutz" class="underline hover:text-orange-600"
+								>Datenschutzerklärung</a
+							> zur Kenntnis genommen. Meine Angaben werden ausschließlich zur
+							Bearbeitung meiner Anfrage verwendet.
+						</span>
+					</label>
 					<button
 						type="submit"
 						class="mt-2 self-start rounded-full bg-orange-500 px-7 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
@@ -83,10 +104,6 @@ import gastraumStimmung from '../assets/gallery/haus/gastraum-stimmung.jpg';
 						<input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
 					</div>
 					<p id="anfrage-status" class="hidden text-sm" role="status" aria-live="polite"></p>
-					<p class="text-xs text-ink-700/60">
-						Ihre Angaben nutzen wir ausschließlich, um Ihre Anfrage zu beantworten.
-						Mehr dazu in der <a href="/datenschutz" class="underline hover:text-orange-600">Datenschutzerklärung</a>.
-					</p>
 				</form>
 			</div>
 
@@ -139,7 +156,7 @@ import gastraumStimmung from '../assets/gallery/haus/gastraum-stimmung.jpg';
 	if (formular instanceof HTMLFormElement && status) {
 		const knopf = formular.querySelector('button[type="submit"]');
 
-		const melden = (text, erfolg) => {
+		const melden = (text: string, erfolg: boolean) => {
 			status.textContent = text;
 			status.classList.remove('hidden');
 			status.classList.toggle('text-green-700', erfolg);
