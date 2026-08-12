@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/extracted/logo.png';
+import mcLogo from '../assets/mc-logo-white.png';
 import { footerNavItems, contact } from '../data/nav';
 import { openingHours } from '../data/hours';
 
@@ -79,16 +80,21 @@ const year = new Date().getFullYear();
 		</button>
 
 		<span>© {year} Landgasthof Wetteraperle. Alle Rechte vorbehalten.</span>
-		<span>
-			Made by
-			<a
-				href="https://www.media-castle.com"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="font-semibold text-cream-100/80 transition-colors hover:text-orange-400"
-			>
-				Media Castle
-			</a>
-		</span>
+		<a
+			href="https://www.media-castle.com"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="group inline-flex items-center gap-2.5 no-underline"
+		>
+			<Image src={mcLogo} alt="Media Castle" width={96} height={96} class="h-7 w-7" />
+			<span class="flex flex-col items-start leading-tight">
+				<span class="text-[9px] font-normal uppercase tracking-[0.25em] text-cream-100/50">
+					Visualized by
+				</span>
+				<span class="text-sm font-semibold text-cream-100 transition-colors group-hover:text-orange-400">
+					media castle
+				</span>
+			</span>
+		</a>
 	</div>
 </footer>
