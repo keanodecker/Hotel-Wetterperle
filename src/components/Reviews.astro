@@ -14,7 +14,7 @@ import RatingBadge from './RatingBadge.astro';
 		</div>
 	</div>
 
-	<div id="review-slider" class="mx-auto mt-14 max-w-3xl px-6">
+	<div id="review-slider" class="mx-auto mt-14 max-w-3xl px-6" style="transition: max-width 700ms ease;">
 		<div class="relative rounded-3xl border border-ink-900/10 bg-white px-8 py-12 shadow-sm md:px-16">
 			<span
 				class="pointer-events-none absolute -top-2 left-8 select-none font-akzent text-8xl leading-none text-orange-100 md:left-12"
@@ -95,21 +95,84 @@ import RatingBadge from './RatingBadge.astro';
 	const slider = document.getElementById('review-slider');
 
 	if (slider) {
+		const viewport = document.getElementById('review-viewport')!;
 		const slides = [...slider.querySelectorAll<HTMLElement>('[data-slide]')];
 		const dots = [...slider.querySelectorAll<HTMLElement>('[data-dot]')];
 		const INTERVAL = 6000;
 		let current = 0;
 		let timer: ReturnType<typeof setInterval> | undefined;
 
+		// KD-Vorgabe 12.08.2026: Die Box behält IMMER dieselbe Höhe (bestimmt von
+		// den kurzen Bewertungen). Eine lange Bewertung macht die Box nicht höher,
+		// sondern BREITER. Dazu wird jede Bewertung bei mehreren Kandidaten-Breiten
+		// vermessen und die schmalste Breite gewählt, bei der sie in die feste
+		// Höhe passt. Auf schmalen Screens (kein Platz in die Breite) bleibt das
+		// alte Verhalten: Höhe passt sich an.
+		const BASE_WIDTH = 768; // = max-w-3xl
+		const WIDTHS = [768, 960, 1152];
+		const KURZE = 6; // Bewertung 1–6 bestimmen die feste Höhe
+		let slideWidth: number[] = slides.map(() => BASE_WIDTH);
+		let fixedMode = false;
+
+		function measure() {
+			const platz = document.documentElement.clientWidth;
+			fixedMode = platz >= WIDTHS[1];
+			slider.style.transition = 'none';
+
+			if (!fixedMode) {
+				slider.style.maxWidth = '';
+				viewport.style.height = '';
+				slides.forEach((s) => {
+					s.style.height = '';
+					s.classList.remove('justify-center');
+				});
+				slideWidth = slides.map(() => BASE_WIDTH);
+				requestAnimationFrame(() => (slider.style.transition = 'max-width 700ms ease'));
+				return;
+			}
+
+			viewport.style.height = '';
+			slides.forEach((s) => (s.style.height = ''));
+
+			const kandidaten = WIDTHS.filter((w) => w <= platz);
+			const hoehen: number[][] = [];
+			for (const w of kandidaten) {
+				slider.style.maxWidth = w + 'px';
+				void slider.offsetWidth;
+				hoehen.push(slides.map((s) => s.offsetHeight));
+			}
+
+			const festeHoehe = Math.max(...hoehen[0].slice(0, KURZE));
+			slideWidth = slides.map((_, i) => {
+				for (let k = 0; k < kandidaten.length; k++) {
+					if (hoehen[k][i] <= festeHoehe) return kandidaten[k];
+				}
+				return kandidaten[kandidaten.length - 1];
+			});
+			// Passt eine Bewertung selbst in der breitesten Stufe nicht, wächst die
+			// feste Höhe minimal mit — sie bleibt trotzdem für ALLE gleich.
+			const endHoehe = Math.max(
+				festeHoehe,
+				...slides.map((_, i) => hoehen[kandidaten.indexOf(slideWidth[i])][i]),
+			);
+
+			viewport.style.height = endHoehe + 'px';
+			slides.forEach((s) => {
+				s.style.height = '100%';
+				s.classList.add('justify-center');
+			});
+			slider.style.maxWidth = slideWidth[current] + 'px';
+			void slider.offsetWidth;
+			slider.style.transition = 'max-width 700ms ease';
+		}
+
 		function show(index: number) {
 			current = (index + slides.length) % slides.length;
 
+			if (fixedMode) slider.style.maxWidth = slideWidth[current] + 'px';
+
 			slides.forEach((slide, i) => {
 				const active = i === current;
-				// Nur die aktive Bewertung liegt im normalen Fluss (bestimmt die Höhe der
-				// Box) – alle anderen sind absolut gestapelt und tragen nichts zur Höhe
-				// bei. So passt sich die Fläche automatisch an: kurze Bewertung = kleine
-				// Box, lange Bewertung = große Box, keine feste Höhe für alle gleich.
 				slide.classList.toggle('relative', active);
 				slide.classList.toggle('absolute', !active);
 				slide.classList.toggle('opacity-100', active);
@@ -154,6 +217,15 @@ import RatingBadge from './RatingBadge.astro';
 		slider.addEventListener('mouseleave', start);
 		slider.addEventListener('focusin', stop);
 		slider.addEventListener('focusout', start);
+
+		measure();
+		// Webfonts ändern die Textmaße — nach dem Laden einmal neu vermessen.
+		document.fonts?.ready.then(measure);
+		let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+		window.addEventListener('resize', () => {
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(measure, 150);
+		});
 
 		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 		if (!reducedMotion.matches) start();
