@@ -2,53 +2,44 @@
 // Google-Bewertung + Kernwerte – Texte angelehnt an die Philosophie der Original-Website
 // ("Wir stehen für Nachhaltigkeit, Regionalität, Qualität und Gastfreundschaft.").
 // Icons: eigens gezeichnete, thematische Motive statt generischer Icon-Set-Symbole.
-const values = [
-	{
-		title: 'Nachhaltigkeit',
-		text: 'Wir legen besonders Wert auf einen achtsamen Umgang mit Lebensmitteln – mit kurzen Wegen und Respekt vor unserer Natur.',
-		// Setzling mit Blättern und Erdlinie
-		icon: `
-			<path stroke-linecap="round" d="M12 21v-8" />
-			<path stroke-linejoin="round" d="M12 13c.2-3.2-2.2-5.6-5.9-5.7-.1 3.4 2.3 5.7 5.9 5.7Z" />
-			<path stroke-linejoin="round" d="M12 10.5c-.2-2.7 1.9-4.8 5-4.9.1 2.9-2 4.9-5 4.9Z" />
-			<path stroke-linecap="round" d="M5.5 21h13" />
-		`,
-	},
-	{
-		title: 'Regionalität',
-		text: 'Fleisch, Kartoffeln und viele weitere Produkte kommen von Händlern aus der Umgebung – wenn möglich direkt vom Erzeuger vor Ort.',
-		// Getreideähre
-		icon: `
-			<path stroke-linecap="round" d="M12 21V4" />
-			<path stroke-linejoin="round" d="M12 9C10.3 8.5 9.2 7.2 9 5.2c1.7.5 2.8 1.8 3 3.8Z" />
-			<path stroke-linejoin="round" d="M12 9c1.7-.5 2.8-1.8 3-3.8-1.7.5-2.8 1.8-3 3.8Z" />
-			<path stroke-linejoin="round" d="M12 13.5c-1.7-.5-2.8-1.8-3-3.8 1.7.5 2.8 1.8 3 3.8Z" />
-			<path stroke-linejoin="round" d="M12 13.5c1.7-.5 2.8-1.8 3-3.8-1.7.5-2.8 1.8-3 3.8Z" />
-			<path stroke-linejoin="round" d="M12 18c-1.7-.5-2.8-1.8-3-3.8 1.7.5 2.8 1.8 3 3.8Z" />
-			<path stroke-linejoin="round" d="M12 18c1.7-.5 2.8-1.8 3-3.8-1.7.5-2.8 1.8-3 3.8Z" />
-		`,
-	},
-	{
-		title: 'Qualität',
-		text: '„Wer gute Produkte verwendet, wird auch ein köstliches Essen zaubern" – genau nach diesem Motto kocht Frank jedes Gericht selbst.',
-		// Kochmütze
-		icon: `
-			<path stroke-linecap="round" stroke-linejoin="round" d="M7.2 19.5v-5.6a4.3 4.3 0 0 1-1.9-7.9 4.3 4.3 0 0 1 2.9-1.5 4.7 4.7 0 0 1 7.6 0 4.3 4.3 0 0 1 2.9 1.5 4.3 4.3 0 0 1-1.9 7.9v5.6" />
-			<path stroke-linecap="round" d="M7.2 19.5h9.6" />
-			<path stroke-linecap="round" d="M10.4 16.4v-2.7M13.6 16.4v-2.7" />
-		`,
-	},
-	{
-		title: 'Gastfreundschaft',
-		text: 'Zum perfekten Erlebnis gehören nicht nur gute Speisen, sondern auch freundliche Gastwirte – wir lernen unsere Gäste gern kennen.',
-		// Haus mit Herz
-		icon: `
-			<path stroke-linecap="round" stroke-linejoin="round" d="m3.8 11.3 8.2-7 8.2 7" />
-			<path stroke-linecap="round" stroke-linejoin="round" d="M6 9.5v10h12v-10" />
-			<path stroke-linejoin="round" d="M12 16.8l-2.2-2.1a1.7 1.7 0 0 1 2.2-2.5 1.7 1.7 0 0 1 2.2 2.5Z" />
-		`,
-	},
+// Die Beschriftungen stehen in src/i18n/ui.ts (Reihenfolge = Reihenfolge der Icons hier).
+import { ausUrl, zahl } from '../i18n/ui';
+
+const { sprache, t } = ausUrl(Astro.url);
+
+const icons = [
+	// Setzling mit Blättern und Erdlinie
+	`
+		<path stroke-linecap="round" d="M12 21v-8" />
+		<path stroke-linejoin="round" d="M12 13c.2-3.2-2.2-5.6-5.9-5.7-.1 3.4 2.3 5.7 5.9 5.7Z" />
+		<path stroke-linejoin="round" d="M12 10.5c-.2-2.7 1.9-4.8 5-4.9.1 2.9-2 4.9-5 4.9Z" />
+		<path stroke-linecap="round" d="M5.5 21h13" />
+	`,
+	// Getreideähre
+	`
+		<path stroke-linecap="round" d="M12 21V4" />
+		<path stroke-linejoin="round" d="M12 9C10.3 8.5 9.2 7.2 9 5.2c1.7.5 2.8 1.8 3 3.8Z" />
+		<path stroke-linejoin="round" d="M12 9c1.7-.5 2.8-1.8 3-3.8-1.7.5-2.8 1.8-3 3.8Z" />
+		<path stroke-linejoin="round" d="M12 13.5c-1.7-.5-2.8-1.8-3-3.8 1.7.5 2.8 1.8 3 3.8Z" />
+		<path stroke-linejoin="round" d="M12 13.5c1.7-.5 2.8-1.8 3-3.8-1.7.5-2.8 1.8-3 3.8Z" />
+		<path stroke-linejoin="round" d="M12 18c-1.7-.5-2.8-1.8-3-3.8 1.7.5 2.8 1.8 3 3.8Z" />
+		<path stroke-linejoin="round" d="M12 18c1.7-.5 2.8-1.8 3-3.8-1.7.5-2.8 1.8-3 3.8Z" />
+	`,
+	// Kochmütze
+	`
+		<path stroke-linecap="round" stroke-linejoin="round" d="M7.2 19.5v-5.6a4.3 4.3 0 0 1-1.9-7.9 4.3 4.3 0 0 1 2.9-1.5 4.7 4.7 0 0 1 7.6 0 4.3 4.3 0 0 1 2.9 1.5 4.3 4.3 0 0 1-1.9 7.9v5.6" />
+		<path stroke-linecap="round" d="M7.2 19.5h9.6" />
+		<path stroke-linecap="round" d="M10.4 16.4v-2.7M13.6 16.4v-2.7" />
+	`,
+	// Haus mit Herz
+	`
+		<path stroke-linecap="round" stroke-linejoin="round" d="m3.8 11.3 8.2-7 8.2 7" />
+		<path stroke-linecap="round" stroke-linejoin="round" d="M6 9.5v10h12v-10" />
+		<path stroke-linejoin="round" d="M12 16.8l-2.2-2.1a1.7 1.7 0 0 1 2.2-2.5 1.7 1.7 0 0 1 2.2 2.5Z" />
+	`,
 ];
+
+const values = t.werte.punkte.map((punkt, i) => ({ ...punkt, icon: icons[i] }));
 ---
 
 <section class="border-b border-ink-900/5 bg-cream-50">
@@ -63,10 +54,10 @@ const values = [
 					))}
 				</span>
 				<p class="mt-4 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
-					4,9 von 5
+					{t.werte.von5}
 				</p>
 				<p class="mt-1 text-sm uppercase tracking-[0.3em] text-orange-600">
-					Google-Bewertungen
+					{t.allgemein.googleBewertungen}
 				</p>
 			</div>
 
@@ -75,14 +66,14 @@ const values = [
 			<div class="flex flex-col items-center text-center">
 				<span class="flex h-8 items-center" aria-hidden="true">
 					<span class="flex h-8 items-center rounded-md rounded-bl-none bg-[#003580] px-2.5 font-akzent text-lg font-bold text-white">
-						9,2
+						{zahl(sprache, '9,2')}
 					</span>
 				</span>
 				<p class="mt-4 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
-					9,2 von 10
+					{t.werte.von10}
 				</p>
 				<p class="mt-1 text-sm uppercase tracking-[0.3em] text-orange-600">
-					Booking.com
+					{t.werte.booking}
 				</p>
 			</div>
 		</div>
@@ -99,7 +90,7 @@ const values = [
 						aria-hidden="true"
 						set:html={value.icon}
 					/>
-					<h3 class="mt-5 font-akzent text-xl font-semibold text-ink-900">{value.title}</h3>
+					<h3 class="mt-5 font-akzent text-xl font-semibold text-ink-900">{value.titel}</h3>
 					<p class="mt-2 text-sm leading-relaxed text-ink-700/75">{value.text}</p>
 				</div>
 			))}

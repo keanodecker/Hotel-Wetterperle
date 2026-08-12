@@ -1,6 +1,7 @@
 ---
 import { Image, getImage } from 'astro:assets';
 import type { RoomImage } from '../data/rooms';
+import { ausUrl } from '../i18n/ui';
 
 interface Props {
 	bilder: RoomImage[];
@@ -9,6 +10,21 @@ interface Props {
 }
 
 const { bilder, name } = Astro.props;
+const { t } = ausUrl(Astro.url);
+
+/*
+ * Die Lightbox unten laeuft im Browser und kann nicht auf `t` zugreifen.
+ * Deshalb haengen ihre Beschriftungen als data-Attribut an der Galerie und
+ * werden dort ausgelesen - so bleibt die Sprache auch dort richtig, ohne dass
+ * das Skript zweimal existiert.
+ */
+const bedientexte = {
+	schliessen: t.galerie.schliessen,
+	vorheriges: t.galerie.vorheriges,
+	naechstes: t.galerie.naechstes,
+	// Platzhalter {i} / {n} werden im Skript ersetzt.
+	bildVon: t.galerie.bildVon('{i}', '{n}'),
+};
 
 const [titelbild, ...weitere] = bilder;
 
@@ -23,14 +39,19 @@ const grossbilder = await Promise.all(
 );
 ---
 
-<div class="zimmer-galerie" data-zimmer-galerie data-name={name}>
+<div
+	class="zimmer-galerie"
+	data-zimmer-galerie
+	data-name={name}
+	data-texte={JSON.stringify(bedientexte)}
+>
 	<button
 		type="button"
 		class="group relative block w-full overflow-hidden rounded-3xl bg-cream-100"
 		data-galerie-bild
 		data-index="0"
 		data-voll={grossbilder[0].src}
-		aria-label={`${titelbild.alt} – grösser ansehen`}
+		aria-label={`${titelbild.alt} – ${t.galerie.groesser}`}
 	>
 		<Image
 			src={titelbild.src}
@@ -46,7 +67,7 @@ const grossbilder = await Promise.all(
 		<span
 			class="pointer-events-none absolute bottom-4 right-4 rounded-full bg-ink-900/70 px-4 py-1.5 text-xs font-medium text-cream-50 backdrop-blur-sm"
 		>
-			{bilder.length} Fotos ansehen
+			{t.galerie.fotosAnsehen(bilder.length)}
 		</span>
 	</button>
 
@@ -59,7 +80,7 @@ const grossbilder = await Promise.all(
 					data-galerie-bild
 					data-index={i + 1}
 					data-voll={grossbilder[i + 1].src}
-					aria-label={`${bild.alt} – grösser ansehen`}
+					aria-label={`${bild.alt} – ${t.galerie.groesser}`}
 				>
 					<Image
 						src={bild.src}
@@ -89,6 +110,32 @@ const grossbilder = await Promise.all(
 		alt: string;
 	}
 
+	interface Bedientexte {
+		schliessen: string;
+		vorheriges: string;
+		naechstes: string;
+		bildVon: string;
+	}
+
+	/*
+	 * Die Beschriftungen kommen aus dem data-Attribut der Galerie (dort in der
+	 * Sprache der Seite hinterlegt). Faellt das aus, bleibt die deutsche
+	 * Fassung - eine Lightbox ohne Beschriftung waere schlechter als eine mit
+	 * der falschen Sprache.
+	 */
+	const ersteGalerie = document.querySelector<HTMLElement>('[data-zimmer-galerie]');
+	let texte: Bedientexte = {
+		schliessen: 'Galerie schliessen',
+		vorheriges: 'Vorheriges Bild',
+		naechstes: 'Nächstes Bild',
+		bildVon: 'Bild {i} von {n}',
+	};
+	try {
+		if (ersteGalerie?.dataset.texte) texte = JSON.parse(ersteGalerie.dataset.texte);
+	} catch {
+		/* Standardtexte behalten */
+	}
+
 	let overlay: HTMLDivElement | null = null;
 	let bildEl: HTMLImageElement | null = null;
 	let textEl: HTMLParagraphElement | null = null;
@@ -105,11 +152,11 @@ const grossbilder = await Promise.all(
 		overlay.setAttribute('role', 'dialog');
 		overlay.setAttribute('aria-modal', 'true');
 		overlay.innerHTML = `
-			<button type="button" data-schliessen aria-label="Galerie schliessen"
+			<button type="button" data-schliessen aria-label="${texte.schliessen}"
 				class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-cream-50/10 text-2xl leading-none text-cream-50 transition hover:bg-cream-50/25">&times;</button>
-			<button type="button" data-zurueck aria-label="Vorheriges Bild"
+			<button type="button" data-zurueck aria-label="${texte.vorheriges}"
 				class="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-2xl leading-none text-cream-50 transition hover:bg-cream-50/25 sm:left-6">&#8249;</button>
-			<button type="button" data-weiter aria-label="Nächstes Bild"
+			<button type="button" data-weiter aria-label="${texte.naechstes}"
 				class="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream-50/10 text-2xl leading-none text-cream-50 transition hover:bg-cream-50/25 sm:right-6">&#8250;</button>
 			<figure class="flex max-h-full w-full max-w-5xl flex-col items-center gap-3">
 				<img data-lightbox-bild alt="" class="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain" />
@@ -140,7 +187,9 @@ const grossbilder = await Promise.all(
 		bildEl.src = eintrag.voll;
 		bildEl.alt = eintrag.alt;
 		textEl.textContent = eintrag.alt;
-		zaehlerEl.textContent = `Bild ${aktuellerIndex + 1} von ${aktuelleListe.length}`;
+		zaehlerEl.textContent = texte.bildVon
+			.replace('{i}', String(aktuellerIndex + 1))
+			.replace('{n}', String(aktuelleListe.length));
 	}
 
 	function blaettern(richtung: number) {

@@ -1,21 +1,34 @@
+import { pfad, texte, type Lang } from '../i18n/ui';
+
 export interface NavItem {
 	href: string;
 	label: string;
 }
 
-export const navItems: NavItem[] = [
-	{ href: '/restaurant', label: 'Restaurant' },
-	{ href: '/hotel', label: 'Hotel' },
-	{ href: '/feiern', label: 'Feiern' },
-	{ href: '/ueber-uns', label: 'Über uns' },
-	{ href: '/kontakt', label: 'Kontakt' },
-];
+/**
+ * Navigation je Sprache. Die Adressen kommen aus der Routen-Tabelle in
+ * `src/i18n/ui.ts` — hier steht kein englischer Slug, damit es nur EINE
+ * Stelle gibt, an der sich eine Adresse aendern laesst.
+ */
+export function navItems(sprache: Lang): NavItem[] {
+	const t = texte(sprache);
+	return [
+		{ href: pfad(sprache, '/restaurant'), label: t.nav.restaurant },
+		{ href: pfad(sprache, '/hotel'), label: t.nav.hotel },
+		{ href: pfad(sprache, '/feiern'), label: t.nav.feiern },
+		{ href: pfad(sprache, '/ueber-uns'), label: t.nav.ueberUns },
+		{ href: pfad(sprache, '/kontakt'), label: t.nav.kontakt },
+	];
+}
 
-export const footerNavItems: NavItem[] = [
-	...navItems,
-	{ href: '/presse', label: 'Presse' },
-	{ href: '/datenschutz', label: 'Datenschutz' },
-];
+export function footerNavItems(sprache: Lang): NavItem[] {
+	const t = texte(sprache);
+	return [
+		...navItems(sprache),
+		{ href: pfad(sprache, '/presse'), label: t.nav.presse },
+		{ href: pfad(sprache, '/datenschutz'), label: t.nav.datenschutz },
+	];
+}
 
 export const chefplatzUrl = 'https://www.chefplatz.de/wetteraperle';
 

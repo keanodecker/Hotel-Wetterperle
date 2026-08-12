@@ -1,0 +1,54 @@
+---
+// HINWEIS FÜR ENTWICKLER/BETREIBER: Dies ist ein improvisiertes Standard-Grundgerüst
+// und ersetzt keine rechtliche Prüfung. Vor Veröffentlichung von einem/einer
+// Datenschutzbeauftragten bzw. einer Rechtsberatung prüfen und vervollständigen lassen.
+// ⚠️ Die englische Fassung ist eine Uebersetzung desselben Grundgeruests und
+// ebenfalls nicht rechtlich geprueft — massgeblich bleibt die deutsche Fassung.
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { contact } from '../data/nav';
+import { ausUrl } from '../i18n/ui';
+
+const { t } = ausUrl(Astro.url);
+const s = t.datenschutzSeite;
+---
+
+<Layout title={s.titel} description={s.beschreibung}>
+	<PageHeader kicker={s.kicker} title={s.ueberschrift} />
+
+	<section class="mx-auto max-w-3xl space-y-10 px-6 py-20 text-sm leading-relaxed text-ink-700/90">
+		<div>
+			<h2 class="font-akzent text-xl font-semibold text-ink-900">{s.verantwortlichTitel}</h2>
+			<p class="mt-3">
+				{s.verantwortlichText}<br />
+				{contact.name}<br />
+				{contact.street}, {contact.zipCity}<br />
+				{t.kontaktSeite.email}: {contact.email} · {t.kontaktSeite.telefon}: {contact.phoneDisplay}
+			</p>
+		</div>
+
+		{s.abschnitte.map((abschnitt) => (
+			<div>
+				<h2 class="font-akzent text-xl font-semibold text-ink-900">{abschnitt.titel}</h2>
+				<p class="mt-3">{abschnitt.text}</p>
+			</div>
+		))}
+
+		<div>
+			<h2 class="font-akzent text-xl font-semibold text-ink-900">{s.mapsTitel}</h2>
+			<p class="mt-3">
+				{s.mapsText1}
+				<a href="https://policies.google.com/privacy" class="font-medium text-orange-600" target="_blank" rel="noopener noreferrer">
+					policies.google.com/privacy
+				</a>.
+			</p>
+		</div>
+
+		{s.abschnitte2.map((abschnitt) => (
+			<div>
+				<h2 class="font-akzent text-xl font-semibold text-ink-900">{abschnitt.titel}</h2>
+				<p class="mt-3">{abschnitt.text}</p>
+			</div>
+		))}
+	</section>
+</Layout>

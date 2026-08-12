@@ -3,13 +3,16 @@ import { Image } from 'astro:assets';
 import hero from '../assets/extracted/hero.jpg';
 import logoMark from '../assets/extracted/logo-mark.png';
 import { chefplatzUrl } from '../data/nav';
+import { ausUrl, pfad } from '../i18n/ui';
+
+const { sprache, t } = ausUrl(Astro.url);
 ---
 
 <section class="relative flex h-[92vh] min-h-[640px] w-full items-center justify-center overflow-hidden">
 	<div class="absolute inset-0">
 		<Image
 			src={hero}
-			alt="Luftaufnahme des Landgasthofs Wetteraperle im Grünen"
+			alt={t.hero.bildAlt}
 			class="animate-kenburns h-full w-full object-cover"
 			widths={[640, 1080, 1600, 2000]}
 			sizes="100vw"
@@ -30,7 +33,7 @@ import { chefplatzUrl } from '../data/nav';
 
 		<h1 class="animate-fade-in mt-5 flex flex-col items-center" style="animation-delay: 0.25s; opacity: 0;">
 			<span class="text-sm font-semibold uppercase tracking-[0.45em] text-cream-100/90 md:text-base">
-				Landgasthof
+				{t.hero.kicker}
 			</span>
 			<span class="mt-1 font-akzent text-4xl font-bold text-cream-50 drop-shadow-md md:text-6xl">
 				WetteraPerle
@@ -41,8 +44,7 @@ import { chefplatzUrl } from '../data/nav';
 			class="animate-fade-up mt-10 max-w-xl text-lg leading-relaxed text-cream-100/90 md:mt-12"
 			style="animation-delay: 0.6s; opacity: 0;"
 		>
-			Gemütlichkeit, Ruhe und Genuss – dafür stehen wir in der Wetteraperle und das
-			geben wir auch an unsere Gäste weiter.
+			{t.hero.claim}
 		</p>
 
 		<div
@@ -55,13 +57,13 @@ import { chefplatzUrl } from '../data/nav';
 				rel="noopener noreferrer"
 				class="inline-flex min-w-48 items-center justify-center rounded-full bg-orange-500 px-8 py-3.5 text-sm font-semibold text-cream-50 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-orange-600 hover:shadow-xl"
 			>
-				Tisch reservieren
+				{t.allgemein.tischReservieren}
 			</a>
 			<a
-				href="/hotel"
+				href={pfad(sprache, '/hotel')}
 				class="inline-flex min-w-48 items-center justify-center rounded-full border border-cream-50/50 px-8 py-3.5 text-sm font-semibold text-cream-50 transition-all duration-300 hover:-translate-y-0.5 hover:border-cream-50 hover:bg-cream-50/10"
 			>
-				Hotel buchen
+				{t.allgemein.hotelBuchen}
 			</a>
 		</div>
 	</div>

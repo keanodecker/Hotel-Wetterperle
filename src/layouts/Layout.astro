@@ -2,20 +2,29 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { ausUrl, gegenstueck, spracheAusPfad } from '../i18n/ui';
 
 interface Props {
 	title?: string;
 	description?: string;
 }
 
+const { sprache, t } = ausUrl(Astro.url);
+
 const {
 	title = 'Landgasthof Wetteraperle',
-	description = 'Landgasthof Wetteraperle in Saalburg-Ebersdorf – Restaurant, Hotelzimmer und Feiern mitten im Thüringer Schiefergebirge.',
+	description = t.start.beschreibung,
 } = Astro.props;
+
+// Verweis auf die jeweils andere Sprachfassung derselben Seite - fuer
+// Suchmaschinen (hreflang) und als Beleg, dass Umschalter und Kopfbereich
+// dieselbe Zuordnung benutzen.
+const andereFassung = gegenstueck(Astro.url.pathname);
+const andereSprache = spracheAusPfad(andereFassung);
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang={sprache}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,6 +32,8 @@ const {
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
 		<title>{title} | Landgasthof Wetteraperle</title>
+		<link rel="alternate" hreflang={andereSprache} href={andereFassung} />
+		<link rel="alternate" hreflang={sprache} href={Astro.url.pathname} />
 		<!-- Schriften werden lokal aus /public/fonts ausgeliefert (siehe global.css).
 		     KEIN Google-Fonts-CDN: der Abruf von fonts.googleapis.com uebertraegt die
 		     IP des Besuchers in die USA und ist in DE abmahnfaehig (LG Muenchen I,

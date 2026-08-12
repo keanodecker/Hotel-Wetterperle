@@ -2,6 +2,10 @@
 import { Image } from 'astro:assets';
 import { rooms } from '../data/rooms';
 import { contact } from '../data/nav';
+import { ausUrl, preis } from '../i18n/ui';
+
+const { sprache, t } = ausUrl(Astro.url);
+const zimmer = rooms(sprache);
 
 /*
  * Buchung laeuft ueber Smoobu, den Channel-Manager des Hauses (dort haengt auch
@@ -47,7 +51,7 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 <div class="rounded-3xl border border-ink-900/10 bg-white p-6 shadow-sm md:p-10" id="booking-widget">
 	{/* Zimmeruebersicht - reine Darstellung, die Auswahl trifft der Gast im Buchungssystem. */}
 	<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-		{rooms.map((room) => (
+		{zimmer.map((room) => (
 			<div class="flex flex-col overflow-hidden rounded-2xl border-2 border-ink-900/10">
 				<div class="h-36 w-full overflow-hidden">
 					<Image
@@ -66,7 +70,7 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 					<span class="font-akzent text-lg font-semibold text-ink-900">{room.name}</span>
 					{room.size && <span class="text-xs text-ink-700/60">{room.size}</span>}
 					<span class="text-sm text-ink-700/70">
-						bis {room.maxGuests} {room.maxGuests === 1 ? 'Person' : 'Personen'}
+						{room.maxGuests === 1 ? t.buchung.bisPerson : t.buchung.bisPersonen(room.maxGuests)}
 					</span>
 					<ul class="mt-1 space-y-1 text-xs text-ink-700/60">
 						{room.features.map((feature) => (
@@ -75,11 +79,12 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 					</ul>
 					{room.pricePerNight === null ? (
 						<span class="mt-2 font-akzent text-lg font-semibold text-orange-600">
-							Preis auf Anfrage
+							{t.buchung.preisAufAnfrage}
 						</span>
 					) : (
 						<span class="mt-2 font-akzent text-xl font-semibold text-orange-600">
-							ab {room.pricePerNight} €<span class="text-xs font-normal text-ink-700/60"> / Nacht</span>
+							{t.buchung.ab} {preis(sprache, room.pricePerNight)}
+							<span class="text-xs font-normal text-ink-700/60">{t.buchung.proNacht}</span>
 						</span>
 					)}
 				</div>
@@ -116,8 +121,7 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 			<noscript>
 				<div class="mt-8 rounded-2xl bg-ink-900 p-8 text-cream-50">
 					<p class="leading-relaxed text-cream-100/85">
-						Für die Online-Buchung braucht Ihr Browser JavaScript. Sie erreichen uns
-						auch direkt – wir bestätigen Ihnen Ihr Zimmer persönlich.
+						{t.buchung.ohneJs}
 					</p>
 					<div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
 						<a
@@ -139,9 +143,7 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 	) : (
 		<div class="mt-8 rounded-2xl bg-ink-900 p-8 text-cream-50">
 			<p class="leading-relaxed text-cream-100/85">
-				Ihr Zimmer buchen Sie direkt bei uns – telefonisch oder per E-Mail. Nennen Sie uns
-				Ihren Wunschzeitraum und die Anzahl der Personen, wir bestätigen Ihnen Ihr Zimmer
-				persönlich.
+				{t.buchung.direkt}
 			</p>
 			<div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
 				<a

@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PhotoGrid from '../components/PhotoGrid.astro';
+import { Image } from 'astro:assets';
+import restaurant from '../assets/gallery/restaurant/gastraum-bar.jpg';
+import gastraumUebersicht from '../assets/gallery/restaurant/gastraum-uebersicht.jpg';
+import gerichtSteak from '../assets/gallery/restaurant/gericht-steak.jpg';
+import gerichtBurrata from '../assets/gallery/restaurant/gericht-rote-bete-burrata.jpg';
+import gerichtPfifferlinge from '../assets/gallery/restaurant/gericht-pfifferlinge.jpg';
+import gerichtDessert from '../assets/gallery/restaurant/gericht-dessert-sorbet.jpg';
+import galerie4 from '../assets/gallery/restaurant/restaurant-04.jpg';
+import { openingHours } from '../data/hours';
+import { chefplatzUrl, contact } from '../data/nav';
+import { ausUrl } from '../i18n/ui';
+
+const { sprache, t } = ausUrl(Astro.url);
+const s = t.restaurantSeite;
+
+const galerie = [
+	gerichtSteak,
+	gerichtBurrata,
+	gerichtPfifferlinge,
+	gerichtDessert,
+	gastraumUebersicht,
+	galerie4,
+].map((src, i) => ({ src, alt: s.galerie[i] }));
+---
+
+<Layout title={s.titel} description={s.beschreibung}>
+	<PageHeader kicker={s.kicker} title={s.ueberschrift} description={s.einleitung} />
+
+	<section class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
+		<Image src={restaurant} alt={s.bildAlt} class="h-80 w-full rounded-3xl object-cover md:h-[26rem]" />
+		<div>
+			<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">{s.konzeptKicker}</p>
+			<h2 class="mt-3 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
+				{s.konzeptTitel}
+			</h2>
+			<p class="mt-4 leading-relaxed text-ink-700/80">
+				{s.konzept1}
+			</p>
+			<p class="mt-3 leading-relaxed text-ink-700/80">
+				{s.konzept2}
+			</p>
+			<ul class="mt-6 grid grid-cols-2 gap-3">
+				{s.schwerpunkte.map((item) => (
+					<li class="rounded-xl bg-cream-100/70 px-4 py-3 text-sm font-medium text-ink-900">{item}</li>
+				))}
+			</ul>
+		</div>
+	</section>
+
+	<section class="bg-ink-900">
+		<div class="mx-auto max-w-6xl px-6 py-20">
+			<div class="mx-auto max-w-3xl text-center">
+				<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-400">{s.haltungKicker}</p>
+				<h2 class="mt-3 font-akzent text-3xl font-semibold text-cream-50 md:text-4xl">{s.haltungTitel}</h2>
+				<p class="mt-8 font-akzent text-2xl leading-snug text-cream-50 md:text-3xl">
+					{s.haltungZitat}
+				</p>
+				<p class="mt-6 leading-relaxed text-cream-100/80">
+					{s.haltung1}
+				</p>
+				<p class="mt-4 leading-relaxed text-cream-100/80">
+					{s.haltung2}
+				</p>
+				<p class="mt-4 leading-relaxed text-cream-100/80">
+					{s.haltung3}
+				</p>
+			</div>
+
+			<div class="mx-auto mt-14 grid max-w-4xl gap-10 text-left md:grid-cols-2">
+				<div class="rounded-3xl border border-cream-50/10 bg-cream-50/5 p-8">
+					<h3 class="font-akzent text-xl font-semibold text-cream-50">
+						{s.karte1Titel}
+					</h3>
+					<p class="mt-3 text-sm leading-relaxed text-cream-100/75">
+						{s.karte1Text}
+					</p>
+				</div>
+				<div class="rounded-3xl border border-cream-50/10 bg-cream-50/5 p-8">
+					<h3 class="font-akzent text-xl font-semibold text-cream-50">{s.karte2Titel}</h3>
+					<p class="mt-3 text-sm leading-relaxed text-cream-100/75">
+						{s.karte2Text}
+					</p>
+					<p class="mt-4 font-akzent text-lg text-orange-400">
+						{s.karte2Zitat}
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-6 py-20">
+		<h2 class="mb-8 font-akzent text-2xl font-semibold text-ink-900">{s.impressionen}</h2>
+		<PhotoGrid images={galerie} />
+	</section>
+
+	<section class="bg-cream-100/60">
+		<div class="mx-auto max-w-6xl px-6 py-20 text-center">
+			<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">{s.biergartenKicker}</p>
+			<h2 class="mt-3 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
+				{s.biergartenTitel}
+			</h2>
+			<p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-700/80">
+				{s.biergartenText}
+			</p>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-4xl px-6 py-20">
+		<div class="grid gap-10 rounded-3xl border border-ink-900/10 bg-white p-10 md:grid-cols-2">
+			<div>
+				<h2 class="font-akzent text-2xl font-semibold text-ink-900">{t.allgemein.oeffnungszeiten}</h2>
+				<ul class="mt-5 space-y-2 text-sm">
+					{openingHours(sprache).map((entry) => (
+						<li class="flex justify-between gap-4">
+							<span class="font-medium text-ink-900">{entry.label}</span>
+							<span class="text-ink-700/70">{entry.ranges ? entry.ranges.join(' · ') : t.allgemein.ruhetag}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+			<div class="flex flex-col justify-between gap-6">
+				<div>
+					<h2 class="font-akzent text-2xl font-semibold text-ink-900">{s.reservierung}</h2>
+					<p class="mt-3 text-sm leading-relaxed text-ink-700/80">
+						{s.reservierungText1}
+						<a href={contact.phoneHref} class="font-semibold text-orange-600">{contact.phoneDisplay}</a>.
+					</p>
+				</div>
+				<a
+					href={chefplatzUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-block rounded-full bg-orange-500 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
+				>
+					{t.allgemein.tischReservieren}
+				</a>
+			</div>
+		</div>
+	</section>
+</Layout>

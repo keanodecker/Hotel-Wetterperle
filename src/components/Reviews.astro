@@ -1,13 +1,22 @@
 ---
 import { reviews } from '../data/reviews';
 import RatingBadge from './RatingBadge.astro';
+import { ausUrl } from '../i18n/ui';
+
+/*
+ * ⚠️ Die Bewertungstexte selbst bleiben in JEDER Sprachfassung DEUTSCH.
+ * Es sind echte, woertlich uebernommene Google-Rezensionen von Gaesten -
+ * eine Uebersetzung waere ein veraendertes Zitat. Uebersetzt werden nur die
+ * Ueberschriften und die Bedienelemente drumherum.
+ */
+const { t } = ausUrl(Astro.url);
 ---
 
 <section class="overflow-hidden bg-cream-100/60 py-24">
 	<div class="mx-auto max-w-6xl px-6 text-center">
-		<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">Das sagen unsere Gäste</p>
+		<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">{t.bewertungen.kicker}</p>
 		<h2 class="mt-3 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
-			Bewertungen aus erster Hand
+			{t.bewertungen.titel}
 		</h2>
 		<div class="mt-5 flex justify-center">
 			<RatingBadge />
@@ -46,7 +55,7 @@ import RatingBadge from './RatingBadge.astro';
 							</span>
 							<span class="text-left">
 								<span class="block text-sm font-semibold text-ink-900">{review.author}</span>
-								<span class="block text-xs text-ink-700/60">Google-Bewertung</span>
+								<span class="block text-xs text-ink-700/60">{t.allgemein.googleBewertung}</span>
 							</span>
 						</figcaption>
 					</figure>
@@ -56,7 +65,7 @@ import RatingBadge from './RatingBadge.astro';
 			<button
 				type="button"
 				data-prev
-				aria-label="Vorherige Bewertung"
+				aria-label={t.bewertungen.vorherige}
 				class="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-ink-900/10 bg-white text-ink-900 shadow-sm transition-colors hover:bg-orange-500 hover:text-cream-50 md:flex"
 			>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" aria-hidden="true">
@@ -66,7 +75,7 @@ import RatingBadge from './RatingBadge.astro';
 			<button
 				type="button"
 				data-next
-				aria-label="Nächste Bewertung"
+				aria-label={t.bewertungen.naechste}
 				class="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-ink-900/10 bg-white text-ink-900 shadow-sm transition-colors hover:bg-orange-500 hover:text-cream-50 md:flex"
 			>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" aria-hidden="true">
@@ -80,7 +89,7 @@ import RatingBadge from './RatingBadge.astro';
 				<button
 					type="button"
 					data-dot
-					aria-label={`Bewertung ${index + 1} von ${reviews.length} anzeigen`}
+					aria-label={t.bewertungen.punkt(index + 1, reviews.length)}
 					class:list={[
 						'h-2.5 rounded-full transition-all duration-300',
 						index === 0 ? 'w-8 bg-orange-500' : 'w-2.5 bg-ink-900/15 hover:bg-ink-900/30',

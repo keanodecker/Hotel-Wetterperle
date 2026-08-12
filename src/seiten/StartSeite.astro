@@ -1,0 +1,30 @@
+---
+/*
+ * Der Inhalt der Startseite. Er liegt hier und nicht in src/pages/, weil es
+ * ZWEI Adressen gibt (/ und /en/), die exakt dieselbe Seite zeigen sollen —
+ * nur in einer anderen Sprache. Die Route-Dateien unter src/pages/ sind
+ * deshalb nur noch zwei Zeilen lang und rufen diese Komponente auf.
+ * Die Sprache erkennt jede Komponente selbst an der URL (src/i18n/ui.ts).
+ */
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Values from '../components/Values.astro';
+import ServiceCards from '../components/ServiceCards.astro';
+import OpeningHours from '../components/OpeningHours.astro';
+import StoryTeaser from '../components/StoryTeaser.astro';
+import Partners from '../components/Partners.astro';
+import Reviews from '../components/Reviews.astro';
+import { ausUrl } from '../i18n/ui';
+
+const { t } = ausUrl(Astro.url);
+---
+
+<Layout title={t.start.titel} description={t.start.beschreibung}>
+	<Hero />
+	<Values />
+	<ServiceCards />
+	<OpeningHours />
+	<StoryTeaser />
+	<Partners />
+	<Reviews />
+</Layout>

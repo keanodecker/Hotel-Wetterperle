@@ -1,10 +1,13 @@
 ---
+import { ausUrl, zahl } from '../i18n/ui';
+
 interface Props {
 	class?: string;
 	dark?: boolean;
 }
 
 const { class: className = '', dark = false } = Astro.props;
+const { sprache, t } = ausUrl(Astro.url);
 ---
 
 <div
@@ -23,5 +26,5 @@ const { class: className = '', dark = false } = Astro.props;
 			</svg>
 		))}
 	</span>
-	<span>4,9 · Google-Bewertungen</span>
+	<span>{zahl(sprache, '4,9')} · {t.allgemein.googleBewertungen}</span>
 </div>

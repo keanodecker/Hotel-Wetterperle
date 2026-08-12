@@ -1,35 +1,37 @@
 ---
 import { openingHours } from '../data/hours';
 import { contact } from '../data/nav';
+import { ausUrl } from '../i18n/ui';
+
+const { sprache, t } = ausUrl(Astro.url);
 ---
 
 <section class="bg-ink-900">
 	<div class="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-2 md:items-center">
 		<div>
-			<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-400">Öffnungszeiten</p>
+			<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-400">{t.zeiten.kicker}</p>
 			<h2 class="mt-3 font-akzent text-3xl font-semibold text-cream-50 md:text-4xl">
-				Wann Sie uns besuchen können
+				{t.zeiten.titel}
 			</h2>
 			<p class="mt-4 max-w-md leading-relaxed text-cream-100/70">
-				Wir freuen uns auf Ihren Besuch im Restaurant – Reservierungen sind jederzeit
-				telefonisch oder online möglich.
+				{t.zeiten.text}
 			</p>
 			<a
 				href={contact.phoneHref}
 				class="group mt-6 inline-flex flex-col text-left leading-tight text-cream-50 transition-colors hover:text-orange-400"
 			>
-				<span class="text-xs lowercase tracking-[0.2em] text-cream-100/60 group-hover:text-orange-400">anrufen</span>
+				<span class="text-xs lowercase tracking-[0.2em] text-cream-100/60 group-hover:text-orange-400">{t.zeiten.anrufen}</span>
 				<span class="text-lg font-semibold underline decoration-orange-500/60 decoration-2 underline-offset-4">{contact.phoneDisplay}</span>
 			</a>
 		</div>
 
 		<div class="rounded-3xl bg-cream-50/5 p-8 ring-1 ring-cream-50/10">
 			<ul class="divide-y divide-cream-50/10">
-				{openingHours.map((entry) => (
+				{openingHours(sprache).map((entry) => (
 					<li class="flex items-center justify-between gap-4 py-3 text-sm">
 						<span class="font-medium text-cream-50">{entry.label}</span>
 						<span class:list={['text-right', entry.ranges ? 'text-cream-100/80' : 'text-orange-400/90']}>
-							{entry.ranges ? entry.ranges.join(' · ') : 'Ruhetag'}
+							{entry.ranges ? entry.ranges.join(' · ') : t.allgemein.ruhetag}
 						</span>
 					</li>
 				))}
