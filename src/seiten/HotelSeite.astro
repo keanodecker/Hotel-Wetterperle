@@ -3,14 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import BookingWidget from '../components/BookingWidget.astro';
 import BuchungsModal from '../components/BuchungsModal.astro';
-import PhotoGrid from '../components/PhotoGrid.astro';
 import ZimmerGalerie from '../components/ZimmerGalerie.astro';
 import { rooms } from '../data/rooms';
 import { Image } from 'astro:assets';
-import badDusche from '../assets/gallery/zimmer/bad-dusche.jpg';
-import detailHandtuecher from '../assets/gallery/zimmer/detail-handtuecher.jpg';
-import treppe from '../assets/gallery/haus/treppe-historisch.jpg';
-import gastraum from '../assets/gallery/haus/gastraum-stimmung.jpg';
 import fruehstueck1 from '../assets/gallery/fruehstueck/fruehstueck-tisch.jpg';
 import fruehstueck2 from '../assets/gallery/fruehstueck/fruehstueck-osaft.jpg';
 import { ausUrl, pfad, preis } from '../i18n/ui';
@@ -18,13 +13,6 @@ import { ausUrl, pfad, preis } from '../i18n/ui';
 const { sprache, t } = ausUrl(Astro.url);
 const s = t.hotelSeite;
 const zimmer = rooms(sprache);
-
-// Die einzelnen Zimmer haben seit dem Fotoschwung eigene Galerien (siehe unten).
-// Hier bleiben nur Motive, die zu keinem bestimmten Zimmertyp gehoeren.
-const galerie = [badDusche, detailHandtuecher, treppe, gastraum].map((src, i) => ({
-	src,
-	alt: s.galerie[i],
-}));
 ---
 
 <Layout title={s.titel} description={s.beschreibung}>
@@ -190,10 +178,6 @@ const galerie = [badDusche, detailHandtuecher, treppe, gastraum].map((src, i) =>
 		</div>
 	</section>
 
-	<section class="mx-auto max-w-6xl px-6 pb-24">
-		<h2 class="mb-8 font-akzent text-2xl font-semibold text-ink-900">{s.rundumsHaus}</h2>
-		<PhotoGrid images={galerie} />
-	</section>
 
 	{/* Der Buchungsanfrage-Dialog — geoeffnet von allen [data-buchen]-Knoepfen. */}
 	<BuchungsModal />

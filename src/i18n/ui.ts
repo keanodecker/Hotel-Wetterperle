@@ -320,7 +320,6 @@ const de = {
 		fruehstueckAlt1: 'Gedeckter Frühstückstisch mit Etagere, frischen Brötchen und Kaffee',
 		fruehstueckAlt2: 'Frisch eingeschenkter Orangensaft zum Frühstück',
 		gutZuWissen: 'Gut zu wissen',
-		rundumsHaus: 'Rund ums Haus',
 		infos: [
 			{
 				titel: 'Ankunft und Abreise',
@@ -334,12 +333,6 @@ const de = {
 				titel: 'Zahlungsmethoden',
 				text: 'Kreditkarten (Visa, MasterCard, American Express), EC- und Debitkarten sowie Bargeld.',
 			},
-		],
-		galerie: [
-			'Modernes Badezimmer mit Dusche und Waschbecken',
-			'Frische Handtücher mit süßem Willkommensgruß',
-			'Historische Holztreppe im Landgasthof',
-			'Gastraum des Landgasthofs am Abend',
 		],
 	},
 
@@ -867,7 +860,6 @@ const en: typeof de = {
 		fruehstueckAlt1: 'Laid breakfast table with a tiered stand, fresh bread rolls and coffee',
 		fruehstueckAlt2: 'Freshly poured orange juice at breakfast',
 		gutZuWissen: 'Good to know',
-		rundumsHaus: 'Around the house',
 		infos: [
 			{
 				titel: 'Arrival and departure',
@@ -881,12 +873,6 @@ const en: typeof de = {
 				titel: 'Payment methods',
 				text: 'Credit cards (Visa, MasterCard, American Express), debit and EC cards, and cash.',
 			},
-		],
-		galerie: [
-			'Modern bathroom with shower and washbasin',
-			'Fresh towels with a sweet welcome greeting',
-			'Historic wooden staircase inside the inn',
-			'The dining room of the inn in the evening',
 		],
 	},
 
