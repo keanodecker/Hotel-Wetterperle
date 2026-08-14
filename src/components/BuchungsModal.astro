@@ -13,10 +13,8 @@ import { ausUrl, pfad, preis } from '../i18n/ui';
  *    Buchung: POST /api/zimmer-buchen → Verfuegbarkeitspruefung → echte
  *    Smoobu-Reservierung zum WEBSITE-Preis (inkl. Fruehstueck +
  *    Kulturfoerderabgabe; der Server rechnet den Preis selbst, die Anzeige
- *    hier ist nur Anzeige). Felder: Zeitraum, Personen, Name, E-Mail,
- *    Telefon optional, Nachricht optional, Datenschutz — der Name ist EIN
- *    Feld wie im Anfrage-Modus (KD 14.08.2026 14:15), Vorname/Nachname fuer
- *    Smoobu trennt die Route serverseitig.
+ *    hier ist nur Anzeige). Felder: Zeitraum, Personen, Vorname, Nachname,
+ *    E-Mail, Telefon optional, Nachricht optional, Datenschutz.
  *  · Modus ANFRAGEN — Knoepfe mit `data-anfragen="<zimmer-id>"`. Unverbindliche
  *    Mail ans Haus ueber die BESTEHENDE Resend-Route /api/kontakt (Honeypot,
  *    Datenschutz-Pflicht, Rate-Limit) — wie seit dem 12.08.
@@ -204,19 +202,38 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			</div>
 
 			<div class="grid gap-4 sm:grid-cols-2">
-				{/* EIN Namensfeld "Ihr Name" fuer BEIDE Modi (KD 14.08.2026 14:15:
-				    "Bei beiden nur 'Ihr Name' bitte" — die getrennten Vorname/
-				    Nachname-Felder des Buchen-Modus sind auf diese Ansage raus).
-				    Smoobu braucht firstName/lastName trotzdem getrennt — das
-				    splittet /api/zimmer-buchen serverseitig. Das Formular steht
-				    auf `novalidate`, die Pflicht prueft das Skript. */}
-				<div>
+				{/* Anfrage-Modus: EIN Namensfeld (wie bisher). Buchen-Modus: Vorname +
+				    Nachname getrennt — Smoobu braucht beide einzeln, und beim
+				    verbindlichen Vertrag soll nichts geraten geteilt werden. Das
+				    Formular steht auf `novalidate`, die Pflicht prueft das Skript
+				    je Modus. */}
+				<div data-nur-modus="anfragen">
 					<label for="buchung-name" class="text-sm font-medium text-ink-900">{b.nameLabel}</label>
 					<input
 						type="text"
 						id="buchung-name"
 						name="name"
 						autocomplete="name"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div data-nur-modus="buchen" class="hidden">
+					<label for="buchung-vorname" class="text-sm font-medium text-ink-900">{b.vornameLabel}</label>
+					<input
+						type="text"
+						id="buchung-vorname"
+						name="vorname"
+						autocomplete="given-name"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div data-nur-modus="buchen" class="hidden">
+					<label for="buchung-nachname" class="text-sm font-medium text-ink-900">{b.nachnameLabel}</label>
+					<input
+						type="text"
+						id="buchung-nachname"
+						name="nachname"
+						autocomplete="family-name"
 						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
 					/>
 				</div>
@@ -359,6 +376,8 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 		const abreiseFeld = formular.querySelector<HTMLInputElement>('#buchung-abreise')!;
 		const personenFeld = formular.querySelector<HTMLSelectElement>('#buchung-personen')!;
 		const nameFeld = formular.querySelector<HTMLInputElement>('#buchung-name')!;
+		const vornameFeld = formular.querySelector<HTMLInputElement>('#buchung-vorname')!;
+		const nachnameFeld = formular.querySelector<HTMLInputElement>('#buchung-nachname')!;
 		const emailFeld = formular.querySelector<HTMLInputElement>('#buchung-email')!;
 		const telefonFeld = formular.querySelector<HTMLInputElement>('#buchung-telefon')!;
 		const nachrichtFeld = formular.querySelector<HTMLTextAreaElement>('#buchung-nachricht')!;
@@ -506,9 +525,12 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 		formular.addEventListener('submit', async (ereignis) => {
 			ereignis.preventDefault();
 
-			// EIN Namensfeld fuer beide Modi (KD 14.08.2026 14:15) — Vorname/
-			// Nachname fuer Smoobu trennt der Server (/api/zimmer-buchen).
-			const nameOk = Boolean(nameFeld.value.trim());
+			// Pflichtfelder je Modus: Anfrage braucht EIN Namensfeld, die
+			// verbindliche Buchung Vorname UND Nachname (Smoobu fuehrt beide).
+			const nameOk =
+				modus === 'buchen'
+					? Boolean(vornameFeld.value.trim() && nachnameFeld.value.trim())
+					: Boolean(nameFeld.value.trim());
 			const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailFeld.value.trim());
 			if (!nameOk || !emailFeld.value.trim() || !anreiseFeld.value || !abreiseFeld.value || !datenschutzFeld.checked) {
 				melde(String(texte.pflichtHinweis));
@@ -541,7 +563,8 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 				 * ihn selbst aus rooms.ts, die Anzeige hier ist nur Anzeige.
 				 */
 				ziel = '/api/zimmer-buchen';
-				daten.set('name', nameFeld.value.trim());
+				daten.set('vorname', vornameFeld.value.trim());
+				daten.set('nachname', nachnameFeld.value.trim());
 				daten.set('zimmerId', zimmerFeld.value);
 				daten.set('sprache', String(texte.sprache));
 				daten.set('nachricht', nachrichtFeld.value.trim());

@@ -254,6 +254,8 @@ const de = {
 		buchenErfolgText:
 			'Vielen Dank! Ihre Buchung ist bestätigt — bezahlt wird vor Ort. Sie erhalten eine Bestätigung per E-Mail.',
 		buchenErfolgAuswahl: 'Ihre Buchung:',
+		vornameLabel: 'Vorname *',
+		nachnameLabel: 'Nachname *',
 		modalTitel: 'Unverbindliche Anfrage',
 		modalHinweis:
 			'Unverbindlich anfragen – wir prüfen die Verfügbarkeit und bestätigen Ihnen Ihr Zimmer persönlich.',
@@ -792,6 +794,8 @@ const en: typeof de = {
 		buchenErfolgText:
 			'Thank you! Your booking is confirmed — payment is made on site. You will receive a confirmation by email.',
 		buchenErfolgAuswahl: 'Your booking:',
+		vornameLabel: 'First name *',
+		nachnameLabel: 'Last name *',
 		modalTitel: 'Non-binding enquiry',
 		modalHinweis:
 			'A non-binding request – we check availability and confirm your room personally.',
