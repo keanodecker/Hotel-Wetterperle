@@ -36,6 +36,10 @@ const { sprache, t } = ausUrl(Astro.url);
 					</li>
 				))}
 			</ul>
+			{/* KD 14.08.2026 18:04: Küchenschluss wieder als eigene Zeile, in GRAU (nicht orange) */}
+			<p class="mt-4 border-t border-cream-50/10 pt-4 text-sm text-cream-100/50">
+				{t.stunden.kuechenschluss}
+			</p>
 		</div>
 	</div>
 </section>

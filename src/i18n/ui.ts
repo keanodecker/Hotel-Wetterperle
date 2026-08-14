@@ -108,6 +108,7 @@ const de = {
 		abend: '17:00 – 22:00 Uhr',
 		mittag: '11:00 – 14:00 Uhr',
 		kurz: 'Mo, Do–Sa 17–22 Uhr · So 11–14 & 17–22 Uhr · Di/Mi Ruhetag',
+		kuechenschluss: 'Küchenschluss: 21:00 Uhr',
 	},
 
 	hero: {
@@ -176,7 +177,7 @@ const de = {
 	zeiten: {
 		kicker: 'Öffnungszeiten',
 		titel: 'Wann Sie uns besuchen können',
-		text: 'Wir freuen uns auf Ihren Besuch im Restaurant – Reservierungen sind jederzeit telefonisch oder online möglich, Küchenschluss ist um 21:00 Uhr.',
+		text: 'Wir freuen uns auf Ihren Besuch im Restaurant – Reservierungen sind jederzeit telefonisch oder online möglich.',
 		anrufen: 'anrufen',
 	},
 
@@ -724,6 +725,7 @@ const en: typeof de = {
 		abend: '5 pm – 10 pm',
 		mittag: '11 am – 2 pm',
 		kurz: 'Mon, Thu–Sat 5–10 pm · Sun 11 am–2 pm & 5–10 pm · Closed Tue/Wed',
+		kuechenschluss: 'Kitchen closes at 9 pm',
 	},
 
 	hero: {
@@ -784,7 +786,7 @@ const en: typeof de = {
 	zeiten: {
 		kicker: 'Opening hours',
 		titel: 'When you can visit us',
-		text: 'We look forward to welcoming you to the restaurant – you can reserve by phone or online at any time; the kitchen closes at 9 pm.',
+		text: 'We look forward to welcoming you to the restaurant – you can reserve by phone or online at any time.',
 		anrufen: 'call us',
 	},
 
