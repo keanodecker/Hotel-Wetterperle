@@ -105,9 +105,10 @@ const de = {
 		diMi: 'Dienstag & Mittwoch',
 		doSa: 'Donnerstag – Samstag',
 		sonntag: 'Sonntag',
-		abend: '17:00 – 23:00 Uhr',
+		abend: '17:00 – 22:00 Uhr',
 		mittag: '11:00 – 14:00 Uhr',
-		kurz: 'Mo, Do–Sa 17–23 Uhr · So 11–14 & 17–23 Uhr · Di/Mi Ruhetag',
+		kurz: 'Mo, Do–Sa 17–22 Uhr · So 11–14 & 17–22 Uhr · Di/Mi Ruhetag',
+		kuechenschluss: 'Küchenschluss: 21:00 Uhr',
 	},
 
 	hero: {
@@ -327,7 +328,7 @@ const de = {
 		fruehstueckKicker: 'Guten Morgen',
 		fruehstueckTitel: 'Frühstück',
 		fruehstueckText:
-			'Für alle unsere Übernachtungsgäste gehört auch ein hausgemachtes Frühstück dazu. Dieses wird für jeden Gast von unserem Chefkoch Frank zubereitet. Darunter finden Sie nicht nur frische Brötchen, sondern auch hausgemachte Marmeladen und Produkte aus der Umgebung. Auch unseren Honig aus eigener Bienenhaltung halten wir für Sie bereit. Wir werden die wichtigste Mahlzeit für einen guten Start in den Tag so angenehm wie möglich gestalten.',
+			'Für alle unsere Übernachtungsgäste gehört auch ein hausgemachtes Frühstück dazu. Darunter finden Sie nicht nur frische Brötchen, sondern auch hausgemachte Marmeladen und Produkte aus der Umgebung. Auch unseren Honig aus der eigenen Imkerei halten wir für Sie bereit. Wir werden die wichtigste Mahlzeit für einen guten Start in den Tag so angenehm wie möglich gestalten.',
 		fruehstueckAlt1: 'Gedeckter Frühstückstisch mit Etagere, frischen Brötchen und Kaffee',
 		fruehstueckAlt2: 'Frisch eingeschenkter Orangensaft zum Frühstück',
 		gutZuWissen: 'Gut zu wissen',
@@ -407,7 +408,7 @@ const de = {
 		mottoKicker: 'Unser Motto',
 		mottoTitel: '"Es gibt nur einen Chef und das ist der Gast"',
 		mottoText:
-			'Festsaal, Außenbereich am See, Biergarten oder Restaurant – wir finden für jeden Anlass den passenden Rahmen und planen Menü und Dekoration ganz nach Ihren Wünschen.',
+			'Festsaal, Außenbereich am See, Biergarten oder Restaurant – wir finden für jeden Anlass den passenden Rahmen und planen Menü und Dekoration ganz nach Ihren Wünschen. Damit Sie Ihren großen Tag ganz entspannt mit Familie und Freunden genießen können.',
 		anfragen: 'Event anfragen',
 		bildAlt: 'Feier im Landgasthof Wetteraperle',
 		anlaesseTitel: 'Für jeden Anlass',
@@ -491,8 +492,8 @@ const de = {
 				text: 'Einer der schönsten Aussichtspunkte Thüringens, mit Blick auf die geschwungene Saale.',
 			},
 			{
-				titel: 'Saalburg-Ebersdorf am Thüringer Meer',
-				text: 'Die Stadt am Bleilochstausee: Schlosspark Ebersdorf, Sommerrodelbahn, Kletterwald und viele weitere Ausflugstipps.',
+				titel: 'Ausflugstipps Saalburg-Ebersdorf',
+				text: 'Die Sehenswürdigkeiten der Stadt am Thüringer Meer auf einen Blick: Schlosspark Ebersdorf, Steinerne Rose, Sommerrodelbahn und Kletterwald.',
 				href: 'https://www.saalburg-ebersdorf.de/seite/593222/ausflugstipps.html',
 				bildnachweis: 'Foto: Stephan van Helden · CC BY-SA 4.0',
 			},
@@ -721,9 +722,10 @@ const en: typeof de = {
 		diMi: 'Tuesday & Wednesday',
 		doSa: 'Thursday – Saturday',
 		sonntag: 'Sunday',
-		abend: '5 pm – 11 pm',
+		abend: '5 pm – 10 pm',
 		mittag: '11 am – 2 pm',
-		kurz: 'Mon, Thu–Sat 5–11 pm · Sun 11 am–2 pm & 5–11 pm · Closed Tue/Wed',
+		kurz: 'Mon, Thu–Sat 5–10 pm · Sun 11 am–2 pm & 5–10 pm · Closed Tue/Wed',
+		kuechenschluss: 'Kitchen closes at 9 pm',
 	},
 
 	hero: {
@@ -921,7 +923,7 @@ const en: typeof de = {
 		fruehstueckKicker: 'Good morning',
 		fruehstueckTitel: 'Breakfast',
 		fruehstueckText:
-			'A home-made breakfast is part of every overnight stay with us, prepared for each guest by our head chef Frank. You will find not only fresh bread rolls, but also home-made jams and produce from the surrounding area. Our own honey, straight from our beehives, is waiting for you too. We do everything we can to make the most important meal of the day as pleasant as possible.',
+			'A home-made breakfast is part of every overnight stay with us. You will find not only fresh bread rolls, but also home-made jams and produce from the surrounding area. Honey from our own apiary is waiting for you too. We do everything we can to make the most important meal of the day as pleasant as possible.',
 		fruehstueckAlt1: 'Laid breakfast table with a tiered stand, fresh bread rolls and coffee',
 		fruehstueckAlt2: 'Freshly poured orange juice at breakfast',
 		gutZuWissen: 'Good to know',
@@ -1001,7 +1003,7 @@ const en: typeof de = {
 		mottoKicker: 'Our motto',
 		mottoTitel: '"There is only one boss, and that is the guest"',
 		mottoText:
-			'Function hall, the outdoor area by the lake, beer garden or restaurant – we find the right setting for every occasion and plan the menu and decoration entirely as you wish.',
+			'Function hall, the outdoor area by the lake, beer garden or restaurant – we find the right setting for every occasion and plan the menu and decoration entirely as you wish. So you can simply relax and enjoy your big day with family and friends.',
 		anfragen: 'Enquire about your event',
 		bildAlt: 'A celebration at the Landgasthof Wetteraperle',
 		anlaesseTitel: 'For every occasion',
@@ -1088,8 +1090,8 @@ const en: typeof de = {
 				text: 'One of the finest viewpoints in Thuringia, looking out over the winding river Saale.',
 			},
 			{
-				titel: 'Saalburg-Ebersdorf on the “Thuringian Sea”',
-				text: 'The town on the Bleiloch reservoir: Ebersdorf palace park, summer toboggan run, climbing forest and many more day-trip tips.',
+				titel: 'Day-trip tips: Saalburg-Ebersdorf',
+				text: 'The sights of the town on the “Thuringian Sea” at a glance: Ebersdorf palace park, the Stone Rose, summer toboggan run and climbing forest.',
 				href: 'https://www.saalburg-ebersdorf.de/seite/593222/ausflugstipps.html',
 				bildnachweis: 'Photo: Stephan van Helden · CC BY-SA 4.0',
 			},
