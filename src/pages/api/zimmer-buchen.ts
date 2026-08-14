@@ -25,10 +25,62 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { contact } from '../../data/nav';
 import { rooms } from '../../data/rooms';
 import { ZIMMER_ZU_SMOOBU, legeBuchungAn, pruefeVerfuegbarkeit, smoobuKonfiguriert } from '../../lib/smoobu';
 
 const MAX = { name: 120, email: 200, telefon: 60, nachricht: 2000 };
+const RESEND_URL = 'https://api.resend.com/emails';
+const MAIL_ZEITLIMIT_MS = 10_000;
+
+/**
+ * Wie in /api/kontakt: Werte zur LAUFZEIT aus process.env (SSR-Adapter),
+ * import.meta.env nur als Rueckfall fuer lokales `astro dev`.
+ */
+function env(name: string) {
+  return process.env[name] ?? (import.meta.env as Record<string, string | undefined>)[name];
+}
+
+/** Resend-Zugang — dieselben Variablen wie das Kontaktformular. Fehlt etwas → kein Versand (die Buchung bleibt davon unberuehrt). */
+function mailKonfiguration() {
+  const key = env('RESEND_API_KEY');
+  const empfaenger = env('KONTAKT_EMPFAENGER');
+  if (!key || !empfaenger) return null;
+  return {
+    key,
+    empfaenger,
+    absender: env('KONTAKT_ABSENDER') || 'formular@wetteraperle.de',
+  };
+}
+
+/** Ein Send ueber die Resend-HTTP-API. Wirft bei HTTP-Fehler — der Aufrufer entscheidet, was das bedeutet. */
+async function sendeMail(key: string, mail: { von: string; an: string; replyTo: string; betreff: string; text: string }) {
+  const res = await fetch(RESEND_URL, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: `Landgasthof Wetteraperle <${mail.von}>`,
+      to: [mail.an],
+      // ⚠️ snake_case! `replyTo` ignoriert die REST-API stillschweigend (Lehre aus /api/kontakt).
+      reply_to: mail.replyTo,
+      subject: mail.betreff,
+      text: mail.text,
+    }),
+    signal: AbortSignal.timeout(MAIL_ZEITLIMIT_MS),
+  });
+  if (!res.ok) {
+    const grund = await res.text().catch(() => '');
+    throw new Error(`Resend ${res.status}: ${grund.slice(0, 300)}`);
+  }
+  const ergebnis = (await res.json().catch(() => ({}))) as { id?: string };
+  return ergebnis.id;
+}
+
+/** ISO-Datum (2026-08-14) fuer Mailtexte als 14.08.2026. */
+function lesbaresDatum(wert: string) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(wert);
+  return m ? `${m[3]}.${m[2]}.${m[1]}` : wert;
+}
 
 function antwort(ok: boolean, meldung: string, status = ok ? 200 : 400, extra: object = {}) {
   return new Response(JSON.stringify({ ok, meldung, ...extra }), {
@@ -43,21 +95,6 @@ function sauber(wert: FormDataEntryValue | null, grenze: number) {
 
 /** yyyy-mm-dd, wie das <input type="date"> es liefert. Alles andere wird abgelehnt. */
 const ISO_DATUM = /^\d{4}-\d{2}-\d{2}$/;
-
-/*
- * Das Formular hat EIN Feld "Ihr Name" (KD 14.08.2026 14:15: "Bei beiden nur
- * 'Ihr Name' bitte") — Smoobus API fuehrt firstName und lastName aber getrennt.
- * Aufteilung: erstes Wort = Vorname, REST = Nachname ("Frank van der Berg" →
- * "Frank" / "van der Berg"). Bei nur EINEM Wort steht das Wort in BEIDEN
- * Feldern: nichts wird erfunden (der Gast hat genau das getippt), und ein
- * moeglicherweise pflichtiges firstName bleibt gefuellt — lastName ist das
- * Feld, ueber das Frank die Buchung in Smoobu wiederfindet.
- */
-function nameTeilen(voll: string) {
-  const teile = voll.split(/\s+/).filter(Boolean);
-  if (teile.length < 2) return { vorname: voll, nachname: voll };
-  return { vorname: teile[0], nachname: teile.slice(1).join(' ') };
-}
 
 /** Notbremse wie im Kontaktformular: pro IP hoechstens 5 Versuche in 10 Minuten. */
 const takt = new Map<string, number[]>();
@@ -100,7 +137,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   // Honeypot wie im Kontaktformular: gefuellt = Bot. Erfolg melden, nichts buchen.
   if (sauber(daten.get('website'), 100)) return antwort(true, 'Vielen Dank.');
 
-  const name = sauber(daten.get('name'), MAX.name);
+  const vorname = sauber(daten.get('vorname'), MAX.name);
+  const nachname = sauber(daten.get('nachname'), MAX.name);
   const email = sauber(daten.get('email'), MAX.email);
   const telefon = sauber(daten.get('telefon'), MAX.telefon);
   const anreise = sauber(daten.get('anreise'), 20);
@@ -109,8 +147,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const personen = Number(sauber(daten.get('personen'), 10) || '0');
   const nachricht = sauber(daten.get('nachricht'), MAX.nachricht);
 
-  if (!name || !email) {
-    return antwort(false, txt('Bitte geben Sie Ihren Namen und Ihre E-Mail-Adresse an.', 'Please fill in your name and email address.'));
+  if (!vorname || !nachname || !email) {
+    return antwort(false, txt('Bitte geben Sie Vorname, Nachname und E-Mail-Adresse an.', 'Please fill in your first name, last name and email address.'));
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return antwort(false, txt('Diese E-Mail-Adresse sieht nicht gültig aus.', 'This email address does not look valid.'));
@@ -211,7 +249,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   // 2. Buchen. Ab hier ist der Zeitraum blockiert — auch auf Booking.com.
-  const { vorname, nachname } = nameTeilen(name);
   let buchungsId: number | undefined;
   try {
     buchungsId = await legeBuchungAn({
@@ -246,6 +283,132 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   console.log(`[buchung] angelegt: Smoobu-ID ${buchungsId ?? 'unbekannt'}, Einheit ${apartmentId}, ${anreise} bis ${abreise}, ${gesamt} € (${aufschluesselung})`);
+
+  /*
+   * BUCHUNGSBESTAETIGUNG per Resend (KD 14.08.2026 14:30). Anlass: Bei beiden
+   * Testbuchungen kam beim Gast KEINE Mail an — Smoobu verschickt aktuell
+   * keine Bestaetigungen. Also schicken WIR: eine Bestaetigung an den Gast
+   * (in der Seitensprache, reply_to = info@wetteraperle.de, Antworten landen
+   * bei Frank) und eine Kopie an Frank (immer deutsch, reply_to = Gast).
+   * Gleiches Resend-Muster wie /api/kontakt.
+   *
+   * 🔴 FAIL-OPEN — bewusst anders als das fail-closed des Kontaktformulars:
+   * Die Buchung STEHT zu diesem Zeitpunkt bereits in Smoobu. Scheitert der
+   * Mailversand, bleibt sie erfolgreich und die Erfolgsantwort geht raus;
+   * der Fehler landet nur im Log. Jeder der beiden Sends ist einzeln
+   * abgesichert, damit die Frank-Kopie nicht an einer kaputten Gast-Adresse
+   * haengt (und umgekehrt).
+   */
+  const mail = mailKonfiguration();
+  if (!mail) {
+    console.error('[buchung] RESEND_API_KEY oder KONTAKT_EMPFAENGER fehlt — Buchung ok, aber KEINE Bestätigungsmail verschickt.');
+  } else {
+    const zimmerNameGast =
+      sprache === 'en' ? (rooms('en').find((r) => r.id === zimmerId)?.name ?? zimmer.name) : zimmer.name;
+    const anTag = lesbaresDatum(anreise);
+    const abTag = lesbaresDatum(abreise);
+    const aufschluesselungEn =
+      zusatz > 0
+        ? `${naechte} × (€${zimmer.pricePerNight} + ${zusatz} × €${zimmer.aufpreisProPerson})`
+        : `${naechte} × €${proNacht}`;
+
+    const gastBetreff =
+      sprache === 'en'
+        ? `Booking confirmation Landgasthof Wetteraperle: ${zimmerNameGast}, ${anTag}–${abTag}`
+        : `Buchungsbestätigung Landgasthof Wetteraperle: ${zimmerNameGast}, ${anTag}–${abTag}`;
+
+    // KDs Storno-Regel woertlich hinterlegt: "Storno ist bis ein Tag davor gültig."
+    const gastText =
+      sprache === 'en'
+        ? [
+            `Dear ${vorname} ${nachname},`,
+            '',
+            'Thank you for booking with Landgasthof Wetteraperle — we are happy to confirm your reservation:',
+            '',
+            `Room: ${zimmerNameGast}`,
+            `Arrival: ${anTag}`,
+            `Departure: ${abTag}`,
+            `Guests: ${personen}`,
+            `Total: €${gesamt} incl. breakfast & city tax (${aufschluesselungEn})`,
+            '',
+            'Payment is made on site. Free cancellation until one day before arrival — just give us a call or write to us.',
+            '',
+            'We look forward to welcoming you!',
+            '',
+            'Warm regards',
+            'Frank & Nadine Gröters',
+            contact.name,
+            `${contact.street}, ${contact.zipCity}`,
+            `Phone: ${contact.phoneDisplay}`,
+            contact.email,
+          ].join('\n')
+        : [
+            `Guten Tag ${vorname} ${nachname},`,
+            '',
+            'vielen Dank für Ihre Buchung im Landgasthof Wetteraperle — hiermit bestätigen wir Ihnen Ihre Reservierung:',
+            '',
+            `Zimmer: ${zimmerNameGast}`,
+            `Anreise: ${anTag}`,
+            `Abreise: ${abTag}`,
+            `Personen: ${personen}`,
+            `Gesamtpreis: ${gesamt} € inkl. Frühstück & Kulturförderabgabe (${aufschluesselung})`,
+            '',
+            'Bezahlt wird bequem vor Ort. Kostenlose Stornierung bis einen Tag vor Anreise — rufen Sie uns dafür einfach an oder schreiben Sie uns.',
+            '',
+            'Wir freuen uns auf Ihren Besuch!',
+            '',
+            'Herzliche Grüße',
+            'Frank & Nadine Gröters',
+            contact.name,
+            `${contact.street}, ${contact.zipCity}`,
+            `Telefon: ${contact.phoneDisplay}`,
+            contact.email,
+          ].join('\n');
+
+    try {
+      const id = await sendeMail(mail.key, {
+        von: mail.absender,
+        an: email,
+        replyTo: mail.empfaenger,
+        betreff: gastBetreff,
+        text: gastText,
+      });
+      console.log(`[buchung] Bestätigung an Gast verschickt, Resend-ID ${id ?? 'unbekannt'}`);
+    } catch (fehler) {
+      console.error('[buchung] Gast-Bestätigung fehlgeschlagen:', fehler instanceof Error ? fehler.message : 'unbekannt');
+    }
+
+    // Kopie an Frank — immer deutsch, mit allem, was er zum Gast wissen muss.
+    const frankText = [
+      `Neue verbindliche Buchung über das Buchungsformular der Website (Smoobu-ID ${buchungsId ?? 'unbekannt'}):`,
+      '',
+      `Zimmer: ${zimmer.name}`,
+      `Anreise: ${anTag}`,
+      `Abreise: ${abTag}`,
+      `Personen: ${personen}`,
+      `Gesamtpreis: ${gesamt} € inkl. Frühstück & Kulturförderabgabe (${aufschluesselung})`,
+      '',
+      `Gast: ${vorname} ${nachname}`,
+      `E-Mail: ${email}`,
+      telefon ? `Telefon: ${telefon}` : 'Telefon: nicht angegeben',
+      nachricht ? `Nachricht des Gastes:\n${nachricht}` : 'Keine Nachricht des Gastes.',
+      '',
+      'Der Gast hat soeben eine Bestätigungsmail mit den Storno-Bedingungen (kostenlos bis einen Tag vor Anreise) erhalten.',
+    ].join('\n');
+
+    try {
+      const id = await sendeMail(mail.key, {
+        von: mail.absender,
+        an: mail.empfaenger,
+        replyTo: email,
+        betreff: `Neue Buchung über die Website: ${zimmer.name}, ${anTag}–${abTag}`,
+        text: frankText,
+      });
+      console.log(`[buchung] Kopie an ${mail.empfaenger} verschickt, Resend-ID ${id ?? 'unbekannt'}`);
+    } catch (fehler) {
+      console.error('[buchung] Frank-Kopie fehlgeschlagen:', fehler instanceof Error ? fehler.message : 'unbekannt');
+    }
+  }
 
   return antwort(
     true,
