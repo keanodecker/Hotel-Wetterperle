@@ -96,11 +96,7 @@ const heute = new Date().toISOString().slice(0, 10);
 					</div>
 					<div>
 						<label for="betreff" class="text-sm font-medium text-ink-900">{s.anliegen}</label>
-						<select
-							id="betreff"
-							name="betreff"
-							class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
-						>
+						<select id="betreff" name="betreff" class="feld-select mt-1">
 							{s.anliegenOptionen.map((option) => (
 								<option>{option}</option>
 							))}
@@ -147,11 +143,7 @@ const heute = new Date().toISOString().slice(0, 10);
 							{/* Wert = DEUTSCHER Zimmername (Mail ans Haus), Anzeige in Seitensprache. */}
 							<div>
 								<label for="zimmer" class="text-sm font-medium text-ink-900">{s.zimmerart}</label>
-								<select
-									id="zimmer"
-									name="zimmer"
-									class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
-								>
+								<select id="zimmer" name="zimmer" class="feld-select mt-1">
 									<option value="">{s.zimmerartEgal}</option>
 									{zimmerAuswahl.map((zimmer) => (
 										<option value={zimmer.nameDe}>{zimmer.name}</option>
@@ -204,7 +196,7 @@ const heute = new Date().toISOString().slice(0, 10);
 							name="datenschutz"
 							value="ja"
 							required
-							class="mt-0.5 shrink-0 accent-orange-500"
+							class="feld-checkbox mt-0.5"
 						/>
 						<span>
 							{s.einwilligung1} <a href={pfad(sprache, '/datenschutz')} class="underline hover:text-orange-600"
