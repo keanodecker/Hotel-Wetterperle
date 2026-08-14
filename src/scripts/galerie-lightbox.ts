@@ -19,6 +19,8 @@
  * KEINE Abhaengigkeit — bewusst von Hand, wie der Rest der Seite.
  */
 
+import { beiHorizontalemSwipe } from './swipe';
+
 interface Eintrag {
 	voll: string;
 	alt: string;
@@ -106,32 +108,11 @@ function baueDialog() {
 		vorherFokus?.focus();
 	});
 
-	/*
-	 * Touch-/Maus-Swipe (KD 14.08.2026: "ganz schön durch swipen"): Pointer
-	 * Events decken Finger UND Maus ab. `touch-pan-y` an der figure laesst
-	 * vertikales Scrollen dem Browser und gibt uns die horizontale Geste.
-	 * Schwelle 40 px, und horizontal muss dominieren — sonst blaettert ein
-	 * schraeger Scroll-Wisch versehentlich.
-	 */
+	// Touch-/Maus-Swipe (KD 14.08.2026: "ganz schön durch swipen") — gemeinsame
+	// Logik aus swipe.ts, hier bewusst OHNE nurTouch: auf dem Bild kollidiert
+	// ein Maus-Drag mit nichts, also darf auch die Maus wischen.
 	const flaeche = dialog.querySelector<HTMLElement>('[data-swipe-flaeche]');
-	let startX = 0;
-	let startY = 0;
-	let wischt = false;
-	flaeche?.addEventListener('pointerdown', (event) => {
-		wischt = true;
-		startX = event.clientX;
-		startY = event.clientY;
-	});
-	flaeche?.addEventListener('pointerup', (event) => {
-		if (!wischt) return;
-		wischt = false;
-		const dx = event.clientX - startX;
-		const dy = event.clientY - startY;
-		if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) blaettern(dx < 0 ? 1 : -1);
-	});
-	flaeche?.addEventListener('pointercancel', () => {
-		wischt = false;
-	});
+	if (flaeche) beiHorizontalemSwipe(flaeche, blaettern);
 }
 
 /** Nachbarbild in den Browser-Cache holen — dann fuehlt sich Swipen sofort an. */

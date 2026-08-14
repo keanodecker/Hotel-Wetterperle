@@ -30,7 +30,9 @@ const { t } = ausUrl(Astro.url);
 				aria-hidden="true"
 			>„</span>
 
-			<div id="review-viewport" class="relative overflow-hidden" aria-live="polite">
+			{/* touch-pan-y: vertikales Scrollen bleibt beim Browser, horizontales
+			    Wischen blaettert die Bewertungen (KD 14.08.2026 12:35). */}
+			<div id="review-viewport" class="relative touch-pan-y overflow-hidden" aria-live="polite">
 				{reviews.map((review, index) => (
 					<figure
 						data-slide
@@ -101,9 +103,15 @@ const { t } = ausUrl(Astro.url);
 </section>
 
 <script>
-	const slider = document.getElementById('review-slider');
+	import { beiHorizontalemSwipe } from '../scripts/swipe';
 
-	if (slider) {
+	const sliderEl = document.getElementById('review-slider');
+
+	if (sliderEl) {
+		// Explizit als HTMLElement gebunden: das Narrowing aus dem if oben kam
+		// in den Funktionen unten (measure/show sind Closures) nicht an —
+		// daher stammten die neun "slider is possibly null"-Typfehler.
+		const slider: HTMLElement = sliderEl;
 		const viewport = document.getElementById('review-viewport')!;
 		const slides = [...slider.querySelectorAll<HTMLElement>('[data-slide]')];
 		const dots = [...slider.querySelectorAll<HTMLElement>('[data-dot]')];
@@ -226,6 +234,18 @@ const { t } = ausUrl(Astro.url);
 		slider.addEventListener('mouseleave', start);
 		slider.addEventListener('focusin', stop);
 		slider.addEventListener('focusout', start);
+
+		// Wischen blaettert die Bewertungen (KD 14.08.2026) — NUR Touch: mit der
+		// Maus wuerde die Geste mit dem Markieren des Bewertungstextes
+		// kollidieren. Gemeinsame Logik aus swipe.ts (wie die Galerie-Lightbox).
+		beiHorizontalemSwipe(
+			viewport,
+			(richtung) => {
+				show(current + richtung);
+				start();
+			},
+			{ nurTouch: true },
+		);
 
 		measure();
 		// Webfonts ändern die Textmaße — nach dem Laden einmal neu vermessen.
