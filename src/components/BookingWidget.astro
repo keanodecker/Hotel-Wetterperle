@@ -91,6 +91,13 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 								<span class="text-xs font-normal text-ink-700/60">{t.buchung.proNacht}</span>
 							</span>
 						)}
+						{/* Personen-Staffel (Familienzimmer/-Suite): Basispreis gilt fuer
+						    2 Personen, jede weitere +15 €/Nacht (KD 14.08.2026 10:46). */}
+						{room.basisPersonen != null && room.aufpreisProPerson != null && (
+							<span class="mt-0.5 block text-xs text-ink-700/60">
+								{t.buchung.staffelHinweis(room.basisPersonen, room.aufpreisProPerson)}
+							</span>
+						)}
 						{/* Fruehstueck ist bei jeder Anfrage/Buchung ueber die WEBSITE
 						    inklusive (nicht auf Booking.com) — deshalb deutlich beim
 						    Preis, nicht nur als Listenpunkt (KD 14.08.2026). */}

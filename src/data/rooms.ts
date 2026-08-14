@@ -57,9 +57,14 @@ export interface RoomImage {
 export interface Room {
 	id: string;
 	name: string;
-	/** null = Preis auf Anfrage (noch nicht festgelegt). */
+	/** null = Preis auf Anfrage (noch nicht festgelegt). Bei einer Personen-Staffel
+	 *  ist das der BASISPREIS fuer `basisPersonen` Gaeste. */
 	pricePerNight: number | null;
 	maxGuests: number;
+	/** Personen-Staffel (Familienzimmer/-Suite): Preis gilt fuer diese Personenzahl … */
+	basisPersonen?: number;
+	/** … und jede weitere Person kostet diesen Aufpreis pro Nacht. */
+	aufpreisProPerson?: number;
 	size: string | null;
 	features: string[];
 	/** Kurztext ueber der Galerie auf der Hotelseite. */
@@ -75,6 +80,8 @@ interface RoomQuelle {
 	name: Sprachig<string>;
 	pricePerNight: number | null;
 	maxGuests: number;
+	basisPersonen?: number;
+	aufpreisProPerson?: number;
 	size: string | null;
 	features: Sprachig<string[]>;
 	description: Sprachig<string>;
@@ -82,15 +89,19 @@ interface RoomQuelle {
 }
 
 /*
- * Preise: identisch mit Smoobu/Booking.com (KD-Entscheidung 12.08.2026 22:48
- * "gleiche Preise wie Booking"; Smoobu-Werte am 14.08.2026 live per API
- * ausgelesen: 77 / 85-95 / 85 / 120 / 130). Anzeige bleibt "ab X €".
+ * Website-Preise: KD-Ansage 14.08.2026 10:46, inkl. Fruehstueck +
+ * Kulturfoerderabgabe — damit NICHT mehr identisch mit Smoobu/Booking
+ * (die dortigen Werte sind netto ohne diese Bestandteile; die aeltere
+ * Ansage "gleiche Preise wie Booking" vom 12.08. ist ueberholt).
+ * Familienzimmer und Familien-Suite gelten fuer 2 Personen, jede weitere
+ * Person kostet +15 €/Nacht (basisPersonen/aufpreisProPerson unten).
+ * Anzeige bleibt "ab X €".
  */
 const quelle: RoomQuelle[] = [
 	{
 		id: 'einzelzimmer',
 		name: { de: 'Einzelzimmer', en: 'Single room' },
-		pricePerNight: 77,
+		pricePerNight: 78,
 		maxGuests: 1,
 		size: null,
 		features: {
@@ -149,7 +160,7 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'doppelzimmer',
 		name: { de: 'Doppelzimmer', en: 'Double room' },
-		pricePerNight: 85,
+		pricePerNight: 111,
 		maxGuests: 2,
 		size: null,
 		features: {
@@ -220,7 +231,7 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'doppelzimmer-klein',
 		name: { de: 'Kleines Doppelzimmer', en: 'Small double room' },
-		pricePerNight: 85,
+		pricePerNight: 101,
 		maxGuests: 2,
 		size: null,
 		features: {
@@ -286,8 +297,10 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'familienzimmer',
 		name: { de: 'Familienzimmer', en: 'Family room' },
-		pricePerNight: 120,
+		pricePerNight: 136,
 		maxGuests: 4,
+		basisPersonen: 2,
+		aufpreisProPerson: 15,
 		size: '40 m²',
 		features: {
 			de: [
@@ -352,8 +365,10 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'familien-suite',
 		name: { de: 'Familien-Suite', en: 'Family suite' },
-		pricePerNight: 130,
+		pricePerNight: 146,
 		maxGuests: 5,
+		basisPersonen: 2,
+		aufpreisProPerson: 15,
 		size: '40 m²',
 		features: {
 			de: [
@@ -442,6 +457,8 @@ export function rooms(sprache: Lang): Room[] {
 		name: z.name[sprache],
 		pricePerNight: z.pricePerNight,
 		maxGuests: z.maxGuests,
+		basisPersonen: z.basisPersonen,
+		aufpreisProPerson: z.aufpreisProPerson,
 		size: z.size,
 		features: z.features[sprache],
 		description: z.description[sprache],

@@ -98,10 +98,18 @@ const galerie = [badDusche, detailHandtuecher, treppe, gastraum].map((src, i) =>
 											: `· ${t.buchung.ab} ${preis(sprache, room.pricePerNight)}${t.buchung.proNacht}`}
 									</span>
 									{/* Nur auf der Website inklusive (nicht auf Booking.com) —
-									    deshalb deutlich als Badge beim Preis (KD 14.08.2026). */}
+									    deshalb deutlich als Badge beim Preis; in der Detailzeile
+									    die Langform mit Kulturfoerderabgabe (KD 14.08.2026 10:46). */}
 									<span class="rounded-full bg-green-600/10 px-2.5 py-1 text-xs font-semibold text-green-700">
-										{t.buchung.fruehstueckInklusive}
+										{t.buchung.fruehstueckKultur}
 									</span>
+									{/* Personen-Staffel: Basispreis fuer 2 Personen, jede weitere
+									    +15 €/Nacht (nur Familienzimmer und Familien-Suite). */}
+									{room.basisPersonen != null && room.aufpreisProPerson != null && (
+										<span class="text-xs text-ink-700/60">
+											{t.buchung.staffelHinweis(room.basisPersonen, room.aufpreisProPerson)}
+										</span>
+									)}
 								</div>
 
 								<p class="mt-5 leading-relaxed text-ink-700/80">{room.description}</p>

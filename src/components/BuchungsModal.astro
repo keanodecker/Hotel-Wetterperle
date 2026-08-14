@@ -33,7 +33,22 @@ const zimmerDe = rooms('de');
 const zimmerDaten = Object.fromEntries(
 	zimmer.map((z, i) => [
 		z.id,
-		{ name: z.name, nameDe: zimmerDe[i].name, preis: z.pricePerNight, maxGuests: z.maxGuests },
+		{
+			name: z.name,
+			nameDe: zimmerDe[i].name,
+			preis: z.pricePerNight,
+			maxGuests: z.maxGuests,
+			// Personen-Staffel (Familienzimmer/-Suite, KD 14.08.2026 10:46):
+			// `preis` gilt fuer `basis` Personen, jede weitere kostet `aufpreis`/Nacht.
+			// `staffelText` kommt fertig uebersetzt mit, weil das Browser-Skript
+			// die i18n-Funktionen nicht kennt.
+			basis: z.basisPersonen ?? null,
+			aufpreis: z.aufpreisProPerson ?? null,
+			staffelText:
+				z.basisPersonen != null && z.aufpreisProPerson != null
+					? b.staffelHinweis(z.basisPersonen, z.aufpreisProPerson)
+					: null,
+		},
 	])
 );
 
@@ -160,11 +175,13 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 					</select>
 				</div>
 				{/* Naechte x Preis, live gerechnet — beim Zimmer ohne Preis steht hier
-				    "Preis auf Anfrage". Darueber der Fruehstuecks-Badge: auf der Website
-				    ist das Fruehstueck IMMER inklusive (KD 14.08.2026). */}
+				    "Preis auf Anfrage". Darueber der Badge: auf der Website sind
+				    Fruehstueck UND Kulturfoerderabgabe im Preis drin (KD 14.08.2026).
+				    Darunter der Staffel-Hinweis, nur bei Zimmern mit Personen-Staffel
+				    (das Skript fuellt und zeigt ihn je gewaehltem Zimmer). */}
 				<div class="flex flex-col justify-end gap-1.5">
 					<span class="w-fit rounded-full bg-green-600/10 px-2.5 py-1 text-xs font-semibold text-green-700">
-						{b.fruehstueckInklusive}
+						{b.fruehstueckKultur}
 					</span>
 					<p
 						class="w-full rounded-lg bg-cream-100/80 px-4 py-2.5 text-sm font-semibold text-ink-900"
@@ -172,6 +189,7 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 						aria-live="polite"
 					>
 					</p>
+					<p class="hidden text-xs text-ink-700/60" data-buchung-staffel></p>
 				</div>
 			</div>
 
@@ -290,7 +308,15 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 	if (dialog) {
 		const zimmerDaten = JSON.parse(dialog.dataset.zimmer ?? '{}') as Record<
 			string,
-			{ name: string; nameDe: string; preis: number | null; maxGuests: number }
+			{
+				name: string;
+				nameDe: string;
+				preis: number | null;
+				maxGuests: number;
+				basis: number | null;
+				aufpreis: number | null;
+				staffelText: string | null;
+			}
 		>;
 		const texte = JSON.parse(dialog.dataset.texte ?? '{}') as Record<string, string | boolean>;
 
@@ -300,6 +326,7 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 		const status = dialog.querySelector<HTMLElement>('[data-buchung-status]')!;
 		const zimmerName = dialog.querySelector<HTMLElement>('[data-buchung-zimmername]')!;
 		const summe = dialog.querySelector<HTMLElement>('[data-buchung-summe]')!;
+		const staffel = dialog.querySelector<HTMLElement>('[data-buchung-staffel]')!;
 		const bilder = dialog.querySelectorAll<HTMLElement>('[data-buchung-bild]');
 
 		const zimmerFeld = formular.querySelector<HTMLSelectElement>('#buchung-zimmer')!;
@@ -349,13 +376,34 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			});
 			if (geklemmt) personenFeld.value = String(z.maxGuests);
 
+			// Personen-Staffel (Familienzimmer/-Suite): der Basispreis gilt fuer
+			// z.basis Personen, jede weitere kostet z.aufpreis pro Nacht — erst
+			// NACH dem Klemmen rechnen, damit der geklemmte Wert zaehlt.
+			const extra =
+				z.basis != null && z.aufpreis != null
+					? Math.max(0, Number(personenFeld.value) - z.basis)
+					: 0;
+			staffel.textContent = z.staffelText ?? '';
+			staffel.classList.toggle('hidden', !z.staffelText);
+
 			const n = naechte();
 			if (z.preis === null) {
 				summe.textContent = String(texte.preisAufAnfrage);
-			} else if (n > 0) {
-				summe.textContent = `${n} ${n === 1 ? texte.nacht : texte.naechte} × ${geld(z.preis)} = ${geld(n * z.preis)} ${texte.gesamt}`;
 			} else {
-				summe.textContent = `${texte.ab} ${geld(z.preis)}${texte.proNacht}`;
+				const proNacht = z.preis + extra * (z.aufpreis ?? 0);
+				// Sobald Zusatzpersonen zahlen, steht die Rechnung sichtbar da:
+				// "136 € + 2 × 15 € = 166 € / Nacht" (KD 14.08.2026).
+				const zerlegung =
+					extra > 0
+						? `${geld(z.preis)} + ${extra} × ${geld(z.aufpreis!)} = ${geld(proNacht)}${texte.proNacht}`
+						: null;
+				if (n > 0) {
+					summe.textContent = zerlegung
+						? `${zerlegung} · ${n} ${n === 1 ? texte.nacht : texte.naechte} = ${geld(n * proNacht)} ${texte.gesamt}`
+						: `${n} ${n === 1 ? texte.nacht : texte.naechte} × ${geld(proNacht)} = ${geld(n * proNacht)} ${texte.gesamt}`;
+				} else {
+					summe.textContent = zerlegung ?? `${texte.ab} ${geld(z.preis)}${texte.proNacht}`;
+				}
 			}
 		}
 
@@ -433,11 +481,20 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			// Personen und Telefon gehen als strukturierte Felder mit: /api/kontakt
 			// baut daraus den Aufenthaltsblock und den Betreff
 			// "Anfrage für Zimmer <name>" (gleicher Weg wie das Kontaktformular).
+			// Personen-Staffel auch in der Mail ans Haus aufschluesseln — Frank
+			// sieht sofort, wie der Betrag zustande kommt (deutsch, s. oben).
+			const extra =
+				z.basis != null && z.aufpreis != null
+					? Math.max(0, Number(personenFeld.value) - z.basis)
+					: 0;
+			const proNacht = z.preis === null ? null : z.preis + extra * (z.aufpreis ?? 0);
 			const nachrichtTeile = [
 				nachrichtFeld.value.trim(),
-				z.preis === null
+				proNacht === null
 					? 'Preis: auf Anfrage (Website nennt keinen Preis)'
-					: `Preis laut Website: ${n} × ${z.preis} € = ${n * z.preis} € (inkl. Frühstück)`,
+					: extra > 0
+						? `Preis laut Website: ${n} × (${z.preis} € + ${extra} × ${z.aufpreis} €) = ${n * proNacht} € (inkl. Frühstück & Kulturförderabgabe)`
+						: `Preis laut Website: ${n} × ${proNacht} € = ${n * proNacht} € (inkl. Frühstück & Kulturförderabgabe)`,
 			].filter(Boolean);
 
 			const daten = new FormData();

@@ -223,8 +223,15 @@ const de = {
 
 		// Nur auf der WEBSITE (nicht auf Booking.com) ist das Fruehstueck bei
 		// jeder Anfrage/Buchung inklusive — deshalb der auffaellige Badge direkt
-		// beim Preis (KD 14.08.2026).
+		// beim Preis (KD 14.08.2026). Kurzform fuer die engen Grid-Karten,
+		// Langform (inkl. Kulturfoerderabgabe, KD 14.08.2026 10:46) fuer
+		// Zimmer-Detailzeile und Anfrage-Dialog.
 		fruehstueckInklusive: 'inkl. Frühstück',
+		fruehstueckKultur: 'inkl. Frühstück & Kulturförderabgabe',
+		// Personen-Staffel von Familienzimmer und Familien-Suite (rooms.ts:
+		// basisPersonen/aufpreisProPerson) — steht ueberall neben dem Preis.
+		staffelHinweis: (basis: number, aufpreis: number) =>
+			`für ${basis} Personen, jede weitere +${aufpreis} €/Nacht`,
 
 		// Buchungsanfrage-Dialog (12.08.2026): Zimmer waehlen → Daten → Anfrage
 		// geht als Mail ans Haus (Route /api/kontakt, Resend). Keine
@@ -765,6 +772,9 @@ const en: typeof de = {
 			'You book your room directly with us – by phone, by email or via the booking request. Just tell us your preferred dates and the number of guests, and we will confirm your room personally.',
 
 		fruehstueckInklusive: 'incl. breakfast',
+		fruehstueckKultur: 'incl. breakfast & city tax',
+		staffelHinweis: (basis: number, aufpreis: number) =>
+			`for ${basis} guests, each additional +€${aufpreis}/night`,
 
 		buchen: 'Enquire',
 		modalTitel: 'Booking request',
