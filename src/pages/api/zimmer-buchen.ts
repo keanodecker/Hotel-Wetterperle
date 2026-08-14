@@ -44,6 +44,21 @@ function sauber(wert: FormDataEntryValue | null, grenze: number) {
 /** yyyy-mm-dd, wie das <input type="date"> es liefert. Alles andere wird abgelehnt. */
 const ISO_DATUM = /^\d{4}-\d{2}-\d{2}$/;
 
+/*
+ * Das Formular hat EIN Feld "Ihr Name" (KD 14.08.2026 14:15: "Bei beiden nur
+ * 'Ihr Name' bitte") — Smoobus API fuehrt firstName und lastName aber getrennt.
+ * Aufteilung: erstes Wort = Vorname, REST = Nachname ("Frank van der Berg" →
+ * "Frank" / "van der Berg"). Bei nur EINEM Wort steht das Wort in BEIDEN
+ * Feldern: nichts wird erfunden (der Gast hat genau das getippt), und ein
+ * moeglicherweise pflichtiges firstName bleibt gefuellt — lastName ist das
+ * Feld, ueber das Frank die Buchung in Smoobu wiederfindet.
+ */
+function nameTeilen(voll: string) {
+  const teile = voll.split(/\s+/).filter(Boolean);
+  if (teile.length < 2) return { vorname: voll, nachname: voll };
+  return { vorname: teile[0], nachname: teile.slice(1).join(' ') };
+}
+
 /** Notbremse wie im Kontaktformular: pro IP hoechstens 5 Versuche in 10 Minuten. */
 const takt = new Map<string, number[]>();
 function zuOft(ip: string) {
@@ -85,8 +100,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   // Honeypot wie im Kontaktformular: gefuellt = Bot. Erfolg melden, nichts buchen.
   if (sauber(daten.get('website'), 100)) return antwort(true, 'Vielen Dank.');
 
-  const vorname = sauber(daten.get('vorname'), MAX.name);
-  const nachname = sauber(daten.get('nachname'), MAX.name);
+  const name = sauber(daten.get('name'), MAX.name);
   const email = sauber(daten.get('email'), MAX.email);
   const telefon = sauber(daten.get('telefon'), MAX.telefon);
   const anreise = sauber(daten.get('anreise'), 20);
@@ -95,8 +109,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const personen = Number(sauber(daten.get('personen'), 10) || '0');
   const nachricht = sauber(daten.get('nachricht'), MAX.nachricht);
 
-  if (!vorname || !nachname || !email) {
-    return antwort(false, txt('Bitte geben Sie Vorname, Nachname und E-Mail-Adresse an.', 'Please fill in your first name, last name and email address.'));
+  if (!name || !email) {
+    return antwort(false, txt('Bitte geben Sie Ihren Namen und Ihre E-Mail-Adresse an.', 'Please fill in your name and email address.'));
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return antwort(false, txt('Diese E-Mail-Adresse sieht nicht gültig aus.', 'This email address does not look valid.'));
@@ -197,6 +211,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   // 2. Buchen. Ab hier ist der Zeitraum blockiert — auch auf Booking.com.
+  const { vorname, nachname } = nameTeilen(name);
   let buchungsId: number | undefined;
   try {
     buchungsId = await legeBuchungAn({
