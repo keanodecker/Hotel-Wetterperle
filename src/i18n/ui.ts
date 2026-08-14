@@ -218,8 +218,6 @@ const de = {
 		ab: 'ab',
 		ohneJs:
 			'Für die Online-Buchung braucht Ihr Browser JavaScript. Sie erreichen uns auch direkt – wir bestätigen Ihnen Ihr Zimmer persönlich.',
-		direkt:
-			'Ihr Zimmer buchen Sie direkt bei uns – telefonisch, per E-Mail oder über die Buchungsanfrage. Nennen Sie uns Ihren Wunschzeitraum und die Anzahl der Personen, wir bestätigen Ihnen Ihr Zimmer persönlich.',
 
 		// Nur auf der WEBSITE (nicht auf Booking.com) ist das Fruehstueck bei
 		// jeder Anfrage/Buchung inklusive — deshalb der auffaellige Badge direkt
@@ -233,13 +231,28 @@ const de = {
 		staffelHinweis: (basis: number, aufpreis: number) =>
 			`für ${basis} Personen, jede weitere +${aufpreis} €/Nacht`,
 
-		// Buchungsanfrage-Dialog (12.08.2026): Zimmer waehlen → Daten → Anfrage
-		// geht als Mail ans Haus (Route /api/kontakt, Resend). Keine
-		// Verfuegbarkeitsanzeige — die Bestaetigung kommt persoenlich vom Haus.
-		// Seit 14.08.2026 heissen alle Ausloese-Knoepfe "Anfragen", nicht mehr
-		// "Buchen" — verbindlich gebucht wird NUR noch im Smoobu-iframe.
-		buchen: 'Anfragen',
-		modalTitel: 'Buchungsanfrage',
+		/*
+		 * Buchungs-/Anfrage-Dialog, seit 14.08.2026 12:04 mit ZWEI Modi
+		 * (KD: "eigenes Buchungsformular … aber auch die Anfrageoption"):
+		 *  · BUCHEN  → /api/zimmer-buchen → echte, VERBINDLICHE Smoobu-Buchung.
+		 *    Wording muss unmissverstaendlich verbindlich sein.
+		 *  · ANFRAGEN → /api/kontakt (Resend-Mail ans Haus), unverbindlich.
+		 * Jeder Zimmerknopf oeffnet den Dialog im jeweiligen Modus, Zimmer
+		 * vorausgewaehlt. Der Smoobu-iframe ist raus.
+		 */
+		knopfBuchen: 'Buchen',
+		knopfAnfragen: 'Anfragen',
+		buchenTitel: 'Zimmer verbindlich buchen',
+		buchenHinweis:
+			'Diese Buchung ist verbindlich: Das Zimmer wird sofort für Sie reserviert. Bezahlt wird vor Ort bei der Abreise.',
+		buchenAbsenden: 'Verbindlich buchen',
+		buchenErfolgTitel: 'Ihr Zimmer ist verbindlich gebucht',
+		buchenErfolgText:
+			'Vielen Dank! Ihre Buchung ist bestätigt — bezahlt wird vor Ort. Sie erhalten eine Bestätigung per E-Mail.',
+		buchenErfolgAuswahl: 'Ihre Buchung:',
+		vornameLabel: 'Vorname *',
+		nachnameLabel: 'Nachname *',
+		modalTitel: 'Unverbindliche Anfrage',
 		modalHinweis:
 			'Unverbindlich anfragen – wir prüfen die Verfügbarkeit und bestätigen Ihnen Ihr Zimmer persönlich.',
 		zimmerLabel: 'Zimmer',
@@ -301,6 +314,7 @@ const de = {
 		zimmerText:
 			'Jedes unserer Zimmer ist anders geschnitten – alte Balken, Dachschrägen und Fachwerk lassen sich nun einmal nicht in eine Norm pressen. Damit Sie vorher genau wissen, worauf Sie sich freuen, finden Sie hier zu jedem Zimmer die Fotos. Auf ein Bild klicken, dann wird es gross.',
 		springenAria: 'Zu einem Zimmer springen',
+		zimmerBuchen: 'Zimmer buchen',
 		zimmerAnfragen: 'Zimmer anfragen',
 		fruehstueckKicker: 'Guten Morgen',
 		fruehstueckTitel: 'Frühstück',
@@ -768,16 +782,25 @@ const en: typeof de = {
 		ab: 'from',
 		ohneJs:
 			'Online booking needs JavaScript in your browser. You can also reach us directly – we will confirm your room personally.',
-		direkt:
-			'You book your room directly with us – by phone, by email or via the booking request. Just tell us your preferred dates and the number of guests, and we will confirm your room personally.',
 
 		fruehstueckInklusive: 'incl. breakfast',
 		fruehstueckKultur: 'incl. breakfast & city tax',
 		staffelHinweis: (basis: number, aufpreis: number) =>
 			`for ${basis} guests, each additional +€${aufpreis}/night`,
 
-		buchen: 'Enquire',
-		modalTitel: 'Booking request',
+		knopfBuchen: 'Book',
+		knopfAnfragen: 'Enquire',
+		buchenTitel: 'Book this room (binding)',
+		buchenHinweis:
+			'This booking is binding: the room is reserved for you immediately. Payment is made on site at departure.',
+		buchenAbsenden: 'Book bindingly',
+		buchenErfolgTitel: 'Your room is booked',
+		buchenErfolgText:
+			'Thank you! Your booking is confirmed — payment is made on site. You will receive a confirmation by email.',
+		buchenErfolgAuswahl: 'Your booking:',
+		vornameLabel: 'First name *',
+		nachnameLabel: 'Last name *',
+		modalTitel: 'Non-binding enquiry',
 		modalHinweis:
 			'A non-binding request – we check availability and confirm your room personally.',
 		zimmerLabel: 'Room',
@@ -840,6 +863,7 @@ const en: typeof de = {
 		zimmerText:
 			'Every one of our rooms has its own shape – old beams, sloping ceilings and half-timbering simply cannot be pressed into a standard mould. So that you know exactly what to look forward to, you will find photos of every room here. Click an image to see it large.',
 		springenAria: 'Jump to a room',
+		zimmerBuchen: 'Book this room',
 		zimmerAnfragen: 'Enquire about this room',
 		fruehstueckKicker: 'Good morning',
 		fruehstueckTitel: 'Breakfast',

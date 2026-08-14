@@ -8,43 +8,19 @@ const { sprache, t } = ausUrl(Astro.url);
 const zimmer = rooms(sprache);
 
 /*
- * Buchung laeuft ueber Smoobu, den Channel-Manager des Hauses (dort haengt auch
- * Booking.com dran). Smoobu bindet sein Buchungssystem NICHT als statischen
- * <iframe src=…> ein, sondern ueber ein eigenes Skript: das holt per XHR erst
- * JSON von login.smoobu.com und setzt den iFrame dann selbst in den Container.
- * Deshalb steht unten ein leeres <div> und kein iframe-Tag.
+ * Zimmer-Grid mit zwei Wegen je Zimmer (KD-Entscheidung 14.08.2026 12:04):
+ *  · „Buchen"   → BuchungsModal im BUCHEN-Modus → /api/zimmer-buchen → echte,
+ *    verbindliche Smoobu-Buchung zum WEBSITE-Preis (inkl. Fruehstueck +
+ *    Kulturfoerderabgabe).
+ *  · „Anfragen" → BuchungsModal im ANFRAGE-Modus → unverbindliche Mail ans
+ *    Haus ueber /api/kontakt (Resend).
  *
- * ▼▼▼ DIESE EINE ZEILE AUSTAUSCHEN, sobald die Adresse aus Smoobu vorliegt ▼▼▼
- *
- * Wo sie herkommt:
- *   Smoobu (login.smoobu.com) → Einstellungen → "In Webseite integrieren"
- *   → Reiter BUCHUNGSSYSTEM. Dort steht ein fertiger Schnipsel; darin steckt
- *   in BookingToolIframe.initialize({ url: "…" }) genau diese Adresse.
- *   Nur sie hier eintragen, mit https:// beginnend.
- *
- * NICHT das ebenfalls angebotene "Kalender-Widget" nehmen: das zeigt nur belegte
- * Tage an und nimmt keine Buchungen entgegen - damit haetten wir die Attrappe
- * nur ausgetauscht.
- *
- * Voraussetzung in Smoobu: die Unterkunft ist mit Zimmern, Preisen und
- * Verfuegbarkeiten angelegt. Vorher erzeugt Smoobu keinen Buchungs-iFrame.
- *
- * Solange hier der Platzhalter steht, zeigt die Seite die Direktbuchung
- * (Telefon + E-Mail) statt eines leeren Rahmens.
- */
-const SMOOBU_BUCHUNG_URL: string = 'https://login.smoobu.com/de/booking-tool/iframe/86259';
-
-const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
-
-/*
- * WEG B, falls der iFrame an Third-Party-Cookies scheitert (noch nicht gebaut,
- * bewusst nur notiert): dann statt des eingebetteten Buchungssystems ein Link
- * auf booking.smoobu.com in einem neuen Tab - dort ist es keine Cross-Site-
- * Situation mehr.
- * Gemessen wurde: Smoobu setzt PHPSESSID8 ohne SameSite=None, ohne Secure und
- * ohne Partitioned; ein solches Cookie wird im Cross-Site-iFrame nicht
- * mitgeschickt, Safari blockt ohnehin. Ob es real bricht, ist NICHT bestaetigt
- * - ein Safari-Test auf der echten Domain ist vor Go-Live Pflicht.
+ * Der Smoobu-Buchungs-iFrame, der hier bis zum 14.08.2026 unter dem Grid hing,
+ * ist auf KD-Ansage RAUS („dann haben wir nicht noch dieses Smoobu Design auf
+ * der Website"). Nebeneffekt, den die Datenschutzerklaerung freut: die Seite
+ * laedt damit auch kein BookingToolIframe.js mehr nach — das zog jQuery und
+ * iframe-resizer 3.5.16 von cdnjs.cloudflare.com (US-CDN) hinterher.
+ * Der API-Zugang fuer die eigene Buchungsstrecke steckt in lib/smoobu.ts.
  */
 ---
 
@@ -104,12 +80,21 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 						<span class="mt-1.5 block w-fit rounded-full bg-green-600/10 px-2.5 py-1 text-xs font-semibold text-green-700">
 							{t.buchung.fruehstueckInklusive}
 						</span>
+						{/* Primaer die verbindliche Buchung, sekundaer die unverbindliche
+						    Anfrage — beide oeffnen den Dialog im jeweiligen Modus. */}
 						<button
 							type="button"
 							data-buchen={room.id}
 							class="mt-3 w-full rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
 						>
-							{t.buchung.buchen}
+							{t.buchung.knopfBuchen}
+						</button>
+						<button
+							type="button"
+							data-anfragen={room.id}
+							class="mt-2 w-full rounded-full border border-ink-900/15 px-5 py-2.5 text-sm font-semibold text-ink-900 transition-colors hover:border-orange-500 hover:text-orange-600"
+						>
+							{t.buchung.knopfAnfragen}
 						</button>
 					</div>
 				</div>
@@ -117,70 +102,16 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 		))}
 	</div>
 
-	{smoobuBereit ? (
-		<Fragment>
-			{/*
-			 * Hier haengt Smoobus Skript den Buchungs-iFrame hinein. Keine feste
-			 * Hoehe: das Skript bringt eine automatische Hoehenanpassung mit.
-			 */}
-			<div id="smoobu-buchung" class="mt-8"></div>
-
-			{/*
-			 * DRITTANBIETER-JS - relevant fuer die Datenschutzerklaerung:
-			 * BookingToolIframe.js laedt zusaetzlich iframe-resizer 3.5.16 von
-			 * cdnjs.cloudflare.com (Stand Januar 2018) und jQuery, falls keins da
-			 * ist - auf dieser Seite ist keins da, es kommt also mit. Der erste
-			 * Schritt ist ein XHR an login.smoobu.com, erst danach entsteht der
-			 * iFrame.
-			 *
-			 * is:inline ist PFLICHT: ohne das buendelt Astro die beiden Skripte,
-			 * der initialize-Aufruf laeuft dann vor der geladenen Datei und es
-			 * erscheint gar nichts - was wie ein Smoobu-Defekt aussieht.
-			 */}
-			<script is:inline src="https://login.smoobu.com/js/Settings/BookingToolIframe.js"></script>
-			<script
-				is:inline
-				set:html={`BookingToolIframe.initialize({ url: "${SMOOBU_BUCHUNG_URL}", baseUrl: "https://login.smoobu.com", target: "#smoobu-buchung" });`}
-			/>
-
-			<noscript>
-				<div class="mt-8 rounded-2xl bg-ink-900 p-8 text-cream-50">
-					<p class="leading-relaxed text-cream-100/85">
-						{t.buchung.ohneJs}
-					</p>
-					<div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-						<a
-							href={contact.phoneHref}
-							class="rounded-full bg-orange-500 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
-						>
-							{contact.phoneDisplay}
-						</a>
-						<a
-							href={`mailto:${contact.email}`}
-							class="rounded-full border border-cream-50/35 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-cream-50/10"
-						>
-							{contact.email}
-						</a>
-					</div>
-				</div>
-			</noscript>
-		</Fragment>
-	) : (
+	{/* Dialog und Versand laufen im Browser — ohne JavaScript waeren die Knoepfe
+	    oben tot. Dieser Hinweis ersetzt den frueheren noscript-Block des
+	    Smoobu-iframes: Telefon und E-Mail funktionieren immer. */}
+	<noscript>
 		<div class="mt-8 rounded-2xl bg-ink-900 p-8 text-cream-50">
-			<p class="leading-relaxed text-cream-100/85">
-				{t.buchung.direkt}
-			</p>
+			<p class="leading-relaxed text-cream-100/85">{t.buchung.ohneJs}</p>
 			<div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-				<button
-					type="button"
-					data-buchen
-					class="rounded-full bg-orange-500 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
-				>
-					{t.buchung.absenden}
-				</button>
 				<a
 					href={contact.phoneHref}
-					class="rounded-full border border-cream-50/35 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-cream-50/10"
+					class="rounded-full bg-orange-500 px-7 py-3 text-center text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
 				>
 					{contact.phoneDisplay}
 				</a>
@@ -192,5 +123,5 @@ const smoobuBereit = SMOOBU_BUCHUNG_URL.startsWith('https://');
 				</a>
 			</div>
 		</div>
-	)}
+	</noscript>
 </div>

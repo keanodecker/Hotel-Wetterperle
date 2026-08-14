@@ -2,13 +2,13 @@
 // Booking.com dran). Wird NUR serverseitig benutzt: die Zugangsdaten duerfen
 // niemals ins Frontend, sie koennen echte Buchungen anlegen und stornieren.
 //
-// ⚠️ STAND 14.08.2026: Aktuell importiert NIEMAND diese Datei. Die Route
-// /api/zimmer-buchen (Direktbuchung uebers Formular) wurde auf KD-Ansage
-// geloescht — Zimmer werden wieder per Mail ANGEFRAGT (/api/kontakt), echte
-// Buchungen laufen nur ueber den Smoobu-iframe in BookingWidget.astro.
-// Die Datei bleibt BEWUSST: der HMAC-Zugang samt der drei gemessenen Fallen
-// unten ist muehsam erarbeitet und wird fuer die spaetere Preis-/
-// Verfuegbarkeits-Anzeige wieder gebraucht. Nicht loeschen.
+// STAND 14.08.2026 12:04: Wieder im Einsatz — /api/zimmer-buchen (eigenes
+// Buchungsformular im BuchungsModal, KD: "eigenes Buchungsformular … dann
+// haben wir nicht dieses Smoobu Design auf der Website") nutzt
+// pruefeVerfuegbarkeit + legeBuchungAn. Der Smoobu-iframe ist raus.
+// ⚠️ Der PREIS an legeBuchungAn kommt seitdem von UNS (rooms.ts, inkl.
+// Fruehstueck + Kulturfoerderabgabe), NICHT aus der Verfuegbarkeitsantwort —
+// die Smoobu-Grundpreise weichen bewusst von den Website-Preisen ab.
 //
 // AUTHENTIFIZIERUNG: HMAC. Der alte einzelne `Api-Key`-Header wird laut
 // docs.smoobu.com am 25.09.2026 abgeschaltet — deshalb hier gar nicht erst
@@ -109,8 +109,11 @@ export type Verfuegbarkeit = {
 
 /**
  * Fragt Smoobu, ob EINE Einheit im Zeitraum buchbar ist — und zu welchem Preis.
- * Rein lesend; aendert nichts. Der Preis kommt bewusst von Smoobu und nicht aus
- * den Website-Daten: nur Smoobu kennt Saison, Mindestaufenthalt und Rabatte.
+ * Rein lesend; aendert nichts.
+ * ⚠️ Das `preis`-Feld der Antwort ist der SMOOBU-Grundpreis. Seit KD-Ansage
+ * 14.08.2026 gilt auf der Website der eigene Preis aus rooms.ts (inkl.
+ * Fruehstueck + Kulturfoerderabgabe) — Aufrufer werten nur `frei`/`grund` aus,
+ * der Smoobu-Preis bleibt hier nur fuer spaetere Vergleiche erhalten.
  */
 export async function pruefeVerfuegbarkeit(
   apartmentId: number,

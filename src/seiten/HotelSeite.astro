@@ -124,22 +124,25 @@ const galerie = [badDusche, detailHandtuecher, treppe, gastraum].map((src, i) =>
 								</ul>
 
 								<div class="mt-8 flex flex-wrap gap-3">
-									{/* Oeffnet den ANFRAGE-Dialog mit DIESEM Zimmer vorausgewaehlt
-									    (KD 14.08.2026: Anfragen statt buchen — verbindlich gebucht
-									    wird nur im Smoobu-Buchungssystem weiter oben). */}
+									{/* Beide oeffnen den Dialog mit DIESEM Zimmer vorausgewaehlt:
+									    „Zimmer buchen" im verbindlichen Buchen-Modus,
+									    „Zimmer anfragen" im unverbindlichen Anfrage-Modus
+									    (KD 14.08.2026 12:04). Der fruehere Kontakt-Link ist bewusst
+									    raus — KD: nicht auf die Kontaktseite verleiten. */}
 									<button
 										type="button"
 										data-buchen={room.id}
 										class="rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-cream-50 transition-colors hover:bg-orange-600"
 									>
-										{s.zimmerAnfragen}
+										{s.zimmerBuchen}
 									</button>
-									<a
-										href={pfad(sprache, '/kontakt')}
+									<button
+										type="button"
+										data-anfragen={room.id}
 										class="rounded-full border border-ink-900/15 px-6 py-3 text-sm font-semibold text-ink-900 transition-colors hover:border-orange-500 hover:text-orange-600"
 									>
-										{t.allgemein.kontakt}
-									</a>
+										{s.zimmerAnfragen}
+									</button>
 								</div>
 							</div>
 						</div>

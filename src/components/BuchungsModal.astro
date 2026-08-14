@@ -5,22 +5,28 @@ import { contact } from '../data/nav';
 import { ausUrl, pfad, preis } from '../i18n/ui';
 
 /*
- * Buchungsanfrage-Dialog (12.08.2026), Vorbild: Gasthof-Herderich-Website.
+ * Buchungs-/Anfrage-Dialog (Grundbau 12.08.2026, Vorbild Gasthof-Herderich;
+ * seit 14.08.2026 12:04 mit ZWEI MODI, KD: "eigenes Buchungsformular was dann
+ * die Bestaetigung an Smoobu gibt … aber auch die Anfrageoption ueber uns").
  *
- * Jeder „Buchen"-Knopf auf der Seite traegt `data-buchen="<zimmer-id>"` — das
- * Skript unten oeffnet dann diesen Dialog mit dem Zimmer vorausgewaehlt. Der
- * Gast waehlt Zeitraum und Personen, sieht Naechte x Preis gerechnet und
- * schickt die Anfrage ab. Versand laeuft ueber die BESTEHENDE Resend-Route
- * /api/kontakt (inkl. Honeypot, Datenschutz-Pflicht, Rate-Limit) — hier
- * entsteht kein zweiter Sendeweg.
+ *  · Modus BUCHEN  — Knoepfe mit `data-buchen="<zimmer-id>"`. VERBINDLICHE
+ *    Buchung: POST /api/zimmer-buchen → Verfuegbarkeitspruefung → echte
+ *    Smoobu-Reservierung zum WEBSITE-Preis (inkl. Fruehstueck +
+ *    Kulturfoerderabgabe; der Server rechnet den Preis selbst, die Anzeige
+ *    hier ist nur Anzeige). Felder: Zeitraum, Personen, Vorname, Nachname,
+ *    E-Mail, Telefon optional, Nachricht optional, Datenschutz.
+ *  · Modus ANFRAGEN — Knoepfe mit `data-anfragen="<zimmer-id>"`. Unverbindliche
+ *    Mail ans Haus ueber die BESTEHENDE Resend-Route /api/kontakt (Honeypot,
+ *    Datenschutz-Pflicht, Rate-Limit) — wie seit dem 12.08.
  *
- * Bewusst KEINE Verfuegbarkeits-/Preispruefung gegen Smoobu: Die Bestaetigung
- * kommt persoenlich vom Haus — das steht auch so im Dialog. KD-Entscheidung
- * 14.08.2026: Dieser Dialog ist und bleibt der ANFRAGE-Weg (Mail via Resend);
- * verbindlich gebucht wird ausschliesslich im Smoobu-iframe (BookingWidget).
+ * Elemente, die nur zu einem Modus gehoeren, tragen `data-nur-modus="buchen"`
+ * bzw. `"anfragen"` — das Skript blendet sie beim Oeffnen passend um. Das
+ * Wording ist bewusst hart getrennt: "Verbindlich buchen" gegen
+ * "Unverbindliche Anfrage senden" — KD hat am 14.08. selbst einen Anfrage-
+ * Knopf fuer einen Buchen-Knopf gehalten (Commit fe0c346).
  *
- * Fruehstueck: Bei jeder Anfrage/Buchung ueber die WEBSITE ist das Fruehstueck
- * inklusive (gilt nicht fuer Booking.com) — deshalb der Badge beim Preis.
+ * Fruehstueck + Kulturfoerderabgabe sind bei Website-Preisen immer inklusive
+ * (gilt nicht fuer Booking.com) — deshalb der Badge beim Preis.
  */
 const { sprache, t } = ausUrl(Astro.url);
 const b = t.buchung;
@@ -69,7 +75,13 @@ const texte = {
 	keineVerbindung: b.keineVerbindung,
 	wirdGesendet: b.wirdGesendet,
 	absenden: b.absenden,
-	// Die API-Route antwortet auf Deutsch — nur dort ihre Meldung durchreichen.
+	buchenAbsenden: b.buchenAbsenden,
+	erfolgText: b.erfolgText,
+	buchenErfolgText: b.buchenErfolgText,
+	// /api/zimmer-buchen braucht die Seitensprache (Smoobu-Bestaetigung + Meldungen).
+	sprache,
+	// /api/kontakt antwortet auf Deutsch — nur dort ihre Meldung durchreichen.
+	// /api/zimmer-buchen antwortet dagegen in der Seitensprache (immer zeigen).
 	serverText: sprache === 'de',
 	// Preisformat je Sprache: "101 €" bzw. "€101" (wie preis() in i18n/ui.ts).
 	preisVor: sprache === 'de' ? '' : '€',
@@ -124,9 +136,16 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 
 		{/* Formular */}
 		<form id="buchung-formular" class="flex flex-col gap-4 overflow-y-auto p-6" novalidate>
+			{/* Titel + Hinweis je Modus — das Skript blendet die Spans passend um. */}
 			<div>
-				<h3 class="font-akzent text-2xl font-semibold text-ink-900">{b.modalTitel}</h3>
-				<p class="mt-1 text-sm text-ink-700/70">{b.modalHinweis}</p>
+				<h3 class="font-akzent text-2xl font-semibold text-ink-900">
+					<span data-nur-modus="anfragen">{b.modalTitel}</span>
+					<span data-nur-modus="buchen" class="hidden">{b.buchenTitel}</span>
+				</h3>
+				<p class="mt-1 text-sm text-ink-700/70">
+					<span data-nur-modus="anfragen">{b.modalHinweis}</span>
+					<span data-nur-modus="buchen" class="hidden">{b.buchenHinweis}</span>
+				</p>
 			</div>
 
 			<div class="grid gap-4 sm:grid-cols-2">
@@ -194,14 +213,38 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			</div>
 
 			<div class="grid gap-4 sm:grid-cols-2">
-				<div>
+				{/* Anfrage-Modus: EIN Namensfeld (wie bisher). Buchen-Modus: Vorname +
+				    Nachname getrennt — Smoobu braucht beide einzeln, und beim
+				    verbindlichen Vertrag soll nichts geraten geteilt werden. Das
+				    Formular steht auf `novalidate`, die Pflicht prueft das Skript
+				    je Modus. */}
+				<div data-nur-modus="anfragen">
 					<label for="buchung-name" class="text-sm font-medium text-ink-900">{b.nameLabel}</label>
 					<input
 						type="text"
 						id="buchung-name"
 						name="name"
-						required
 						autocomplete="name"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div data-nur-modus="buchen" class="hidden">
+					<label for="buchung-vorname" class="text-sm font-medium text-ink-900">{b.vornameLabel}</label>
+					<input
+						type="text"
+						id="buchung-vorname"
+						name="vorname"
+						autocomplete="given-name"
+						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
+					/>
+				</div>
+				<div data-nur-modus="buchen" class="hidden">
+					<label for="buchung-nachname" class="text-sm font-medium text-ink-900">{b.nachnameLabel}</label>
+					<input
+						type="text"
+						id="buchung-nachname"
+						name="nachname"
+						autocomplete="family-name"
 						class="mt-1 w-full rounded-lg border border-ink-900/15 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none"
 					/>
 				</div>
@@ -281,10 +324,18 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 					<path d="M20 6L9 17l-5-5" />
 				</svg>
 			</span>
-			<h3 class="font-akzent text-2xl font-semibold text-ink-900">{b.erfolgTitel}</h3>
-			<p class="text-sm leading-relaxed text-ink-700/80">{b.erfolgText}</p>
+			<h3 class="font-akzent text-2xl font-semibold text-ink-900">
+				<span data-nur-modus="anfragen">{b.erfolgTitel}</span>
+				<span data-nur-modus="buchen" class="hidden">{b.buchenErfolgTitel}</span>
+			</h3>
+			{/* Text setzt das Skript je Modus — im Buchen-Modus kommt hier die
+			    Server-Meldung mit dem verbindlichen Gesamtpreis hinein. */}
+			<p class="text-sm leading-relaxed text-ink-700/80" data-buchung-erfolgtext>{b.erfolgText}</p>
 			<p class="rounded-lg bg-cream-100/80 px-4 py-3 text-sm text-ink-700/80">
-				<span class="font-semibold text-ink-900">{b.erfolgAuswahl}</span>
+				<span class="font-semibold text-ink-900">
+					<span data-nur-modus="anfragen">{b.erfolgAuswahl}</span>
+					<span data-nur-modus="buchen" class="hidden">{b.buchenErfolgAuswahl}</span>
+				</span>
 				<span data-buchung-erfolg-details></span>
 			</p>
 			<button
@@ -323,6 +374,8 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 		const formular = dialog.querySelector<HTMLFormElement>('#buchung-formular')!;
 		const erfolg = dialog.querySelector<HTMLElement>('[data-buchung-erfolg]')!;
 		const erfolgDetails = dialog.querySelector<HTMLElement>('[data-buchung-erfolg-details]')!;
+		const erfolgTextEl = dialog.querySelector<HTMLElement>('[data-buchung-erfolgtext]')!;
+		const nurModus = dialog.querySelectorAll<HTMLElement>('[data-nur-modus]');
 		const status = dialog.querySelector<HTMLElement>('[data-buchung-status]')!;
 		const zimmerName = dialog.querySelector<HTMLElement>('[data-buchung-zimmername]')!;
 		const summe = dialog.querySelector<HTMLElement>('[data-buchung-summe]')!;
@@ -334,6 +387,8 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 		const abreiseFeld = formular.querySelector<HTMLInputElement>('#buchung-abreise')!;
 		const personenFeld = formular.querySelector<HTMLSelectElement>('#buchung-personen')!;
 		const nameFeld = formular.querySelector<HTMLInputElement>('#buchung-name')!;
+		const vornameFeld = formular.querySelector<HTMLInputElement>('#buchung-vorname')!;
+		const nachnameFeld = formular.querySelector<HTMLInputElement>('#buchung-nachname')!;
 		const emailFeld = formular.querySelector<HTMLInputElement>('#buchung-email')!;
 		const telefonFeld = formular.querySelector<HTMLInputElement>('#buchung-telefon')!;
 		const nachrichtFeld = formular.querySelector<HTMLTextAreaElement>('#buchung-nachricht')!;
@@ -412,8 +467,20 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			status.classList.remove('hidden');
 		}
 
-		function oeffne(zimmerId?: string) {
-			// Formular wieder zeigen, falls vorher schon eine Anfrage raus war.
+		// Welcher Weg gerade offen ist: 'buchen' = verbindliche Smoobu-Buchung,
+		// 'anfragen' = unverbindliche Mail ans Haus. Entscheidet der Knopf,
+		// der den Dialog geoeffnet hat.
+		let modus: 'anfragen' | 'buchen' = 'anfragen';
+
+		function oeffne(zimmerId: string | undefined, neuerModus: 'anfragen' | 'buchen') {
+			modus = neuerModus;
+			// Alles, was nur zu einem Modus gehoert (Titel, Hinweis, Namensfelder,
+			// Erfolgstexte), passend ein-/ausblenden.
+			nurModus.forEach((el) => el.classList.toggle('hidden', el.dataset.nurModus !== modus));
+			sendenKnopf.textContent = modus === 'buchen' ? String(texte.buchenAbsenden) : String(texte.absenden);
+			erfolgTextEl.textContent = modus === 'buchen' ? String(texte.buchenErfolgText) : String(texte.erfolgText);
+
+			// Formular wieder zeigen, falls vorher schon etwas raus war.
 			formular.classList.remove('hidden');
 			erfolg.classList.add('hidden');
 			erfolg.classList.remove('flex');
@@ -436,9 +503,13 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			dialog!.showModal();
 		}
 
-		// Alle "Buchen"-Knoepfe der Seite oeffnen den Dialog mit ihrem Zimmer.
+		// Alle Zimmer-Knoepfe der Seite oeffnen den Dialog mit ihrem Zimmer —
+		// data-buchen im verbindlichen, data-anfragen im unverbindlichen Modus.
 		document.querySelectorAll<HTMLElement>('[data-buchen]').forEach((knopf) => {
-			knopf.addEventListener('click', () => oeffne(knopf.dataset.buchen || undefined));
+			knopf.addEventListener('click', () => oeffne(knopf.dataset.buchen || undefined, 'buchen'));
+		});
+		document.querySelectorAll<HTMLElement>('[data-anfragen]').forEach((knopf) => {
+			knopf.addEventListener('click', () => oeffne(knopf.dataset.anfragen || undefined, 'anfragen'));
 		});
 
 		dialog.querySelectorAll<HTMLElement>('[data-buchung-schliessen]').forEach((knopf) => {
@@ -463,8 +534,14 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 		formular.addEventListener('submit', async (ereignis) => {
 			ereignis.preventDefault();
 
+			// Pflichtfelder je Modus: Anfrage braucht EIN Namensfeld, die
+			// verbindliche Buchung Vorname UND Nachname (Smoobu fuehrt beide).
+			const nameOk =
+				modus === 'buchen'
+					? Boolean(vornameFeld.value.trim() && nachnameFeld.value.trim())
+					: Boolean(nameFeld.value.trim());
 			const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailFeld.value.trim());
-			if (!nameFeld.value.trim() || !emailFeld.value.trim() || !anreiseFeld.value || !abreiseFeld.value || !datenschutzFeld.checked) {
+			if (!nameOk || !emailFeld.value.trim() || !anreiseFeld.value || !abreiseFeld.value || !datenschutzFeld.checked) {
 				melde(String(texte.pflichtHinweis));
 				return;
 			}
@@ -476,46 +553,65 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			const z = zimmerDaten[zimmerFeld.value];
 			const n = naechte();
 
-			// Die Mail geht ans HAUS — deshalb der DEUTSCHE Zimmername und deutsche
-			// Texte, unabhaengig von der Seitensprache des Gastes. Zimmer, Zeitraum,
-			// Personen und Telefon gehen als strukturierte Felder mit: /api/kontakt
-			// baut daraus den Aufenthaltsblock und den Betreff
-			// "Anfrage für Zimmer <name>" (gleicher Weg wie das Kontaktformular).
-			// Personen-Staffel auch in der Mail ans Haus aufschluesseln — Frank
-			// sieht sofort, wie der Betrag zustande kommt (deutsch, s. oben).
-			const extra =
-				z.basis != null && z.aufpreis != null
-					? Math.max(0, Number(personenFeld.value) - z.basis)
-					: 0;
-			const proNacht = z.preis === null ? null : z.preis + extra * (z.aufpreis ?? 0);
-			const nachrichtTeile = [
-				nachrichtFeld.value.trim(),
-				proNacht === null
-					? 'Preis: auf Anfrage (Website nennt keinen Preis)'
-					: extra > 0
-						? `Preis laut Website: ${n} × (${z.preis} € + ${extra} × ${z.aufpreis} €) = ${n * proNacht} € (inkl. Frühstück & Kulturförderabgabe)`
-						: `Preis laut Website: ${n} × ${proNacht} € = ${n * proNacht} € (inkl. Frühstück & Kulturförderabgabe)`,
-			].filter(Boolean);
-
+			// Gemeinsame Felder beider Wege.
 			const daten = new FormData();
-			daten.set('name', nameFeld.value.trim());
 			daten.set('email', emailFeld.value.trim());
-			daten.set('betreff', 'Zimmeranfrage');
-			daten.set('zimmer', z.nameDe);
 			daten.set('anreise', anreiseFeld.value);
 			daten.set('abreise', abreiseFeld.value);
 			daten.set('personen', personenFeld.value);
 			if (telefonFeld.value.trim()) daten.set('telefon', telefonFeld.value.trim());
-			daten.set('nachricht', nachrichtTeile.join('\n\n'));
 			daten.set('datenschutz', 'ja');
 			daten.set('website', honeypotFeld.value);
+
+			let ziel: string;
+			if (modus === 'buchen') {
+				/*
+				 * VERBINDLICHE Buchung → /api/zimmer-buchen. `zimmerId` ist die
+				 * stabile ID aus rooms.ts (Schluessel zur Smoobu-Einheit). Den
+				 * PREIS schicken wir absichtlich NICHT mit — der Server rechnet
+				 * ihn selbst aus rooms.ts, die Anzeige hier ist nur Anzeige.
+				 */
+				ziel = '/api/zimmer-buchen';
+				daten.set('vorname', vornameFeld.value.trim());
+				daten.set('nachname', nachnameFeld.value.trim());
+				daten.set('zimmerId', zimmerFeld.value);
+				daten.set('sprache', String(texte.sprache));
+				daten.set('nachricht', nachrichtFeld.value.trim());
+			} else {
+				/*
+				 * Unverbindliche ANFRAGE → /api/kontakt. Die Mail geht ans HAUS —
+				 * deshalb der DEUTSCHE Zimmername und deutsche Preiszeile,
+				 * unabhaengig von der Seitensprache. /api/kontakt baut daraus den
+				 * Aufenthaltsblock und den Betreff "Anfrage für Zimmer <name>".
+				 * Die Personen-Staffel wird aufgeschluesselt, damit Frank sofort
+				 * sieht, wie der Betrag zustande kommt.
+				 */
+				ziel = '/api/kontakt';
+				const extra =
+					z.basis != null && z.aufpreis != null
+						? Math.max(0, Number(personenFeld.value) - z.basis)
+						: 0;
+				const proNacht = z.preis === null ? null : z.preis + extra * (z.aufpreis ?? 0);
+				const nachrichtTeile = [
+					nachrichtFeld.value.trim(),
+					proNacht === null
+						? 'Preis: auf Anfrage (Website nennt keinen Preis)'
+						: extra > 0
+							? `Preis laut Website: ${n} × (${z.preis} € + ${extra} × ${z.aufpreis} €) = ${n * proNacht} € (inkl. Frühstück & Kulturförderabgabe)`
+							: `Preis laut Website: ${n} × ${proNacht} € = ${n * proNacht} € (inkl. Frühstück & Kulturförderabgabe)`,
+				].filter(Boolean);
+				daten.set('name', nameFeld.value.trim());
+				daten.set('betreff', 'Zimmeranfrage');
+				daten.set('zimmer', z.nameDe);
+				daten.set('nachricht', nachrichtTeile.join('\n\n'));
+			}
 
 			sendenKnopf.disabled = true;
 			const knopfText = sendenKnopf.textContent;
 			sendenKnopf.textContent = String(texte.wirdGesendet);
 
 			try {
-				const antwort = await fetch('/api/kontakt', {
+				const antwort = await fetch(ziel, {
 					method: 'POST',
 					body: daten,
 					headers: { Accept: 'application/json' },
@@ -523,12 +619,23 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 				const ergebnis = await antwort.json().catch(() => null);
 
 				if (antwort.ok && ergebnis?.ok) {
+					// Im Buchen-Modus traegt die Server-Meldung den verbindlichen
+					// Gesamtpreis (in Seitensprache) — die zeigen wir statt des
+					// statischen Erfolgtexts.
+					if (modus === 'buchen' && ergebnis?.meldung) {
+						erfolgTextEl.textContent = ergebnis.meldung;
+					}
 					erfolgDetails.textContent = ` ${z.name} · ${anzeigeDatum(anreiseFeld.value)} – ${anzeigeDatum(abreiseFeld.value)} · ${personenFeld.value} ${personenFeld.value === '1' ? texte.gast : texte.gaeste}`;
 					formular.classList.add('hidden');
 					erfolg.classList.remove('hidden');
 					erfolg.classList.add('flex');
 				} else {
-					melde(texte.serverText ? (ergebnis?.meldung ?? String(texte.fehler)) : String(texte.fehler));
+					// /api/zimmer-buchen antwortet in der Seitensprache → Meldung
+					// immer zeigen (z. B. "im Zeitraum belegt — gern unverbindlich
+					// anfragen oder anrufen"). /api/kontakt antwortet deutsch →
+					// nur auf der deutschen Seite durchreichen.
+					const serverMeldung = modus === 'buchen' || texte.serverText ? ergebnis?.meldung : null;
+					melde(serverMeldung ?? String(texte.fehler));
 				}
 			} catch {
 				melde(String(texte.keineVerbindung));
