@@ -28,6 +28,7 @@ export const routen: { de: string; en: string }[] = [
 	{ de: '/kontakt', en: '/en/contact' },
 	{ de: '/presse', en: '/en/press' },
 	{ de: '/datenschutz', en: '/en/privacy' },
+	{ de: '/impressum', en: '/en/imprint' },
 ];
 
 /** Vergleichsform eines Pfades: ohne abschliessenden Schraegstrich (ausser "/"). */
@@ -96,6 +97,7 @@ const de = {
 		kontakt: 'Kontakt',
 		presse: 'Presse',
 		datenschutz: 'Datenschutz',
+		impressum: 'Impressum',
 	},
 
 	stunden: {
@@ -601,37 +603,83 @@ const de = {
 				text: 'Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit dies zur Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen erforderlich ist. Die Verarbeitung personenbezogener Daten erfolgt regelmäßig nur nach Einwilligung der Nutzer oder auf Grundlage einer gesetzlichen Erlaubnis.',
 			},
 			{
-				titel: '3. Server-Logfiles',
-				text: 'Beim Aufruf dieser Website erhebt unser Hosting-Anbieter automatisch Informationen in sogenannten Server-Logfiles, die Ihr Browser übermittelt (z. B. Browsertyp, verwendetes Betriebssystem, Referrer-URL, Datum und Uhrzeit der Anfrage, IP-Adresse). Diese Daten sind nicht bestimmten Personen zuordenbar und werden nicht mit anderen Datenquellen zusammengeführt.',
+				titel: '3. Hosting und Server-Logfiles',
+				text: 'Diese Website wird bei Vercel Inc. (340 S Lemon Ave #4133, Walnut, CA 91789, USA) gehostet. Beim Aufruf dieser Website erhebt unser Hosting-Anbieter automatisch Informationen in sogenannten Server-Logfiles, die Ihr Browser übermittelt (z. B. Browsertyp, verwendetes Betriebssystem, Referrer-URL, Datum und Uhrzeit der Anfrage, IP-Adresse). Diese Daten sind nicht bestimmten Personen zuordenbar und werden nicht mit anderen Datenquellen zusammengeführt. Eine Übermittlung in die USA ist dabei möglich.',
 			},
 			{
 				titel: '4. Kontakt- und Anfrageformular',
 				text: 'Wenn Sie uns per Formular oder E-Mail Anfragen zukommen lassen, werden Ihre Angaben aus dem Anfrageformular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.',
 			},
+			{
+				titel: '5. Zimmerbuchung über die Website',
+				text: 'Wenn Sie über unser Buchungsformular verbindlich ein Zimmer buchen, verarbeiten wir die dafür erforderlichen Angaben (Vor- und Nachname, E-Mail-Adresse, ggf. Telefonnummer, Reisedaten, Personenzahl sowie ggf. Ihre Nachricht) zur Durchführung und Abwicklung der Buchung (Art. 6 Abs. 1 lit. b DSGVO). Zur Verwaltung der Reservierung und zum Abgleich der Verfügbarkeiten mit Buchungsportalen übermitteln wir die Buchungsdaten an unseren Dienstleister Smoobu GmbH, Berlin (Buchungsverwaltung / Channel-Manager).',
+			},
+			{
+				titel: '6. E-Mail-Versand (Resend)',
+				text: 'Für den Versand von Anfrage- und Buchungsbestätigungs-E-Mails nutzen wir den Dienst Resend (Resend, Inc., USA). Dabei werden die für den Versand erforderlichen Daten (Name, E-Mail-Adresse, Inhalt der Nachricht bzw. Buchungsdaten) über die Server des Anbieters verarbeitet; eine Übermittlung in die USA ist möglich. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.',
+			},
 		],
-		mapsTitel: '5. Google Maps',
+		mapsTitel: '7. Google Maps',
 		mapsText1:
 			'Auf unserer Kontaktseite binden wir Kartenmaterial des Dienstes „Google Maps" der Google Ireland Limited ein. Bei Aufruf der Kontaktseite kann Google Informationen, einschließlich Ihrer IP-Adresse, an Server in den USA übertragen. Weitere Informationen entnehmen Sie der Datenschutzerklärung von Google unter',
 		abschnitte2: [
 			{
-				titel: '6. Google Fonts',
-				text: 'Diese Website nutzt zur einheitlichen Darstellung von Schriftarten „Google Fonts", einen Dienst der Google Ireland Limited. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Schriftarten direkt von den Servern Googles, wobei eine Verbindung zu Google-Servern hergestellt und dabei Ihre IP-Adresse übermittelt wird.',
+				titel: '8. Schriftarten',
+				text: 'Die auf dieser Website verwendeten Schriftarten sind lokal auf unserem Server gespeichert. Beim Aufruf der Seite wird dafür keine Verbindung zu Servern von Drittanbietern (z. B. Google Fonts) aufgebaut.',
 			},
 			{
-				titel: '7. Cookies',
+				titel: '9. Cookies',
 				text: 'Diese Website verwendet aktuell keine Analyse- oder Marketing-Cookies. Sollte sich dies ändern, informieren wir Sie an dieser Stelle und holen, soweit erforderlich, Ihre Einwilligung ein.',
 			},
 			{
-				titel: '8. Ihre Rechte',
+				titel: '10. Ihre Rechte',
 				text: 'Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten sowie ein Recht auf Berichtigung, Sperrung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Zudem steht Ihnen ein Beschwerderecht bei der zuständigen Aufsichtsbehörde zu. Bei Fragen zur Erhebung, Verarbeitung oder Nutzung Ihrer personenbezogenen Daten wenden Sie sich bitte an die oben genannten Kontaktdaten.',
 			},
 			{
-				titel: '9. SSL-/TLS-Verschlüsselung',
+				titel: '11. SSL-/TLS-Verschlüsselung',
 				text: 'Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine SSL- bzw. TLS-Verschlüsselung.',
 			},
 			{
-				titel: '10. Änderung dieser Datenschutzerklärung',
+				titel: '12. Änderung dieser Datenschutzerklärung',
 				text: 'Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht. Es gilt die jeweils aktuelle, auf dieser Seite veröffentlichte Fassung.',
+			},
+		],
+	},
+
+	// Inhalt von der alten Website wetteraperle.de uebernommen (KD-Ansage 14.08.2026).
+	// Bewusste Abweichungen: § 5 TMG -> § 5 DDG (TMG seit Mai 2024 abgeloest) und der
+	// Verweis auf die EU-OS-Plattform ist raus (Plattform Mitte 2025 eingestellt).
+	impressumSeite: {
+		titel: 'Impressum',
+		beschreibung: 'Impressum des Landgasthofs Wetteraperle.',
+		kicker: 'Rechtliches',
+		ueberschrift: 'Impressum',
+		angabenTitel: 'Angaben gemäß § 5 DDG',
+		inhaber: 'Inhaber: Frank Gröters',
+		kontaktTitel: 'Kontakt',
+		telefonLabel: 'Telefon',
+		telefaxLabel: 'Telefax',
+		telefax: '036647 / 299910',
+		emailLabel: 'E-Mail',
+		ustTitel: 'Umsatzsteuer-ID',
+		ustText: 'Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:',
+		ustId: 'DE319663695',
+		abschnitte: [
+			{
+				titel: 'Streitschlichtung',
+				text: 'Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.',
+			},
+			{
+				titel: 'Haftung für Inhalte',
+				text: 'Als Diensteanbieter sind wir für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Wir sind als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.',
+			},
+			{
+				titel: 'Haftung für Links',
+				text: 'Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.',
+			},
+			{
+				titel: 'Urheberrecht',
+				text: 'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.',
 			},
 		],
 	},
@@ -665,6 +713,7 @@ const en: typeof de = {
 		kontakt: 'Contact',
 		presse: 'Press',
 		datenschutz: 'Privacy',
+		impressum: 'Legal notice',
 	},
 
 	stunden: {
@@ -1148,37 +1197,81 @@ const en: typeof de = {
 				text: 'As a rule, we process our users’ personal data only to the extent necessary to provide a functioning website along with our content and services. Personal data is generally processed only with the user’s consent or on the basis of a statutory permission.',
 			},
 			{
-				titel: '3. Server log files',
-				text: 'When you visit this website, our hosting provider automatically collects information in what are known as server log files, which your browser transmits (e.g. browser type, operating system used, referrer URL, date and time of the request, IP address). This data cannot be assigned to specific individuals and is not merged with other data sources.',
+				titel: '3. Hosting and server log files',
+				text: 'This website is hosted by Vercel Inc. (340 S Lemon Ave #4133, Walnut, CA 91789, USA). When you visit this website, our hosting provider automatically collects information in what are known as server log files, which your browser transmits (e.g. browser type, operating system used, referrer URL, date and time of the request, IP address). This data cannot be assigned to specific individuals and is not merged with other data sources. A transfer to the USA is possible in this context.',
 			},
 			{
 				titel: '4. Contact and enquiry form',
 				text: 'If you send us enquiries via the form or by email, the details you provide in the enquiry form, including the contact data you enter there, will be stored by us in order to process the enquiry and in case of follow-up questions. We do not pass this data on without your consent.',
 			},
+			{
+				titel: '5. Room booking via the website',
+				text: 'If you make a binding room booking via our booking form, we process the details required for this (first and last name, email address, phone number if provided, travel dates, number of guests and your message if any) in order to carry out and process the booking (Art. 6(1)(b) GDPR). To manage the reservation and synchronise availability with booking portals, we transmit the booking data to our service provider Smoobu GmbH, Berlin (booking management / channel manager).',
+			},
+			{
+				titel: '6. Email dispatch (Resend)',
+				text: 'We use the service Resend (Resend, Inc., USA) to send enquiry and booking confirmation emails. The data required for dispatch (name, email address, content of the message or booking data) is processed via the provider’s servers; a transfer to the USA is possible. The legal basis is Art. 6(1)(b) GDPR.',
+			},
 		],
-		mapsTitel: '5. Google Maps',
+		mapsTitel: '7. Google Maps',
 		mapsText1:
 			'On our contact page we embed map material from the “Google Maps” service provided by Google Ireland Limited. When you open the contact page, Google may transmit information, including your IP address, to servers in the USA. For further information please see Google’s privacy policy at',
 		abschnitte2: [
 			{
-				titel: '6. Google Fonts',
-				text: 'To display fonts consistently, this website uses “Google Fonts”, a service provided by Google Ireland Limited. When you open a page, your browser loads the required fonts directly from Google’s servers, establishing a connection to Google servers and transmitting your IP address in the process.',
+				titel: '8. Fonts',
+				text: 'The fonts used on this website are stored locally on our server. No connection to third-party servers (e.g. Google Fonts) is established for this when the page is loaded.',
 			},
 			{
-				titel: '7. Cookies',
+				titel: '9. Cookies',
 				text: 'This website currently uses no analytics or marketing cookies. Should this change, we will inform you here and, where required, obtain your consent.',
 			},
 			{
-				titel: '8. Your rights',
+				titel: '10. Your rights',
 				text: 'You have the right at any time to obtain information free of charge about the personal data we hold about you, as well as the right to rectification, blocking, erasure, restriction of processing, data portability and objection. You also have the right to lodge a complaint with the competent supervisory authority. If you have questions about the collection, processing or use of your personal data, please contact us using the details given above.',
 			},
 			{
-				titel: '9. SSL/TLS encryption',
+				titel: '11. SSL/TLS encryption',
 				text: 'For security reasons and to protect the transmission of confidential content, this site uses SSL or TLS encryption.',
 			},
 			{
-				titel: '10. Changes to this privacy policy',
+				titel: '12. Changes to this privacy policy',
 				text: 'We reserve the right to adapt this privacy policy so that it always complies with current legal requirements. The version published on this page at the time applies.',
+			},
+		],
+	},
+
+	// Translation of the German legal notice — the German version is authoritative.
+	impressumSeite: {
+		titel: 'Legal notice',
+		beschreibung: 'Legal notice of the Landgasthof Wetteraperle.',
+		kicker: 'Legal',
+		ueberschrift: 'Legal notice',
+		angabenTitel: 'Information pursuant to § 5 DDG (German Digital Services Act)',
+		inhaber: 'Owner: Frank Gröters',
+		kontaktTitel: 'Contact',
+		telefonLabel: 'Phone',
+		telefaxLabel: 'Fax',
+		telefax: '+49 36647 299910',
+		emailLabel: 'Email',
+		ustTitel: 'VAT ID',
+		ustText: 'VAT identification number pursuant to § 27 a of the German VAT Act (Umsatzsteuergesetz):',
+		ustId: 'DE319663695',
+		abschnitte: [
+			{
+				titel: 'Dispute resolution',
+				text: 'We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board.',
+			},
+			{
+				titel: 'Liability for content',
+				text: 'As a service provider, we are responsible for our own content on these pages in accordance with general legislation. However, as a service provider we are not obliged to monitor transmitted or stored third-party information or to investigate circumstances that indicate illegal activity. Obligations to remove or block the use of information under general legislation remain unaffected. Any liability in this respect is, however, only possible from the moment we become aware of a specific infringement. Upon becoming aware of corresponding infringements, we will remove this content immediately.',
+			},
+			{
+				titel: 'Liability for links',
+				text: 'Our website contains links to external third-party websites over whose content we have no influence. We therefore cannot accept any liability for this third-party content. The respective provider or operator of the linked pages is always responsible for their content. The linked pages were checked for possible legal violations at the time of linking. No illegal content was identifiable at that time. Permanent monitoring of the content of the linked pages is, however, unreasonable without concrete indications of an infringement. Upon becoming aware of legal violations, we will remove such links immediately.',
+			},
+			{
+				titel: 'Copyright',
+				text: 'The content and works created by the site operators on these pages are subject to German copyright law. Reproduction, editing, distribution and any kind of use outside the limits of copyright law require the written consent of the respective author or creator. Downloads and copies of this site are permitted for private, non-commercial use only. Insofar as the content on this site was not created by the operator, the copyrights of third parties are respected. In particular, third-party content is marked as such. Should you nevertheless become aware of a copyright infringement, please notify us accordingly. Upon becoming aware of legal violations, we will remove such content immediately.',
 			},
 		],
 	},

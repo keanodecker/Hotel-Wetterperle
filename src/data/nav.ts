@@ -27,6 +27,7 @@ export function footerNavItems(sprache: Lang): NavItem[] {
 		...navItems(sprache),
 		{ href: pfad(sprache, '/presse'), label: t.nav.presse },
 		{ href: pfad(sprache, '/datenschutz'), label: t.nav.datenschutz },
+		{ href: pfad(sprache, '/impressum'), label: t.nav.impressum },
 	];
 }
 
