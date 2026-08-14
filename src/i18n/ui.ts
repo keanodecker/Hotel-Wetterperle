@@ -140,8 +140,10 @@ const de = {
 	},
 
 	leistungen: {
-		kicker: 'Willkommen',
-		titel: 'Dienstleistungen',
+		// KD 14.08.2026: "Dienstleistungen" komplett raus — stattdessen steht
+		// "Willkommen" gross in der schwarzen Ueberschrift, kein Kicker mehr.
+		kicker: '',
+		titel: 'Willkommen',
 		/*
 		 * Mobile-Kurzfassung (KD 14.08.2026 12:35: "auf der Mobile Version soll
 		 * dieser lange Willkommens-Text weg sein, sondern einfach nur auf zwei
@@ -330,11 +332,11 @@ const de = {
 		infos: [
 			{
 				titel: 'Ankunft und Abreise',
-				text: 'Die Anreise kann zwischen 14:00 und 22:00 Uhr flexibel erfolgen. Nach vorheriger Absprache mit uns sind auch andere Zeiten möglich. Ihre Abreise muss bis 11:00 Uhr erfolgt sein. Ihr Gepäck können Sie nach Absprache mit uns im Landgasthof hinterlassen und später abholen.',
+				text: 'Die Anreise kann zwischen 14:00 und 22:00 Uhr flexibel erfolgen. Nach vorheriger Absprache mit uns sind auch andere Zeiten möglich. Ihre Abreise muss bis 10:30 Uhr erfolgt sein. Ihr Gepäck können Sie nach Absprache mit uns im Landgasthof hinterlassen und später abholen.',
 			},
 			{
 				titel: 'Stornierungsbedingungen',
-				text: 'Bis 7 Tage vor Anreise erheben wir keine Gebühren. Danach wird Ihnen die erste Nacht berechnet.',
+				text: 'Bis 3 Tage vor Anreise erheben wir keine Gebühren. Danach wird Ihnen die erste Nacht berechnet.',
 			},
 			{
 				titel: 'Zahlungsmethoden',
@@ -701,8 +703,8 @@ const en: typeof de = {
 	},
 
 	leistungen: {
-		kicker: 'Welcome',
-		titel: 'What we offer',
+		kicker: '',
+		titel: 'Welcome',
 		kurz: 'Comfort, quiet and good food – that is what we stand for at the Wetteraperle, and it is what we pass on to our guests. Let our cooking work its magic on you.',
 		absatz1:
 			'Comfort, quiet and good food – that is what we stand for at the Wetteraperle, and it is what we pass on to our guests. We, Frank and Nadine Gröters, want to bring the Wetteraperle back to its old glory and return a little of that history to Raila.',
@@ -871,11 +873,11 @@ const en: typeof de = {
 		infos: [
 			{
 				titel: 'Arrival and departure',
-				text: 'You can arrive any time between 2 pm and 10 pm. Other times are possible if arranged with us in advance. Departure is by 11 am. If you like, you can leave your luggage at the inn by arrangement and collect it later.',
+				text: 'You can arrive any time between 2 pm and 10 pm. Other times are possible if arranged with us in advance. Departure is by 10:30 am. If you like, you can leave your luggage at the inn by arrangement and collect it later.',
 			},
 			{
 				titel: 'Cancellation terms',
-				text: 'Up to 7 days before arrival we charge no fee. After that, the first night will be invoiced.',
+				text: 'Up to 3 days before arrival we charge no fee. After that, the first night will be invoiced.',
 			},
 			{
 				titel: 'Payment methods',

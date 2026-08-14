@@ -22,8 +22,11 @@ const services = t.leistungen.karten.map((karte, i) => ({
 
 <section class="mx-auto max-w-6xl px-6 py-24">
 	<div class="mb-14 max-w-3xl">
-		<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">{t.leistungen.kicker}</p>
-		<h2 class="mt-3 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
+		{/* KD 14.08.2026: kein Kicker mehr — "Willkommen" steht selbst als grosse Ueberschrift */}
+		{t.leistungen.kicker && (
+			<p class="font-akzent text-sm uppercase tracking-[0.3em] text-orange-600">{t.leistungen.kicker}</p>
+		)}
+		<h2 class="font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
 			{t.leistungen.titel}
 		</h2>
 		{/* Mobile: nur die 2-Satz-Kurzfassung, danach direkt die drei Karten
