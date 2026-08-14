@@ -317,7 +317,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         ? `Booking confirmation Landgasthof Wetteraperle: ${zimmerNameGast}, ${anTag}–${abTag}`
         : `Buchungsbestätigung Landgasthof Wetteraperle: ${zimmerNameGast}, ${anTag}–${abTag}`;
 
-    // KDs Storno-Regel woertlich hinterlegt: "Storno ist bis ein Tag davor gültig."
+    // KDs Storno-Regel (Stand 14.08.2026, 15:10): "Stornofristen sind jetzt 3 Tage."
+    // Muss mit dem Website-Text in i18n/ui.ts (hotelSeite, "Stornierungsbedingungen") uebereinstimmen.
     const gastText =
       sprache === 'en'
         ? [
@@ -331,7 +332,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
             `Guests: ${personen}`,
             `Total: €${gesamt} incl. breakfast & city tax (${aufschluesselungEn})`,
             '',
-            'Payment is made on site. Free cancellation until one day before arrival — just give us a call or write to us.',
+            'Payment is made on site. Free cancellation up to three days before arrival, after that the first night will be charged — just give us a call or write to us.',
             '',
             'We look forward to welcoming you!',
             '',
@@ -353,7 +354,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
             `Personen: ${personen}`,
             `Gesamtpreis: ${gesamt} € inkl. Frühstück & Kulturförderabgabe (${aufschluesselung})`,
             '',
-            'Bezahlt wird bequem vor Ort. Kostenlose Stornierung bis einen Tag vor Anreise — rufen Sie uns dafür einfach an oder schreiben Sie uns.',
+            'Bezahlt wird bequem vor Ort. Kostenlose Stornierung bis drei Tage vor Anreise, danach wird die erste Nacht berechnet — rufen Sie uns dafür einfach an oder schreiben Sie uns.',
             '',
             'Wir freuen uns auf Ihren Besuch!',
             '',
@@ -393,7 +394,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       telefon ? `Telefon: ${telefon}` : 'Telefon: nicht angegeben',
       nachricht ? `Nachricht des Gastes:\n${nachricht}` : 'Keine Nachricht des Gastes.',
       '',
-      'Der Gast hat soeben eine Bestätigungsmail mit den Storno-Bedingungen (kostenlos bis einen Tag vor Anreise) erhalten.',
+      'Der Gast hat soeben eine Bestätigungsmail mit den Storno-Bedingungen (kostenlos bis drei Tage vor Anreise, danach erste Nacht) erhalten.',
     ].join('\n');
 
     try {
