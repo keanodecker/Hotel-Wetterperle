@@ -12,6 +12,16 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   adapter: vercel(),
+  // Alte WordPress-Adressen (wetteraperle.de) auf die neuen Seiten umleiten —
+  // greift erst richtig nach dem Domain-Umzug, schadet vorher nicht.
+  // /hotel und /restaurant existieren neu unter gleichem Pfad, brauchen nichts.
+  redirects: {
+    '/home': '/',
+    '/about': '/ueber-uns',
+    '/contact-us': '/kontakt',
+    '/events': '/feiern',
+    '/privacy-policy': '/datenschutz',
+  },
   vite: {
     plugins: [tailwindcss()]
   }
