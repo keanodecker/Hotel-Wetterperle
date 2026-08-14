@@ -26,10 +26,15 @@ const services = t.leistungen.karten.map((karte, i) => ({
 		<h2 class="mt-3 font-akzent text-3xl font-semibold text-ink-900 md:text-4xl">
 			{t.leistungen.titel}
 		</h2>
-		<p class="mt-4 leading-relaxed text-ink-700/80">
+		{/* Mobile: nur die 2-Satz-Kurzfassung, danach direkt die drei Karten
+		    (KD 14.08.2026 12:35). Desktop (ab md) zeigt die volle Einleitung. */}
+		<p class="mt-4 leading-relaxed text-ink-700/80 md:hidden">
+			{t.leistungen.kurz}
+		</p>
+		<p class="mt-4 hidden leading-relaxed text-ink-700/80 md:block">
 			{t.leistungen.absatz1}
 		</p>
-		<p class="mt-3 leading-relaxed text-ink-700/80">
+		<p class="mt-3 hidden leading-relaxed text-ink-700/80 md:block">
 			{t.leistungen.absatz2}
 		</p>
 	</div>

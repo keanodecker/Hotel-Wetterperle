@@ -142,6 +142,13 @@ const de = {
 	leistungen: {
 		kicker: 'Willkommen',
 		titel: 'Dienstleistungen',
+		/*
+		 * Mobile-Kurzfassung (KD 14.08.2026 12:35: "auf der Mobile Version soll
+		 * dieser lange Willkommens-Text weg sein, sondern einfach nur auf zwei
+		 * Sätze gekürzt"). Beide Sätze sind WOERTLICH aus absatz1/absatz2
+		 * destilliert — nichts erfunden. Desktop zeigt weiter die Langfassung.
+		 */
+		kurz: 'Gemütlichkeit, Ruhe und Genuss – dafür stehen wir in der Wetteraperle und das geben wir auch an unsere Gäste weiter. Lassen Sie sich von unseren Kochkünsten verzaubern.',
 		absatz1:
 			'Gemütlichkeit, Ruhe und Genuss – dafür stehen wir in der Wetteraperle und das geben wir auch an unsere Gäste weiter. Wir, Frank und Nadine Gröters, wollen die Wetteraperle in einem neuen Glanz erstrahlen lassen und die historischen Zeiten wieder zurück nach Raila bringen.',
 		absatz2:
@@ -696,6 +703,7 @@ const en: typeof de = {
 	leistungen: {
 		kicker: 'Welcome',
 		titel: 'What we offer',
+		kurz: 'Comfort, quiet and good food – that is what we stand for at the Wetteraperle, and it is what we pass on to our guests. Let our cooking work its magic on you.',
 		absatz1:
 			'Comfort, quiet and good food – that is what we stand for at the Wetteraperle, and it is what we pass on to our guests. We, Frank and Nadine Gröters, want to bring the Wetteraperle back to its old glory and return a little of that history to Raila.',
 		absatz2:
