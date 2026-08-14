@@ -221,10 +221,17 @@ const de = {
 		direkt:
 			'Ihr Zimmer buchen Sie direkt bei uns – telefonisch, per E-Mail oder über die Buchungsanfrage. Nennen Sie uns Ihren Wunschzeitraum und die Anzahl der Personen, wir bestätigen Ihnen Ihr Zimmer persönlich.',
 
+		// Nur auf der WEBSITE (nicht auf Booking.com) ist das Fruehstueck bei
+		// jeder Anfrage/Buchung inklusive — deshalb der auffaellige Badge direkt
+		// beim Preis (KD 14.08.2026).
+		fruehstueckInklusive: 'inkl. Frühstück',
+
 		// Buchungsanfrage-Dialog (12.08.2026): Zimmer waehlen → Daten → Anfrage
 		// geht als Mail ans Haus (Route /api/kontakt, Resend). Keine
 		// Verfuegbarkeitsanzeige — die Bestaetigung kommt persoenlich vom Haus.
-		buchen: 'Buchen',
+		// Seit 14.08.2026 heissen alle Ausloese-Knoepfe "Anfragen", nicht mehr
+		// "Buchen" — verbindlich gebucht wird NUR noch im Smoobu-iframe.
+		buchen: 'Anfragen',
 		modalTitel: 'Buchungsanfrage',
 		modalHinweis:
 			'Unverbindlich anfragen – wir prüfen die Verfügbarkeit und bestätigen Ihnen Ihr Zimmer persönlich.',
@@ -261,7 +268,6 @@ const de = {
 			'Vielen Dank! Wir haben Ihre Buchungsanfrage erhalten und melden uns schnellstmöglich bei Ihnen – unsere Antwort geht an Ihre E-Mail-Adresse.',
 		erfolgAuswahl: 'Ihre Anfrage:',
 		erfolgSchliessen: 'Fenster schließen',
-		betreff: 'Buchungsanfrage',
 	},
 
 	start: {
@@ -288,7 +294,6 @@ const de = {
 		zimmerText:
 			'Jedes unserer Zimmer ist anders geschnitten – alte Balken, Dachschrägen und Fachwerk lassen sich nun einmal nicht in eine Norm pressen. Damit Sie vorher genau wissen, worauf Sie sich freuen, finden Sie hier zu jedem Zimmer die Fotos. Auf ein Bild klicken, dann wird es gross.',
 		springenAria: 'Zu einem Zimmer springen',
-		zimmerBuchen: 'Zimmer buchen',
 		zimmerAnfragen: 'Zimmer anfragen',
 		fruehstueckKicker: 'Guten Morgen',
 		fruehstueckTitel: 'Frühstück',
@@ -487,22 +492,23 @@ const de = {
 		 * Reihenfolge ist Absicht: „Sonstiges" steht vorn und ist damit die
 		 * Vorauswahl (KD 12.08.2026). „Tischreservierung" ist bewusst RAUS — dafür
 		 * gibt es den eigenen Weg „Tisch reservieren" im Kopf der Seite.
-		 * ⚠️ „Zimmeranfrage" blendet die Zimmerfelder darunter ein; wird der Text
-		 * hier geändert, muss `ZIMMER_ANFRAGE` in KontaktSeite.astro mitgeändert werden.
+		 * ⚠️ Die Option an INDEX 1 („Zimmer anfragen") blendet die Zimmerfelder
+		 * darunter ein (`ZIMMER_ANFRAGE` in KontaktSeite.astro liest genau diesen
+		 * Index) — die Reihenfolge muss in beiden Sprachen identisch bleiben.
 		 */
-		anliegenOptionen: ['Sonstiges', 'Zimmer verbindlich buchen', 'Feier / Event'],
-		zimmerBlockTitel: 'Ihre Buchung',
-		/* ⚠️ Muss deutlich sagen, dass hier verbindlich gebucht wird (KD 12.08.2026).
-		   Die Buchung blockt den Zeitraum sofort — auch auf Booking.com. */
+		anliegenOptionen: ['Sonstiges', 'Zimmer anfragen', 'Feier / Event'],
+		zimmerBlockTitel: 'Ihre Zimmeranfrage',
+		/* ⚠️ ANFRAGE, keine Buchung (KD-Rückbau 14.08.2026): Die Angaben gehen als
+		   E-Mail ans Haus (/api/kontakt), es wird NICHTS in Smoobu angelegt.
+		   Verbindlich gebucht wird nur noch über das Smoobu-Buchungssystem auf /hotel. */
 		zimmerBlockHinweis:
-			'Diese Buchung ist verbindlich: Das Zimmer wird sofort für Sie reserviert. Bezahlt wird vor Ort bei der Abreise.',
+			'Ihre Anfrage ist unverbindlich – wir prüfen die Verfügbarkeit und melden uns persönlich bei Ihnen.',
 		zimmerartEgal: 'Bitte wählen',
 		zimmerart: 'Welches Zimmer?',
 		personen: 'Wie viele Personen?',
 		telefonFeld: 'Telefon (für Rückfragen)',
 		anreise: 'Anreise',
 		abreise: 'Abreise',
-		buchenKnopf: 'Verbindlich buchen',
 		nurAnfragen: 'Sie möchten nur etwas fragen? Wählen Sie oben „Sonstiges".',
 		nachricht: 'Nachricht',
 		einwilligung1: 'Ich habe die',
@@ -758,7 +764,9 @@ const en: typeof de = {
 		direkt:
 			'You book your room directly with us – by phone, by email or via the booking request. Just tell us your preferred dates and the number of guests, and we will confirm your room personally.',
 
-		buchen: 'Book',
+		fruehstueckInklusive: 'incl. breakfast',
+
+		buchen: 'Enquire',
 		modalTitel: 'Booking request',
 		modalHinweis:
 			'A non-binding request – we check availability and confirm your room personally.',
@@ -795,7 +803,6 @@ const en: typeof de = {
 			'Thank you! We have received your booking request and will get back to you as soon as possible – our reply will go to your email address.',
 		erfolgAuswahl: 'Your request:',
 		erfolgSchliessen: 'Close window',
-		betreff: 'Booking request',
 	},
 
 	start: {
@@ -823,7 +830,6 @@ const en: typeof de = {
 		zimmerText:
 			'Every one of our rooms has its own shape – old beams, sloping ceilings and half-timbering simply cannot be pressed into a standard mould. So that you know exactly what to look forward to, you will find photos of every room here. Click an image to see it large.',
 		springenAria: 'Jump to a room',
-		zimmerBuchen: 'Book this room',
 		zimmerAnfragen: 'Enquire about this room',
 		fruehstueckKicker: 'Good morning',
 		fruehstueckTitel: 'Breakfast',
@@ -1024,17 +1030,16 @@ const en: typeof de = {
 		/* Siehe den deutschen Block: „Something else" ist die Vorauswahl, „Table
 		   reservation" ist entfernt. Reihenfolge muss zur deutschen passen, weil die
 		   Zimmerfelder am INDEX 1 hängen. */
-		anliegenOptionen: ['Something else', 'Book a room (binding)', 'Celebration / event'],
-		zimmerBlockTitel: 'Your booking',
+		anliegenOptionen: ['Something else', 'Room enquiry', 'Celebration / event'],
+		zimmerBlockTitel: 'Your room enquiry',
 		zimmerBlockHinweis:
-			'This booking is binding: the room is reserved for you immediately. Payment is made on site.',
+			'Your enquiry is non-binding – we check availability and get back to you personally.',
 		zimmerartEgal: 'Please choose',
 		zimmerart: 'Which room?',
 		personen: 'How many guests?',
 		telefonFeld: 'Phone (for queries)',
 		anreise: 'Arrival',
 		abreise: 'Departure',
-		buchenKnopf: 'Book bindingly',
 		nurAnfragen: 'Just want to ask something? Choose “Something else” above.',
 		nachricht: 'Message',
 		einwilligung1: 'I have read the',

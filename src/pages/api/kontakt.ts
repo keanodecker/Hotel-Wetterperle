@@ -22,7 +22,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 
-const MAX = { name: 120, email: 200, betreff: 120, nachricht: 5000 };
+const MAX = { name: 120, email: 200, betreff: 120, nachricht: 5000, zimmer: 80, datum: 20, personen: 10, telefon: 60 };
 const RESEND_URL = 'https://api.resend.com/emails';
 const ZEITLIMIT_MS = 10_000;
 
@@ -57,6 +57,12 @@ function antwort(ok: boolean, meldung: string, status = ok ? 200 : 400) {
 
 function sauber(wert: FormDataEntryValue | null, grenze: number) {
   return typeof wert === 'string' ? wert.trim().slice(0, grenze) : '';
+}
+
+/** ISO-Datum der date-Inputs (2026-08-14) fuer die Mail als 14.08.2026 — alles andere unveraendert. */
+function lesbaresDatum(wert: string) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(wert);
+  return m ? `${m[3]}.${m[2]}.${m[1]}` : wert;
 }
 
 /**
@@ -102,9 +108,27 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const nachricht = sauber(daten.get('nachricht'), MAX.nachricht);
   const einwilligung = daten.get('datenschutz');
 
+  /*
+   * Zimmer-ANFRAGE (KD-Rückbau 14.08.2026, vorher /api/zimmer-buchen → Smoobu):
+   * Buchungsdialog und Kontaktformular schicken Zimmer/Zeitraum/Personen als
+   * eigene Felder mit. Der Zimmername kommt IMMER deutsch (`nameDe`), weil die
+   * Mail ans Haus geht. Hier wird nichts in Smoobu angelegt — es ist eine
+   * unverbindliche Anfrage, Frank antwortet persönlich.
+   */
+  const zimmer = sauber(daten.get('zimmer'), MAX.zimmer);
+  const aufenthalt = [
+    ['Zimmer', zimmer],
+    ['Anreise', lesbaresDatum(sauber(daten.get('anreise'), MAX.datum))],
+    ['Abreise', lesbaresDatum(sauber(daten.get('abreise'), MAX.datum))],
+    ['Personen', sauber(daten.get('personen'), MAX.personen)],
+    ['Telefon', sauber(daten.get('telefon'), MAX.telefon)],
+  ].filter(([, wert]) => wert);
+
   if (!name || !email) return antwort(false, 'Bitte geben Sie Ihren Namen und Ihre E-Mail-Adresse an.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return antwort(false, 'Diese E-Mail-Adresse sieht nicht gültig aus.');
-  if (!nachricht) return antwort(false, 'Bitte schreiben Sie uns kurz Ihr Anliegen.');
+  // Bei einer Zimmeranfrage sagen die Felder oben schon alles — dann ist ein
+  // freier Text nicht nötig. Sonst bleibt er Pflicht, sonst kommt eine leere Mail.
+  if (!nachricht && aufenthalt.length === 0) return antwort(false, 'Bitte schreiben Sie uns kurz Ihr Anliegen.');
   // Ein `required` im Browser ist bequem, aber kein Schutz — deshalb hier noch einmal.
   if (!einwilligung) {
     return antwort(false, 'Bitte bestätigen Sie kurz die Datenschutzhinweise, dann können wir Ihre Anfrage bearbeiten.');
@@ -114,22 +138,22 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return antwort(false, 'Es sind gerade sehr viele Anfragen von Ihrem Anschluss eingegangen. Bitte versuchen Sie es in einigen Minuten noch einmal.', 429);
   }
 
-  /*
-   * ⚠️ Hier landen KEINE Zimmerbuchungen mehr. Wählt der Gast im Formular
-   * „Zimmer verbindlich buchen", schaltet die Seite auf /api/zimmer-buchen um —
-   * die legt die Buchung direkt in Smoobu an. Diese Route ist der Mail-Weg für
-   * alles andere (Sonstiges, Feier/Event) und bleibt bewusst schlicht.
-   */
   const text = [
     `Anliegen: ${betreff}`,
     `Name: ${name}`,
     `E-Mail: ${email}`,
-    '',
-    nachricht,
+    ...(aufenthalt.length
+      ? ['', '— Ihre Zimmeranfrage —', ...aufenthalt.map(([feld, wert]) => `${feld}: ${wert}`)]
+      : []),
+    ...(nachricht ? ['', nachricht] : []),
     '',
     'Einwilligung Datenschutz: erteilt',
     '— Gesendet über das Kontaktformular auf wetteraperle.de',
   ].join('\n');
+
+  // Betreff der Mail ans Haus: bei einer Zimmeranfrage IMMER
+  // "Anfrage für Zimmer <deutscher Name>" (KD 14.08.2026).
+  const subject = zimmer ? `Anfrage für Zimmer ${zimmer}` : `Website-Anfrage: ${betreff}`;
 
   try {
     const res = await fetch(RESEND_URL, {
@@ -144,7 +168,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         // ⚠️ snake_case! `replyTo` ist die Schreibweise des SDK; die REST-API
         // ignoriert sie STILLSCHWEIGEND — dann geht „Antworten" ins Leere.
         reply_to: `${name} <${email}>`,
-        subject: `Website-Anfrage: ${betreff}`,
+        subject,
         text,
       }),
       signal: AbortSignal.timeout(ZEITLIMIT_MS),

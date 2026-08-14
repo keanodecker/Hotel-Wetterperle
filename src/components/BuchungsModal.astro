@@ -14,11 +14,13 @@ import { ausUrl, pfad, preis } from '../i18n/ui';
  * /api/kontakt (inkl. Honeypot, Datenschutz-Pflicht, Rate-Limit) — hier
  * entsteht kein zweiter Sendeweg.
  *
- * Bewusst KEINE Verfuegbarkeitsanzeige: es haengt (noch) kein Channel-Manager
- * an der Seite, eine erfundene Frei/Belegt-Anzeige waere irrefuehrend. Die
- * Bestaetigung kommt persoenlich vom Haus — das steht auch so im Dialog.
- * Sobald Smoobu angebunden ist (siehe BookingWidget.astro), entscheidet KD,
- * ob dieser Dialog daneben bestehen bleibt.
+ * Bewusst KEINE Verfuegbarkeits-/Preispruefung gegen Smoobu: Die Bestaetigung
+ * kommt persoenlich vom Haus — das steht auch so im Dialog. KD-Entscheidung
+ * 14.08.2026: Dieser Dialog ist und bleibt der ANFRAGE-Weg (Mail via Resend);
+ * verbindlich gebucht wird ausschliesslich im Smoobu-iframe (BookingWidget).
+ *
+ * Fruehstueck: Bei jeder Anfrage/Buchung ueber die WEBSITE ist das Fruehstueck
+ * inklusive (gilt nicht fuer Booking.com) — deshalb der Badge beim Preis.
  */
 const { sprache, t } = ausUrl(Astro.url);
 const b = t.buchung;
@@ -52,7 +54,6 @@ const texte = {
 	keineVerbindung: b.keineVerbindung,
 	wirdGesendet: b.wirdGesendet,
 	absenden: b.absenden,
-	betreff: b.betreff,
 	// Die API-Route antwortet auf Deutsch — nur dort ihre Meldung durchreichen.
 	serverText: sprache === 'de',
 	// Preisformat je Sprache: "101 €" bzw. "€101" (wie preis() in i18n/ui.ts).
@@ -158,8 +159,13 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 						))}
 					</select>
 				</div>
-				{/* Naechte x Preis, live gerechnet — beim Zimmer ohne Preis steht hier "Preis auf Anfrage". */}
-				<div class="flex items-end">
+				{/* Naechte x Preis, live gerechnet — beim Zimmer ohne Preis steht hier
+				    "Preis auf Anfrage". Darueber der Fruehstuecks-Badge: auf der Website
+				    ist das Fruehstueck IMMER inklusive (KD 14.08.2026). */}
+				<div class="flex flex-col justify-end gap-1.5">
+					<span class="w-fit rounded-full bg-green-600/10 px-2.5 py-1 text-xs font-semibold text-green-700">
+						{b.fruehstueckInklusive}
+					</span>
 					<p
 						class="w-full rounded-lg bg-cream-100/80 px-4 py-2.5 text-sm font-semibold text-ink-900"
 						data-buchung-summe
@@ -422,26 +428,28 @@ const maxPersonen = Math.max(...zimmer.map((z) => z.maxGuests));
 			const z = zimmerDaten[zimmerFeld.value];
 			const n = naechte();
 
-			// Die Mail geht ans HAUS — deshalb deutsche Beschriftungen und der
-			// deutsche Zimmername, unabhaengig von der Seitensprache des Gastes.
-			const zeilen = [
-				`Zimmer: ${z.nameDe}`,
-				`Anreise: ${anzeigeDatum(anreiseFeld.value)}`,
-				`Abreise: ${anzeigeDatum(abreiseFeld.value)}`,
-				`Personen: ${personenFeld.value}`,
+			// Die Mail geht ans HAUS — deshalb der DEUTSCHE Zimmername und deutsche
+			// Texte, unabhaengig von der Seitensprache des Gastes. Zimmer, Zeitraum,
+			// Personen und Telefon gehen als strukturierte Felder mit: /api/kontakt
+			// baut daraus den Aufenthaltsblock und den Betreff
+			// "Anfrage für Zimmer <name>" (gleicher Weg wie das Kontaktformular).
+			const nachrichtTeile = [
+				nachrichtFeld.value.trim(),
 				z.preis === null
 					? 'Preis: auf Anfrage (Website nennt keinen Preis)'
-					: `Preis laut Website: ${n} × ${z.preis} € = ${n * z.preis} €`,
-				telefonFeld.value.trim() ? `Telefon: ${telefonFeld.value.trim()}` : '',
-				'',
-				nachrichtFeld.value.trim() ? `Nachricht des Gastes:\n${nachrichtFeld.value.trim()}` : 'Keine weitere Nachricht.',
-			].filter((zeile, i, alle) => zeile !== '' || alle[i + 1] !== '');
+					: `Preis laut Website: ${n} × ${z.preis} € = ${n * z.preis} € (inkl. Frühstück)`,
+			].filter(Boolean);
 
 			const daten = new FormData();
 			daten.set('name', nameFeld.value.trim());
 			daten.set('email', emailFeld.value.trim());
-			daten.set('betreff', `${texte.betreff}: ${z.nameDe}, ${anzeigeDatum(anreiseFeld.value)}–${anzeigeDatum(abreiseFeld.value)}`);
-			daten.set('nachricht', zeilen.join('\n'));
+			daten.set('betreff', 'Zimmeranfrage');
+			daten.set('zimmer', z.nameDe);
+			daten.set('anreise', anreiseFeld.value);
+			daten.set('abreise', abreiseFeld.value);
+			daten.set('personen', personenFeld.value);
+			if (telefonFeld.value.trim()) daten.set('telefon', telefonFeld.value.trim());
+			daten.set('nachricht', nachrichtTeile.join('\n\n'));
 			daten.set('datenschutz', 'ja');
 			daten.set('website', honeypotFeld.value);
 

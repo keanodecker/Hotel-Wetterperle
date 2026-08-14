@@ -2,6 +2,14 @@
 // Booking.com dran). Wird NUR serverseitig benutzt: die Zugangsdaten duerfen
 // niemals ins Frontend, sie koennen echte Buchungen anlegen und stornieren.
 //
+// ⚠️ STAND 14.08.2026: Aktuell importiert NIEMAND diese Datei. Die Route
+// /api/zimmer-buchen (Direktbuchung uebers Formular) wurde auf KD-Ansage
+// geloescht — Zimmer werden wieder per Mail ANGEFRAGT (/api/kontakt), echte
+// Buchungen laufen nur ueber den Smoobu-iframe in BookingWidget.astro.
+// Die Datei bleibt BEWUSST: der HMAC-Zugang samt der drei gemessenen Fallen
+// unten ist muehsam erarbeitet und wird fuer die spaetere Preis-/
+// Verfuegbarkeits-Anzeige wieder gebraucht. Nicht loeschen.
+//
 // AUTHENTIFIZIERUNG: HMAC. Der alte einzelne `Api-Key`-Header wird laut
 // docs.smoobu.com am 25.09.2026 abgeschaltet — deshalb hier gar nicht erst
 // eingebaut. Gebraucht werden ZWEI Werte:
