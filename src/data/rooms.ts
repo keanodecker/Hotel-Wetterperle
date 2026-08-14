@@ -81,11 +81,16 @@ interface RoomQuelle {
 	gallery: { src: ImageMetadata; alt: Sprachig<string> }[];
 }
 
+/*
+ * Preise: identisch mit Smoobu/Booking.com (KD-Entscheidung 12.08.2026 22:48
+ * "gleiche Preise wie Booking"; Smoobu-Werte am 14.08.2026 live per API
+ * ausgelesen: 77 / 85-95 / 85 / 120 / 130). Anzeige bleibt "ab X €".
+ */
 const quelle: RoomQuelle[] = [
 	{
 		id: 'einzelzimmer',
 		name: { de: 'Einzelzimmer', en: 'Single room' },
-		pricePerNight: 78,
+		pricePerNight: 77,
 		maxGuests: 1,
 		size: null,
 		features: {
@@ -144,7 +149,7 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'doppelzimmer',
 		name: { de: 'Doppelzimmer', en: 'Double room' },
-		pricePerNight: 101,
+		pricePerNight: 85,
 		maxGuests: 2,
 		size: null,
 		features: {
@@ -215,7 +220,7 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'doppelzimmer-klein',
 		name: { de: 'Kleines Doppelzimmer', en: 'Small double room' },
-		pricePerNight: null,
+		pricePerNight: 85,
 		maxGuests: 2,
 		size: null,
 		features: {
@@ -281,8 +286,8 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'familienzimmer',
 		name: { de: 'Familienzimmer', en: 'Family room' },
-		pricePerNight: 150,
-		maxGuests: 3,
+		pricePerNight: 120,
+		maxGuests: 4,
 		size: '40 m²',
 		features: {
 			de: [
@@ -347,14 +352,14 @@ const quelle: RoomQuelle[] = [
 	{
 		id: 'familien-suite',
 		name: { de: 'Familien-Suite', en: 'Family suite' },
-		pricePerNight: 160,
-		maxGuests: 3,
+		pricePerNight: 130,
+		maxGuests: 5,
 		size: '40 m²',
 		features: {
 			de: [
 				'Zwei Ebenen über eine historische Holztreppe',
 				'Großes Doppelbett',
-				'Zusätzliches Klappbett',
+				'Zusätzliches Klappbett und Schlafsessel',
 				'Sitzecke mit Balkon, Minibar und Kaffeemaschine',
 				'Flachbild-TV',
 				'Extra Toilette',
@@ -364,7 +369,7 @@ const quelle: RoomQuelle[] = [
 			en: [
 				'Two levels connected by a historic wooden staircase',
 				'Large double bed',
-				'Additional folding bed',
+				'Additional folding bed and sleeping chair',
 				'Seating corner with balcony, minibar and coffee machine',
 				'Flat-screen TV',
 				'Extra toilet',
@@ -373,8 +378,8 @@ const quelle: RoomQuelle[] = [
 			],
 		},
 		description: {
-			de: 'Unser besonderstes Quartier, verteilt auf zwei Ebenen: Über eine historische Holztreppe geht es hinauf unter die alten Dachbalken zum Schlafbereich mit Galerie. Unten warten Sitzecke, Kaffeemaschine, Minibar und die Balkontür ins Grüne. Ein zusätzliches Klappbett schafft Platz für das dritte Familienmitglied.',
-			en: 'Our most special quarters, spread over two levels: a historic wooden staircase leads up beneath the old roof beams to the sleeping area with its gallery. Downstairs a seating corner, coffee machine, minibar and the balcony door into the green are waiting. An additional folding bed makes room for a third member of the family.',
+			de: 'Unser besonderstes Quartier, verteilt auf zwei Ebenen: Über eine historische Holztreppe geht es hinauf unter die alten Dachbalken zum Schlafbereich mit Galerie. Unten warten Sitzecke, Kaffeemaschine, Minibar und die Balkontür ins Grüne. Ein zusätzliches Klappbett und ein Schlafsessel schaffen Platz für bis zu fünf Gäste.',
+			en: 'Our most special quarters, spread over two levels: a historic wooden staircase leads up beneath the old roof beams to the sleeping area with its gallery. Downstairs a seating corner, coffee machine, minibar and the balcony door into the green are waiting. An additional folding bed and a sleeping chair make room for up to five guests.',
 		},
 		gallery: [
 			{
