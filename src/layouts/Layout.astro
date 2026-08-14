@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import StrukturDaten from '../components/StrukturDaten.astro';
 import { ausUrl, gegenstueck, spracheAusPfad } from '../i18n/ui';
 
 interface Props {
@@ -21,6 +22,15 @@ const {
 // dieselbe Zuordnung benutzen.
 const andereFassung = gegenstueck(Astro.url.pathname);
 const andereSprache = spracheAusPfad(andereFassung);
+
+// ⚠️ Adressen fuer Suchmaschinen und Vorschaubilder muessen VOLLSTAENDIG sein
+// (https://wetteraperle.de/...). Ein relatives "/en/hotel" ist als hreflang
+// wirkungslos, und beim Teilen per WhatsApp laedt kein relatives Bild.
+// Basis ist `site` aus astro.config.mjs.
+const voll = (pfad: string) => new URL(pfad, Astro.site).href;
+const seitenAdresse = voll(Astro.url.pathname);
+const vorschauBild = voll('/og-bild.jpg');
+const vollerTitel = `${title} | Landgasthof Wetteraperle`;
 ---
 
 <!doctype html>
@@ -31,15 +41,39 @@ const andereSprache = spracheAusPfad(andereFassung);
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
-		<title>{title} | Landgasthof Wetteraperle</title>
-		<link rel="alternate" hreflang={andereSprache} href={andereFassung} />
-		<link rel="alternate" hreflang={sprache} href={Astro.url.pathname} />
+		<title>{vollerTitel}</title>
+
+		<!-- Die eine gueltige Adresse dieser Seite. Ohne sie konkurriert nach dem
+		     Domain-Umzug die weiterhin erreichbare Vercel-Adresse
+		     (hotel-wetterperle.vercel.app) bei Google mit wetteraperle.de —
+		     zwei identische Seiten, die sich gegenseitig das Ranking nehmen. -->
+		<link rel="canonical" href={seitenAdresse} />
+		<link rel="alternate" hreflang={sprache} href={seitenAdresse} />
+		<link rel="alternate" hreflang={andereSprache} href={voll(andereFassung)} />
+		<link rel="alternate" hreflang="x-default" href={voll(sprache === 'de' ? Astro.url.pathname : andereFassung)} />
+
+		<!-- Vorschau beim Teilen (WhatsApp, Facebook, iMessage) -->
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Landgasthof Wetteraperle" />
+		<meta property="og:locale" content={sprache === 'de' ? 'de_DE' : 'en_US'} />
+		<meta property="og:title" content={vollerTitel} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={seitenAdresse} />
+		<meta property="og:image" content={vorschauBild} />
+		<meta property="og:image:width" content="1080" />
+		<meta property="og:image:height" content="719" />
+		<meta property="og:image:alt" content={t.hero.bildAlt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={vollerTitel} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={vorschauBild} />
 		<!-- Schriften werden lokal aus /public/fonts ausgeliefert (siehe global.css).
 		     KEIN Google-Fonts-CDN: der Abruf von fonts.googleapis.com uebertraegt die
 		     IP des Besuchers in die USA und ist in DE abmahnfaehig (LG Muenchen I,
 		     3 O 17493/20). Bitte nicht wieder einbauen. -->
 		<link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/Satisfy-Regular.woff2" as="font" type="font/woff2" crossorigin />
+		<StrukturDaten />
 	</head>
 	<body class="flex min-h-screen flex-col bg-cream-50 text-ink-700 font-sans antialiased">
 		<Header />

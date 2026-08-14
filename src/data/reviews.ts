@@ -5,6 +5,18 @@ export interface Review {
 }
 
 /**
+ * Der Google-Gesamtschnitt des Betriebs und die Zahl der Bewertungen dahinter.
+ * ⚠️ ECHTE Werte, nicht geschaetzt: aus dem Kundenprofil in der OS-Datenbank
+ * (urspruenglich Google Places ueber Castle Scout), Stand 14.08.2026.
+ * Gebraucht von den Strukturdaten (StrukturDaten.astro) — Google prueft solche
+ * Angaben gegen die eigenen Daten, erfundene Zahlen gelten als Spam.
+ * Aendert sich der Schnitt, hier aendern (die Anzeige in RatingBadge.astro
+ * fuehrt "4,9" bisher separat).
+ */
+export const ratingValue = 4.9;
+export const ratingCount = 462;
+
+/**
  * Echte Google-Bewertungen, 1:1 von KD am 12.08.2026 aus Google Maps/Search
  * per Screenshot übernommen (Reihenfolge wie von KD vorgegeben).
  * ⚠️ Rezension 3 (Cryo) ist im Original-Screenshot hinter "... Mehr" gekürzt —

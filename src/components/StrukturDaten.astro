@@ -1,0 +1,82 @@
+---
+/**
+ * Strukturdaten (JSON-LD) fuer Google — sagt der Suchmaschine in Maschinensprache,
+ * WAS dieser Betrieb ist: ein Hotel mit angeschlossenem Restaurant, wo es liegt,
+ * wann geoeffnet ist, wie die Bewertung aussieht.
+ *
+ * Warum das zaehlt: Danach richten sich die lokalen Suchergebnisse ("Hotel
+ * Saalburg-Ebersdorf") und die Info-Kaesten neben den Treffern. Ohne die Angaben
+ * muss Google alles aus dem Fliesstext raten.
+ *
+ * ⚠️ Alle Werte kommen aus den vorhandenen Datendateien (nav.ts, reviews.ts,
+ * i18n) — hier steht NICHTS doppelt und nichts Erfundenes. Wer Adresse,
+ * Oeffnungszeiten oder Bewertung aendert, aendert sie dort, nicht hier.
+ */
+import { contact } from '../data/nav';
+import { ratingValue, ratingCount } from '../data/reviews';
+import { ausUrl } from '../i18n/ui';
+
+const { sprache, t } = ausUrl(Astro.url);
+const basis = Astro.site?.href.replace(/\/$/, '') ?? '';
+
+// Oeffnungszeiten in Googles Schreibweise. Quelle: src/data/hours.ts —
+// Mo + Do–Sa abends, So mittags UND abends, Di/Mi Ruhetag.
+const zeiten = [
+	{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Thursday', 'Friday', 'Saturday'], opens: '17:00', closes: '22:00' },
+	{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday'], opens: '11:00', closes: '14:00' },
+	{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday'], opens: '17:00', closes: '22:00' },
+];
+
+const adresse = {
+	'@type': 'PostalAddress',
+	streetAddress: contact.street,
+	postalCode: contact.zipCity.split(' ')[0],
+	addressLocality: contact.zipCity.split(' ').slice(1).join(' '),
+	addressRegion: contact.region,
+	addressCountry: 'DE',
+};
+
+const bewertung = {
+	'@type': 'AggregateRating',
+	ratingValue: ratingValue,
+	reviewCount: ratingCount,
+	bestRating: 5,
+};
+
+const daten = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'Hotel',
+			'@id': `${basis}/#hotel`,
+			name: 'Landgasthof Wetteraperle',
+			description: t.start.beschreibung,
+			url: basis,
+			telephone: contact.phoneHref.replace('tel:', ''),
+			email: contact.email,
+			address: adresse,
+			image: `${basis}/og-bild.jpg`,
+			priceRange: '€€',
+			currenciesAccepted: 'EUR',
+			aggregateRating: bewertung,
+			openingHoursSpecification: zeiten,
+			inLanguage: sprache === 'de' ? 'de-DE' : 'en-US',
+		},
+		{
+			'@type': 'Restaurant',
+			'@id': `${basis}/#restaurant`,
+			name: 'Restaurant im Landgasthof Wetteraperle',
+			url: `${basis}/restaurant`,
+			telephone: contact.phoneHref.replace('tel:', ''),
+			address: adresse,
+			servesCuisine: sprache === 'de' ? 'Regionale Küche' : 'Regional German cuisine',
+			priceRange: '€€',
+			aggregateRating: bewertung,
+			openingHoursSpecification: zeiten,
+			acceptsReservations: true,
+		},
+	],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(daten)} is:inline />

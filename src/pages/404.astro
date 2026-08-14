@@ -1,0 +1,69 @@
+---
+/**
+ * Eigene "Seite nicht gefunden"-Seite im Design des Hauses.
+ *
+ * Warum sie gebraucht wird: Die alte WordPress-Seite hatte Adressen, die es neu
+ * bewusst NICHT mehr gibt (/hello-world/, /coming-soon/, /homepage-mobile/,
+ * /elementor-134/, /category/uncategorized/ — gelesen aus ihrer sitemap_index.xml
+ * am 14.08.2026). Wer sie noch verlinkt hat, landete bisher auf Astros nacktem
+ * englischen "404: Not Found". Jetzt kommt eine Seite mit Weg zurueck.
+ *
+ * Sprache: Eine 404-Adresse laesst sich keiner Sprache sicher zuordnen —
+ * deshalb stehen beide Fassungen untereinander, Deutsch zuerst.
+ */
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { texte } from '../i18n/ui';
+
+const de = texte('de');
+const en = texte('en');
+---
+
+<Layout title="Seite nicht gefunden" description="Diese Seite gibt es nicht mehr — hier geht es zurück zur Startseite des Landgasthofs Wetteraperle.">
+	<PageHeader kicker="404" title="Diese Seite gibt es nicht" />
+
+	<section class="mx-auto max-w-3xl space-y-10 px-6 py-20 text-center">
+		<div class="space-y-4">
+			<p class="text-lg leading-relaxed text-ink-700/90">
+				Die Adresse, die Sie aufgerufen haben, führt ins Leere — vermutlich stammt
+				der Link noch von unserer alten Website. Der Landgasthof ist natürlich
+				weiterhin für Sie da.
+			</p>
+			<p class="leading-relaxed text-ink-700/70">
+				The page you requested no longer exists — the link is probably from our
+				previous website. We are of course still here for you.
+			</p>
+		</div>
+
+		<div class="flex flex-wrap justify-center gap-4">
+			<a
+				href="/"
+				class="rounded-full bg-orange-600 px-7 py-3 font-akzent text-sm font-semibold uppercase tracking-wider text-cream-50 no-underline transition-colors hover:bg-orange-700"
+			>
+				Zur Startseite
+			</a>
+			<a
+				href="/hotel"
+				class="rounded-full border border-ink-900/15 px-7 py-3 font-akzent text-sm font-semibold uppercase tracking-wider text-ink-900 no-underline transition-colors hover:border-ink-900/40"
+			>
+				{de.nav.hotel}
+			</a>
+			<a
+				href="/restaurant"
+				class="rounded-full border border-ink-900/15 px-7 py-3 font-akzent text-sm font-semibold uppercase tracking-wider text-ink-900 no-underline transition-colors hover:border-ink-900/40"
+			>
+				{de.nav.restaurant}
+			</a>
+			<a
+				href="/kontakt"
+				class="rounded-full border border-ink-900/15 px-7 py-3 font-akzent text-sm font-semibold uppercase tracking-wider text-ink-900 no-underline transition-colors hover:border-ink-900/40"
+			>
+				{de.nav.kontakt}
+			</a>
+		</div>
+
+		<p class="text-sm text-ink-700/60">
+			<a href="/en/" class="font-medium text-orange-600">{en.sprache.wechselZu === 'Deutsch' ? 'English version' : 'English version'}</a>
+		</p>
+	</section>
+</Layout>
