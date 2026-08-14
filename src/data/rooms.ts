@@ -105,8 +105,8 @@ const quelle: RoomQuelle[] = [
 		maxGuests: 1,
 		size: null,
 		features: {
-			de: ['Einzelbett', 'Privates Badezimmer', 'Kostenloses WLAN', 'Frühstück inbegriffen'],
-			en: ['Single bed', 'Private bathroom', 'Free Wi-Fi', 'Breakfast included'],
+			de: ['Einzelbett', 'Privates Badezimmer', 'Kostenloses WLAN', 'Frühstück & Kulturförderabgabe inbegriffen'],
+			en: ['Single bed', 'Private bathroom', 'Free Wi-Fi', 'Breakfast & city tax included'],
 		},
 		description: {
 			de: 'Unser gemütlichstes Zimmer: ein Einzelbett in einer Nische unter alten Holzbalken, Sprossenfenster mit Blick ins Grüne und viel warmes Holz. Ideal, wenn Sie allein unterwegs sind und trotzdem nicht auf Landgasthof-Atmosphäre verzichten möchten.',
@@ -169,14 +169,14 @@ const quelle: RoomQuelle[] = [
 				'Balkon mit Blick ins Grüne',
 				'Eigenes Bad mit Dusche',
 				'Kostenloses WLAN',
-				'Frühstück inbegriffen',
+				'Frühstück & Kulturförderabgabe inbegriffen',
 			],
 			en: [
 				'Solid wood double bed',
 				'Balcony looking out into the green',
 				'Private bathroom with shower',
 				'Free Wi-Fi',
-				'Breakfast included',
+				'Breakfast & city tax included',
 			],
 		},
 		description: {
@@ -241,7 +241,7 @@ const quelle: RoomQuelle[] = [
 				'Leselampen mit USB am Kopfteil',
 				'Balkonzugang',
 				'Kostenloses WLAN',
-				'Frühstück inbegriffen',
+				'Frühstück & Kulturförderabgabe inbegriffen',
 			],
 			en: [
 				'Solid wood double bed',
@@ -249,7 +249,7 @@ const quelle: RoomQuelle[] = [
 				'Reading lamps with USB in the headboard',
 				'Access to the balcony',
 				'Free Wi-Fi',
-				'Breakfast included',
+				'Breakfast & city tax included',
 			],
 		},
 		description: {
@@ -309,7 +309,7 @@ const quelle: RoomQuelle[] = [
 				'Eigener Essbereich',
 				'Eigenes Bad mit Dusche',
 				'Kostenloses WLAN',
-				'Frühstück inbegriffen',
+				'Frühstück & Kulturförderabgabe inbegriffen',
 			],
 			en: [
 				'Large double bed',
@@ -317,7 +317,7 @@ const quelle: RoomQuelle[] = [
 				'Its own dining area',
 				'Private bathroom with shower',
 				'Free Wi-Fi',
-				'Breakfast included',
+				'Breakfast & city tax included',
 			],
 		},
 		description: {
@@ -379,7 +379,7 @@ const quelle: RoomQuelle[] = [
 				'Flachbild-TV',
 				'Extra Toilette',
 				'Kostenloses WLAN',
-				'Frühstück inbegriffen',
+				'Frühstück & Kulturförderabgabe inbegriffen',
 			],
 			en: [
 				'Two levels connected by a historic wooden staircase',
@@ -389,7 +389,7 @@ const quelle: RoomQuelle[] = [
 				'Flat-screen TV',
 				'Extra toilet',
 				'Free Wi-Fi',
-				'Breakfast included',
+				'Breakfast & city tax included',
 			],
 		},
 		description: {
