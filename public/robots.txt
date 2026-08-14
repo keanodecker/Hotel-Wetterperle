@@ -1,0 +1,5 @@
+# Landgasthof Wetteraperle — alles darf gelesen werden.
+User-agent: *
+Allow: /
+
+Sitemap: https://wetteraperle.de/sitemap-index.xml
