@@ -1,5 +1,6 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
+import { ausUrl } from '../i18n/ui';
 
 interface GalleryImage {
 	src: ImageMetadata;
@@ -12,25 +13,64 @@ interface Props {
 }
 
 const { images } = Astro.props;
+const { t } = ausUrl(Astro.url);
+
+/*
+ * Seit 14.08.2026 sind die Raster-Bilder klickbar und oeffnen die gemeinsame
+ * Lightbox (src/scripts/galerie-lightbox.ts — dieselbe wie in
+ * ZimmerGalerie.astro, inkl. Pfeilen, Touch-Swipe, Zaehler und Alt-Text als
+ * Unterschrift). Vorher reagierten sie gar nicht auf Klicks — KD: "Macht es
+ * ne schöne Ansicht, dass wenn ich draufklick das Bild angucken kann und dann
+ * ganz schön durch swipen kann und alle Bilder angucke."
+ *
+ * Die Beschriftungen der Lightbox haengen als data-Attribut am Raster (siehe
+ * Kommentar in ZimmerGalerie.astro); die 1600-px-Grossfassung je Bild wird
+ * erst geladen, wenn jemand sie wirklich ansieht.
+ */
+const bedientexte = {
+	schliessen: t.galerie.schliessen,
+	vorheriges: t.galerie.vorheriges,
+	naechstes: t.galerie.naechstes,
+	bildVon: t.galerie.bildVon('{i}', '{n}'),
+};
+
+const grossbilder = await Promise.all(
+	images.map((bild) => getImage({ src: bild.src, width: 1600, format: 'webp', quality: 78 })),
+);
 ---
 
-<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-	{images.map((img) => (
-		<figure class="group overflow-hidden rounded-2xl">
-			<Image
-				src={img.src}
-				alt={img.alt}
-				widths={[400, 800]}
-				sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-				format="webp"
-				quality={72}
-				loading="lazy"
-				decoding="async"
-				class="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105"
-			/>
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-galerie data-texte={JSON.stringify(bedientexte)}>
+	{images.map((img, i) => (
+		<figure class="group">
+			<button
+				type="button"
+				class="block w-full overflow-hidden rounded-2xl bg-cream-100"
+				data-galerie-bild
+				data-index={i}
+				data-voll={grossbilder[i].src}
+				aria-label={`${img.alt} – ${t.galerie.groesser}`}
+			>
+				<Image
+					src={img.src}
+					alt={img.alt}
+					widths={[400, 800]}
+					sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+					format="webp"
+					quality={72}
+					loading="lazy"
+					decoding="async"
+					class="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+				/>
+			</button>
 			{img.caption && (
 				<figcaption class="mt-2 text-xs text-ink-700/60">{img.caption}</figcaption>
 			)}
 		</figure>
 	))}
 </div>
+
+<script>
+	// Gemeinsames Lightbox-Modul — laeuft einmal pro Seite, auch wenn mehrere
+	// Galerien (PhotoGrid + ZimmerGalerie) darauf stehen.
+	import '../scripts/galerie-lightbox';
+</script>
