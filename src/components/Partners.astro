@@ -23,6 +23,16 @@ const track = [...partners, ...partners, ...partners, ...partners];
 	</div>
 
 	<div class="relative">
+		{/*
+		 * ⚠️ loading="eager" ist hier ABSICHT (Fix 14.08.2026, KD: "weiß und
+		 * bugt auf dem Handy"): Astros <Image> laedt sonst lazy — im Marquee
+		 * starten aber fast alle Logos AUSSERHALB des Viewports und wandern per
+		 * CSS-Transform herein. Lazy hiess: jedes Logo laedt erst beim
+		 * Sichtbarwerden — weisse Platzhalter zogen durchs Band und die Decodes
+		 * ruckelten in die laufende Animation. Es sind nur 7 echte Dateien
+		 * (die 4 Kopien teilen sich die URLs aus dem Browser-Cache), eager
+		 * kostet also praktisch nichts.
+		 */}
 		<div class="marquee-track flex w-max animate-marquee items-center gap-16 px-6 md:gap-20">
 			{track.map((partner) => (
 				<Image
@@ -30,6 +40,8 @@ const track = [...partners, ...partners, ...partners, ...partners];
 					alt={partner.name}
 					width={200}
 					height={200}
+					loading="eager"
+					decoding="async"
 					class="h-28 w-auto shrink-0 object-contain opacity-80 grayscale transition-all duration-300 hover:-translate-y-1 hover:opacity-100 hover:grayscale-0 md:h-32"
 				/>
 			))}
