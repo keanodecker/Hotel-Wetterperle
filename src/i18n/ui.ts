@@ -489,6 +489,12 @@ const de = {
 				text: 'Einer der schönsten Aussichtspunkte Thüringens, mit Blick auf die geschwungene Saale.',
 			},
 			{
+				titel: 'Saalburg-Ebersdorf am Thüringer Meer',
+				text: 'Die Stadt am Bleilochstausee: Schlosspark Ebersdorf, Sommerrodelbahn, Kletterwald und viele weitere Ausflugstipps.',
+				href: 'https://www.saalburg-ebersdorf.de/seite/593222/ausflugstipps.html',
+				bildnachweis: 'Foto: Stephan van Helden · CC BY-SA 4.0',
+			},
+			{
 				titel: 'Freizeitpark Plohn',
 				text: 'Wildwasserbahn und Fahrattraktionen für einen actionreichen Familientag.',
 			},
@@ -1031,6 +1037,12 @@ const en: typeof de = {
 			{
 				titel: 'Saale loop near Burgk',
 				text: 'One of the finest viewpoints in Thuringia, looking out over the winding river Saale.',
+			},
+			{
+				titel: 'Saalburg-Ebersdorf on the “Thuringian Sea”',
+				text: 'The town on the Bleiloch reservoir: Ebersdorf palace park, summer toboggan run, climbing forest and many more day-trip tips.',
+				href: 'https://www.saalburg-ebersdorf.de/seite/593222/ausflugstipps.html',
+				bildnachweis: 'Photo: Stephan van Helden · CC BY-SA 4.0',
 			},
 			{
 				titel: 'Plohn amusement park',

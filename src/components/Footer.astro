@@ -93,7 +93,7 @@ const andereFassung = gegenstueck(Astro.url.pathname);
 			{t.sprache.wechselZu}
 		</a>
 
-		<span>© {year} Landgasthof Wetteraperle. {t.fusszeile.rechte}</span>
+		{/* KD 14.08.2026: Media-Castle-Marke in die Mitte, das ©-Jahr nach ganz rechts */}
 		<a
 			href="https://www.media-castle.com"
 			target="_blank"
@@ -110,5 +110,6 @@ const andereFassung = gegenstueck(Astro.url.pathname);
 				</span>
 			</span>
 		</a>
+		<span>© {year} Landgasthof Wetteraperle. {t.fusszeile.rechte}</span>
 	</div>
 </footer>
