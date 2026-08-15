@@ -406,7 +406,7 @@ const de = {
 		einleitung:
 			'Ob Hochzeit, Geburtstag oder Familienfest – wir planen Ihre Feier individuell, mit Herz und Liebe zum Detail.',
 		mottoKicker: 'Unser Motto',
-		mottoTitel: '"Es gibt nur einen Chef und das ist der Gast"',
+		mottoTitel: '"Mit Freunden genießen"',
 		mottoText:
 			'Festsaal, Außenbereich am See, Biergarten oder Restaurant – wir finden für jeden Anlass den passenden Rahmen und planen Menü und Dekoration ganz nach Ihren Wünschen. Damit Sie Ihren großen Tag ganz entspannt mit Familie und Freunden genießen können.',
 		anfragen: 'Event anfragen',
@@ -1001,7 +1001,7 @@ const en: typeof de = {
 		einleitung:
 			'Whether it is a wedding, a birthday or a family celebration – we plan your event individually, with heart and an eye for detail.',
 		mottoKicker: 'Our motto',
-		mottoTitel: '"There is only one boss, and that is the guest"',
+		mottoTitel: '"Enjoy with friends"',
 		mottoText:
 			'Function hall, the outdoor area by the lake, beer garden or restaurant – we find the right setting for every occasion and plan the menu and decoration entirely as you wish. So you can simply relax and enjoy your big day with family and friends.',
 		anfragen: 'Enquire about your event',
