@@ -408,7 +408,7 @@ const de = {
 		mottoKicker: 'Unser Motto',
 		mottoTitel: '"Mit Freunden genießen"',
 		mottoText:
-			'Festsaal, Außenbereich am See, Biergarten oder Restaurant – wir finden für jeden Anlass den passenden Rahmen und planen Menü und Dekoration ganz nach Ihren Wünschen. Damit Sie Ihren großen Tag ganz entspannt mit Familie und Freunden genießen können.',
+			'Festsaal, Außenbereich am See, Biergarten oder Restaurant – wir finden für jeden Anlass den passenden Rahmen und planen Menü und Dekoration ganz nach Ihren Wünschen. Damit Sie Ihren großen Tag ganz entspannt erleben können.',
 		anfragen: 'Event anfragen',
 		bildAlt: 'Feier im Landgasthof Wetteraperle',
 		anlaesseTitel: 'Für jeden Anlass',
@@ -1003,7 +1003,7 @@ const en: typeof de = {
 		mottoKicker: 'Our motto',
 		mottoTitel: '"Enjoy with friends"',
 		mottoText:
-			'Function hall, the outdoor area by the lake, beer garden or restaurant – we find the right setting for every occasion and plan the menu and decoration entirely as you wish. So you can simply relax and enjoy your big day with family and friends.',
+			'Function hall, the outdoor area by the lake, beer garden or restaurant – we find the right setting for every occasion and plan the menu and decoration entirely as you wish. So you can simply relax and enjoy your big day.',
 		anfragen: 'Enquire about your event',
 		bildAlt: 'A celebration at the Landgasthof Wetteraperle',
 		anlaesseTitel: 'For every occasion',
